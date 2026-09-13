@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第1章 数据库环境与开发过程 · 复习</title>
+<style>
+  :root{
+    --bg:#eef1f8; --card:#ffffff; --ink:#1f2430; --mut:#5c6474;
+    --acc:#4f46e5; --acc2:#6366f1;
+    --focus:#e11d48; --focus-bg:#fff1f2;
+    --hard:#7c3aed; --hard-bg:#f5f3ff;
+    --pit:#ea580c; --pit-bg:#fff7ed;
+    --ok:#059669; --ok-bg:#ecfdf5; --bad:#dc2626; --bad-bg:#fef2f2;
+    --line:#e4e7f0; --line2:#d7dbf0;
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:
+    radial-gradient(1000px 500px at 85% -10%, #e4e7ff 0%, transparent 60%),
+    radial-gradient(800px 420px at -10% 10%, #dbeafe 0%, transparent 55%),
+    var(--bg);
+    color:var(--ink);
+    font-family:"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    line-height:1.7}
+  a{color:var(--acc); text-decoration:none}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 20px 60px}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line); box-shadow:0 2px 14px rgba(79,70,229,.06)}
+  .h-in{max-width:1180px; margin:0 auto; padding:14px 20px}
+  .h-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .logo{width:44px;height:44px;border-radius:13px; display:grid;place-items:center; flex:0 0 auto;
+    background:linear-gradient(135deg,var(--acc),var(--acc2)); color:#fff; font-weight:800; font-size:20px}
+  .h-t h1{margin:0; font-size:20px; letter-spacing:.3px}
+  .h-t p{margin:2px 0 0; color:var(--mut); font-size:12.5px}
+  .h-actions{margin-left:auto; display:flex; gap:8px}
+  .btn{border:1px solid var(--line2); background:#fff; color:var(--ink); border-radius:10px; padding:7px 12px;
+    font-size:13px; cursor:pointer; transition:.15s}
+  .btn:hover{border-color:var(--acc); color:var(--acc)}
+  .btn.primary{background:var(--acc); border-color:var(--acc); color:#fff}
+  .btn.primary:hover{background:var(--acc2); color:#fff}
+  .pwrap{margin-top:10px; height:8px; border-radius:99px; background:#e7e9f4; overflow:hidden}
+  #pbar{height:100%; width:0%; border-radius:99px; background:linear-gradient(90deg,var(--acc),#22d3ee); transition:width .3s}
+  .h-stats{font-size:12.5px; color:var(--mut); margin-top:6px; display:flex; gap:14px; flex-wrap:wrap}
+  .h-stats b{color:var(--acc)}
+
+  .layout{display:flex; gap:26px; align-items:flex-start; margin-top:26px}
+  aside{width:248px; flex:0 0 248px; position:sticky; top:118px; max-height:calc(100vh - 140px); overflow:auto;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px}
+  aside h3{margin:2px 4px 10px; font-size:12px; letter-spacing:2px; color:var(--mut); text-transform:uppercase}
+  .nav-i{display:flex; align-items:center; gap:9px; padding:8px 9px; border-radius:10px; color:var(--ink);
+    font-size:13.5px; margin-bottom:2px; border-left:3px solid transparent}
+  .nav-i:hover{background:#f3f4fd}
+  .nav-i.active{background:#eef0ff; border-left-color:var(--acc); font-weight:700}
+  .nav-i .num{color:var(--mut); font-variant-numeric:tabular-nums}
+  .nav-i .cnt{margin-left:auto; font-size:11.5px; color:var(--mut); background:#eef0f7; border-radius:99px; padding:1px 7px}
+  .nav-i .cnt.good{background:var(--ok-bg); color:var(--ok)}
+  .nav-i .cnt.mix{background:#fffbeb; color:#b45309}
+  aside .tip{font-size:11.5px; color:var(--mut); padding:10px 4px 2px; border-top:1px dashed var(--line); margin-top:8px}
+  .legend{display:flex; flex-direction:column; gap:5px; margin-top:10px; font-size:12px; color:var(--mut)}
+  .legend span::before{content:"●"; margin-right:6px}
+  .lg-f::before{color:var(--focus)} .lg-h::before{color:var(--hard)} .lg-p::before{color:var(--pit)}
+
+  main{flex:1; min-width:0}
+
+  .hero{background:linear-gradient(135deg,#312e81 0%,var(--acc) 60%,#4338ca 100%); color:#fff;
+    border-radius:22px; padding:26px 28px; box-shadow:0 14px 30px rgba(79,70,229,.28)}
+  .hero .kicker{font-size:12px; letter-spacing:3px; opacity:.85; margin:0 0 6px}
+  .hero h1{margin:0; font-size:27px; line-height:1.3}
+  .hero p{margin:8px 0 0; opacity:.92; font-size:13.5px; max-width:720px}
+  .map{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
+  .map a{color:#fff; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3);
+    padding:5px 11px; border-radius:99px; font-size:12.5px}
+  .map a:hover{background:rgba(255,255,255,.3)}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); margin-top:24px;
+    box-shadow:0 4px 18px rgba(30,35,60,.05); scroll-margin-top:120px}
+  .card-head{display:flex; align-items:flex-start; gap:14px; padding:20px 22px 14px}
+  .no{flex:0 0 auto; width:46px; height:46px; border-radius:14px; display:grid; place-items:center;
+    background:#eef0ff; color:var(--acc); font-weight:800; font-size:19px; border:1px solid #dfe2ff}
+  .titles{flex:1; min-width:0}
+  .titles h2{margin:0; font-size:20px}
+  .titles .en{color:var(--mut); font-size:12.5px; margin-top:2px}
+  .chips{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{font-size:11.5px; border-radius:99px; padding:3px 10px; font-weight:600}
+  .chip-focus{background:var(--focus-bg); color:var(--focus); border:1px solid #fecdd3}
+  .chip-hard{background:var(--hard-bg); color:var(--hard); border:1px solid #ddd6fe}
+  .chip-pit{background:var(--pit-bg); color:var(--pit); border:1px solid #fed7aa}
+
+  .body{padding:0 22px 22px}
+  .blk{margin-top:12px}
+  .blk h3{margin:0 0 8px; font-size:15px; display:flex; align-items:center; gap:7px}
+  .blk ul{margin:0; padding:0; list-style:none; display:grid; gap:7px}
+  .blk li{padding-left:22px; position:relative; font-size:14px}
+  .blk-sum li::before{content:"▸"; position:absolute; left:2px; color:var(--acc); font-weight:700}
+  .igrid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px}
+  .ig{border-radius:12px; padding:13px 14px; border:1px solid}
+  .ig ul{display:grid; gap:6px}
+  .ig li{padding-left:20px; font-size:13px}
+  .ig-focus{background:var(--focus-bg); border-color:#fecdd3}
+  .ig-focus h3{color:var(--focus)} .ig-focus li::before{content:"★"; position:absolute; left:0; color:var(--focus)}
+  .ig-hard{background:var(--hard-bg); border-color:#ddd6fe}
+  .ig-hard h3{color:var(--hard)} .ig-hard li::before{content:"▲"; position:absolute; left:0; color:var(--hard)}
+  .ig-pit{background:var(--pit-bg); border-color:#fed7aa}
+  .ig-pit h3{color:var(--pit)} .ig-pit li::before{content:"!"; position:absolute; left:2px; font-weight:800; color:var(--pit)}
+
+  .quiz{border-top:1.5px dashed var(--line2); margin-top:16px; padding-top:6px}
+  .quiz h3{margin:12px 0 4px; font-size:15px}
+  .quiz .qhint{font-size:12px; color:var(--mut); margin:0 0 10px}
+  .q{background:#fafbff; border:1px solid var(--line); border-radius:13px; padding:15px 16px; margin-bottom:14px}
+  .q-text{font-size:14.5px; font-weight:600}
+  .q-meta{display:flex; gap:8px; align-items:center; margin-bottom:8px}
+  .tagq{font-size:11px; border-radius:6px; padding:2px 8px; background:#eef0ff; color:var(--acc); font-weight:600}
+  .opts{display:grid; gap:8px; margin-top:10px}
+  .opt{display:flex; gap:10px; align-items:flex-start; text-align:left; width:100%; border:1.5px solid var(--line);
+    background:#fff; border-radius:10px; padding:9px 12px; font-size:13.5px; color:var(--ink); cursor:pointer; transition:.12s; font-family:inherit}
+  .opt:hover:not(:disabled){border-color:var(--acc2); background:#f5f6ff}
+  .opt:disabled{cursor:default}
+  .ol{flex:0 0 auto; width:22px; height:22px; border-radius:7px; display:grid; place-items:center; font-size:12px; font-weight:700;
+    background:#eef0f7; color:var(--mut); margin-top:1px}
+  .opt.right{border-color:var(--ok); background:var(--ok-bg)}
+  .opt.right .ol{background:var(--ok); color:#fff}
+  .opt.wrong{border-color:var(--bad); background:var(--bad-bg)}
+  .opt.wrong .ol{background:var(--bad); color:#fff}
+  .fb{display:none; margin-top:12px; border-radius:11px; padding:10px 14px; font-size:13.5px; border:1px solid}
+  .fb.show{display:block}
+  .fb-ok{background:var(--ok-bg); border-color:#a7f3d0}
+  .fb-bad{background:var(--bad-bg); border-color:#fecaca}
+  .fb b{font-size:14px}
+  .fb .exp{margin-top:4px; color:var(--ink); opacity:.92}
+
+  footer{color:var(--mut); font-size:12.5px; text-align:center; padding:30px 0 6px}
+  @media (max-width:920px){
+    .layout{display:block}
+    aside{display:none}
+    .h-t h1{font-size:16px}
+    .igrid{grid-template-columns:1fr}
+    .hero h1{font-size:21px}
+  }
+  @media print{
+    header,aside,.h-actions,.map{display:none}
+    body{background:#fff}
+    .card{break-inside:avoid; box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="h-in">
+    <div class="h-row">
+      <div class="logo">DB</div>
+      <div class="h-t">
+        <h1>第1章 数据库环境与开发过程 · 复习手册</h1>
+        <p>Modern Database Management（13e Global Edition）Chapter 1 ｜ 中文要点 + 自测练习</p>
+      </div>
+      <div class="h-actions">
+        <button class="btn" id="btnReset" type="button">↺ 重置练习</button>
+        <button class="btn" id="btnPrint" type="button">🖨 打印</button>
+      </div>
+    </div>
+    <div class="pwrap"><div id="pbar"></div></div>
+    <div class="h-stats"><span>已作答 <b id="stAns">0</b> / 16 题</span><span>答对 <b id="stRight">0</b> 题</span><span id="stState">开始答题吧～</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside>
+      <h3>知识点导航</h3>
+      <nav id="side"></nav>
+      <div class="tip">点击题目选项即可作答；答完显示正确答案与解析。</div>
+      <div class="legend">
+        <span class="lg-f">重点（核心必记）</span>
+        <span class="lg-h">难点（理解辨析）</span>
+        <span class="lg-p">易错点（考试常踩坑）</span>
+      </div>
+    </aside>
+    <main>
+      <div class="hero">
+        <p class="kicker">REVIEW · CH01</p>
+        <h1>🗄 The Database Environment &amp; Development Process</h1>
+        <p>本页覆盖 PPT 全部知识点（1.1–1.7）：核心概念、传统文件处理的缺点、数据库方法的优点与成本风险、数据库环境组成、数据模型、开发流程与项目团队。每个知识点均标注<b>重点 / 难点 / 易错点</b>，并配 2 道自测题，共 16 题。</p>
+        <div class="map" id="map"></div>
+      </div>
+      <div id="content"></div>
+      <footer>复习资料整理自：ch01 (2).pptx（Modern Database Management, 13e, Global Edition, Chapter 1）· 仅供个人学习复习使用</footer>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LETTERS = ["A","B","C","D","E"];
+  var state = {};
+
+  var SECTIONS = [
+    {
+      id:"sec-1", no:"01", zh:"核心概念", en:"Data · Information · Metadata · Database · DBMS",
+      summary:[
+        "数据 Data：表示对象与事件的原始素材，分为结构化（数字、文本、日期）与非结构化（图像、视频、文档）。",
+        "信息 Information：数据经过处理、能增进使用者认识后即为信息（信息＝加工后的数据）。",
+        "元数据 Metadata：描述用户数据属性与上下文的数据，即“关于数据的数据”，如数据类型、长度、允许值、来源。",
+        "数据库 Database：具有逻辑关系的数据的有组织集合；数据库方法强调以最少数据冗余集成共享数据。",
+        "DBMS 数据库管理系统：让用户与程序存取、操纵数据的软件，充当程序与数据文件之间的接口，如 MS-Access、Oracle、MySQL。",
+        "例：中药按笔画数有组织存放可提升取药速度——有组织存储能提高检索效率。"
+      ],
+      focus:[
+        "区分三组概念：Data 是原料，Information 是加工后对使用者有意义的数据，Metadata 是“关于数据的数据”。",
+        "Database（数据的集合）与 DBMS（管理数据的软件）是两个不同对象。"
+      ],
+      hard:[
+        "判断一句“数据”是否是 Information：关键看是否经过加工并增进使用者的知识，而不是看它存放在哪里。"
+      ],
+      pit:[
+        "元数据不是用户数据本身，而是描述用户数据的类型、长度、允许值、来源等属性的资料。",
+        "不要混淆“结构化 vs 非结构化”的例子：视频、文档属非结构化数据。"
+      ],
+      questions:[
+        {
+          type:"single", q:"未经处理、表示对象与事件的原始事实，称为（　）。",
+          opts:["信息 Information","元数据 Metadata","数据 Data","数据库 Database"], a:2,
+          exp:"教材定义：Data 是表示对象与事件的原始素材（raw materials）；经处理并增进使用者认识后成为 Information。"
+        },
+        {
+          type:"judge", q:"元数据指数据库中存储的用户数据本身，例如学生姓名与成绩。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。元数据描述用户数据的属性与上下文（字段名、类型、长度、允许值、来源），是“关于数据的数据”。"
+        }
+      ]
+    },
+    {
+      id:"sec-2", no:"02", zh:"传统文件处理的缺点", en:"Disadvantages of File Processing",
+      summary:[
+        "程序-数据依赖 Program-Data Dependence：每个程序都要为自己所用的文件维护详细元数据（文件格式描述写在各程序中）。",
+        "数据重复 Duplication of Data：不同系统/程序各自保存同一数据的分离副本。",
+        "数据共享受限 Limited Data Sharing：用户与其他程序共享数据的机会很少。",
+        "开发周期长 Lengthy Development Times：每个程序都需从零设计文件格式与描述。",
+        "程序维护过度 Excessive Program Maintenance：信息系统中超过 80% 的预算用于程序维护。"
+      ],
+      focus:[
+        "五条缺点应能默写并与英文术语对应：依赖、重复、共享受限、周期长、维护过度。",
+        "数据重复是数据冗余与不一致的主要来源；程序携带元数据导致“改结构就要改程序”。"
+      ],
+      hard:[
+        "“程序-数据依赖”的本质：元数据与文件描述分散在各程序里，未集中管理，导致程序与数据结构强耦合。"
+      ],
+      pit:[
+        "记牢数字：超过 80% 的信息系统预算花在程序维护上。",
+        "数据共享受限 = 共享机会少、困难，不等于绝对无法共享。"
+      ],
+      questions:[
+        {
+          type:"single", q:"同一员工信息在财务系统与人事系统中各保存一份，修改时需多处同步。这体现了传统文件处理的哪一缺点？",
+          opts:["程序-数据依赖","数据重复","开发周期长","程序维护过度"], a:1,
+          exp:"对应 Duplication of Data：不同系统/程序拥有同一数据的分离副本，造成重复存储与更新不一致。"
+        },
+        {
+          type:"single", q:"传统文件环境下，信息系统中超过（　）的预算被用于程序维护。",
+          opts:["20%","50%","80%","95%"], a:2,
+          exp:"Excessive Program Maintenance：more than 80% of IS budget is devoted to program maintenance。"
+        }
+      ]
+    },
+    {
+      id:"sec-3", no:"03", zh:"数据库方法的优点", en:"Advantages of the Database Approach",
+      summary:[
+        "程序-数据独立性 Program-Data Independence：文件描述集中存放于数据仓库 repository，其他程序也能使用这些数据。",
+        "数据冗余减少 Reduced Data Redundancy：数据文件细节整合为单一逻辑结构，减少重复与多余存储。",
+        "数据一致性提高 Improved Data Consistency：数据集中存放于中心位置，减少不一致。",
+        "数据共享改善 Improved Data Sharing：获得授权的用户可以查看/共享数据。",
+        "应用开发生产力提高：显著减少开发新程序的成本与时间。",
+        "数据可访问性与响应性提高：没有编程经验的用户也能较容易地检索数据。",
+        "程序维护减少：修改程序或数据时不必牵动另一方。"
+      ],
+      focus:[
+        "七大优点：独立性、低冗余、一致性、共享、生产力、可访问性、低维护——是本章最常考的“列举/判断”题源。",
+        "传统文件处理的缺点恰好与数据库方法优点一一对照，可对照记忆。"
+      ],
+      hard:[
+        "程序-数据独立性：把“文件描述”从程序中抽出、集中到数据仓库，使数据结构变更不必改动所有程序。"
+      ],
+      pit:[
+        "数据一致性提高是因为数据集中存放于中心位置，而不是“多保存几份副本”。",
+        "看到“各程序自带文件元数据/数据重复/共享受限”应识别为文件处理的缺点，而非数据库方法的优点。"
+      ],
+      questions:[
+        {
+          type:"single", q:"以下哪一项属于数据库方法的优点，而不是传统文件处理的特点？",
+          opts:["各程序自行维护文件元数据","程序-数据独立性","同一数据保存多个副本","程序之间数据共享受限"], a:1,
+          exp:"Program-Data Independence 是数据库方法的优点：文件描述集中到数据仓库，程序不再自带元数据；其余三项均是文件处理的缺点。"
+        },
+        {
+          type:"single", q:"下列哪一项不属于数据库方法带来的好处？",
+          opts:["提高应用开发生产力","提高数据可访问性与响应性","减少程序维护","增加不同程序的独立数据副本"], a:3,
+          exp:"增加独立数据副本=数据重复，正是数据库方法要减少的问题，不属于其优点。"
+        }
+      ]
+    },
+    {
+      id:"sec-4", no:"04", zh:"数据库方法的成本与风险", en:"Costs and Risks of the Database Approach",
+      summary:[
+        "需要新的专业人员：聘请数据库开发人员设计数据库并提供数据库管理服务。",
+        "安装与管理成本：系统安装和运行需要较高的年度维护与支持成本。",
+        "转换成本 Conversion Costs（系统转换成本）：把旧系统转换为现代数据库系统的代价。",
+        "需要显式备份与恢复：数据受损时，须通过备份与恢复操作还原数据。"
+      ],
+      focus:[
+        "四项成本/风险能默写：专业人员、安装管理成本、转换成本、备份与恢复。转换成本最易遗漏。"
+      ],
+      hard:[
+        "从“账本”角度理解：技术收益大，但需要新招人才、持续投入运维、为旧系统转换买单、并承担数据损坏风险。"
+      ],
+      pit:[
+        "数据集中管理≠不需要备份；恰恰需要显式的备份与恢复机制来应对数据损坏。"
+      ],
+      questions:[
+        {
+          type:"single", q:"下列哪一项属于采用数据库方法带来的成本与风险？",
+          opts:["需要聘请新的专业人员","不再需要备份与恢复","没有安装与管理成本","旧系统无需转换即可运行"], a:0,
+          exp:"数据库方法需要新专业人员、安装管理成本与转换成本，且必须做显式备份与恢复；其余选项都与教材相反。"
+        },
+        {
+          type:"judge", q:"采用数据库集中管理数据后，就不需要再做显式的备份与恢复了。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。集中存储反而要求显式的备份和恢复机制（Explicit backup and recovery），以应对数据损坏。"
+        }
+      ]
+    },
+    {
+      id:"sec-5", no:"05", zh:"数据库环境的组成", en:"Components of the Database Environment",
+      summary:[
+        "数据建模与设计工具：设计数据库与应用系统的自动化工具。",
+        "资料仓库 Repository：集中存放“用元数据定义的详细数据”，是元数据的中央仓库。",
+        "DBMS：管理数据库的软件。",
+        "数据库 Database：数据的存储库。",
+        "应用程序 Application Programs：使用数据的软件。",
+        "用户界面 User Interface：文本、图形、菜单等供用户使用的界面。",
+        "数据/数据库管理员 Data/Database Administrators：负责维护数据库的人员。",
+        "系统开发者 System Developers：负责设计数据库与软件的人员。",
+        "终端用户 End Users：使用应用与数据库的人。"
+      ],
+      focus:[
+        "九大组成可归纳记忆：两类软件工具（建模工具、DBMS）+ 两个库（Database、Repository）+ 程序与界面 + 三类人员（管理员、开发者、终端用户）。"
+      ],
+      hard:[
+        "Repository 与 Database 的区分：Repository 集中存储“由元数据定义的详细数据（关于数据的定义/字典）”，Database 存储用户实际数据。"
+      ],
+      pit:[
+        "DBMS（软件）与 Database（数据集合）是两个不同组件。",
+        "用户界面 User Interface 是环境组成之一；“操作系统”不在教材列出的九大组成内。"
+      ],
+      questions:[
+        {
+          type:"single", q:"集中记录用元数据定义的详细数据（相当于“关于数据的字典”）的中央存储库称为（　）。",
+          opts:["Database 数据库","Repository 资料仓库","Application Program 应用程序","Data Model 数据模型"], a:1,
+          exp:"Repository 是集中存储由元数据定义的详细数据的中央仓库；Database 则是存放用户数据的库。"
+        },
+        {
+          type:"single", q:"下列哪一项不属于教材所列数据库环境的组成成分？",
+          opts:["系统开发者","用户界面","DBMS","操作系统"], a:3,
+          exp:"九大组成是建模工具、Repository、DBMS、Database、应用程序、用户界面、数据/数据库管理员、系统开发者、终端用户；操作系统不在其中。"
+        }
+      ]
+    },
+    {
+      id:"sec-6", no:"06", zh:"数据模型与实体联系", en:"Data Models · Entities · Relationships",
+      summary:[
+        "数据模型 Data Model：用图形化图示捕获数据的性质及数据之间的联系。",
+        "企业级数据模型 Enterprise Data Model：高层模型，只显示整个组织中实体与联系的名称。",
+        "项目级数据模型 Project Data Model：更详细，显示实体的更多细节，并与数据库中的实际数据结构匹配。",
+        "实体 Entity：名词，描述人、地点、对象、事件或概念，由属性 attributes 组成。",
+        "联系 Relationship：实体之间的连线，通常为一对多 1:M 或多对多 M:N，但也可能是一对一 1:1。"
+      ],
+      focus:[
+        "企业模型＝高、粗、组织级（只看实体与联系名）；项目模型＝细、贴近数据库实际结构。",
+        "实体是“名词”并带属性；联系是实体间的“连线”并说明基数（1:1、1:M、M:N）。"
+      ],
+      hard:[
+        "把握两层抽象：先由企业模型确定“有哪些实体和联系”，再由项目模型细化“每个实体的属性与库结构”。"
+      ],
+      pit:[
+        "联系“通常为 1:M 或 M:N，但也可以是 1:1”；题目若说联系只能是 M:N 或只能 1:M，都是错的。",
+        "Entity（实体）≠ Attribute（属性），实体由属性组成。"
+      ],
+      questions:[
+        {
+          type:"single", q:"只显示组织中实体与联系名称的高层数据模型是（　）。",
+          opts:["项目级数据模型 Project Data Model","企业级数据模型 Enterprise Data Model","原型 Prototype","文件系统 File System"], a:1,
+          exp:"Enterprise Data Model 是 high-level model，仅展示实体与联系名称；Project Data Model 则更详细并贴近数据库结构。"
+        },
+        {
+          type:"single", q:"关于实体与联系，下列说法错误的是（　）。",
+          opts:["联系通常为 1:M 或 M:N，但也可能为 1:1","实体是描述人、地点、对象、事件或概念的名词","实体由属性组成","实体之间的联系只能是多对多 M:N"], a:3,
+          exp:"联系通常为 1:M 或 M:N，但也可以为 1:1；“只能是 M:N”说法错误。实体由属性组成、本身是名词性描述。"
+        }
+      ]
+    },
+    {
+      id:"sec-7", no:"07", zh:"数据库开发过程", en:"Development Process: SDLC · RAD · Prototyping",
+      summary:[
+        "SDLC 系统开发生命周期：开发、维护、替换信息系统的传统方法；计划详细、过程全面，但较耗时。",
+        "SDLC 五大步骤顺序：规划 Planning → 分析 Analysis → 设计 Design → 实现 Implementation → 维护 Maintenance。",
+        "规划＝初步理解业务情况；分析＝彻底分析业务情形并得出功能需求；设计＝逻辑与物理数据库设计。",
+        "实现＝编写程序、建立数据库、测试、安装、培训、文档化；维护＝监控、修复、增强。",
+        "RAD 快速应用开发：通过频繁迭代与持续反馈，快速地开发应用程序。",
+        "原型法 Prototyping：迭代式开发，把需求转化为可工作的模型，通过与用户密切互动不断修订。"
+      ],
+      focus:[
+        "SDLC 五步顺序是高频考点：Planning → Analysis → Design → Implementation → Maintenance，不能颠倒。",
+        "RAD 强调“快速＋频繁迭代＋持续反馈”；原型法强调“先有可工作模型＋与用户密切互动不断修订”。"
+      ],
+      hard:[
+        "RAD 与原型法都属迭代思路：RAD 侧重开发节奏（快、不断反馈）；Prototyping 侧重用工作模型把需求讨论清楚并逐步完善。"
+      ],
+      pit:[
+        "SDLC 的第一步是 Planning（规划），不是 Analysis；Analysis 的结果是功能需求。",
+        "原型法是“模型不断修订、逐步逼近需求”，不是一次性成型。"
+      ],
+      questions:[
+        {
+          type:"single", q:"SDLC 系统开发生命周期五个步骤的正确顺序是（　）。",
+          opts:["分析→规划→设计→实现→维护","规划→分析→设计→实现→维护","规划→设计→分析→实现→维护","分析→设计→实现→维护→规划"], a:1,
+          exp:"顺序为 Planning → Analysis → Design → Implementation → Maintenance；Analysis 在前一步骤的理解基础上得出功能需求。"
+        },
+        {
+          type:"single", q:"“先把需求转换为可工作的模型，并在设计者与用户密切互动中不断修订”的开发方法称为（　）。",
+          opts:["快速应用开发 RAD","系统开发生命周期 SDLC","原型法 Prototyping","数据建模 Data Modeling"], a:2,
+          exp:"Prototyping 原型法：将需求转换为可运行的 working model，通过设计者与用户的紧密交互持续修订；RAD 则强调快速迭代与持续反馈。"
+        }
+      ]
+    },
+    {
+      id:"sec-8", no:"08", zh:"数据库项目团队", en:"Major Database Project Team Members",
+      summary:[
+        "业务/系统分析师 Business/Systems Analysts：分析业务情况与环境，为整个信息系统确定需求。",
+        "数据库分析师与数据建模者 Database Analysts & Data Modelers：专注于数据库的分析师。",
+        "用户 Users：作为“顾客”，把自己的需求沟通给分析师。",
+        "程序员 Programmers：编写与数据库交互的程序。",
+        "数据管理员 Data Administrators：负责现有数据库，确保数据完整性与一致性。"
+      ],
+      focus:[
+        "角色职责一句话记忆：分析师定系统需求、建模者管数据模型、用户提需求、程序员写代码、数据管理员保现有库完整一致。"
+      ],
+      hard:[
+        "系统分析师（面向整个信息系统需求）与数据库分析师（专注数据库）的范围不同，注意题干主语。"
+      ],
+      pit:[
+        "负责“现有数据库并确保数据完整性与一致性”的是数据管理员 Data Administrator。",
+        "用户也属于项目团队成员（作为客户方代表），不是“团队之外的人”。"
+      ],
+      questions:[
+        {
+          type:"single", q:"负责分析业务情况与环境、并为整个信息系统确定需求的是（　）。",
+          opts:["程序员","业务/系统分析师","数据管理员","数据库分析师与数据建模者"], a:1,
+          exp:"Business/Systems Analysts 分析业务环境并为整个信息系统建立需求（requirements）。"
+        },
+        {
+          type:"single", q:"负责现有数据库的维护，并确保数据完整性与一致性的是（　）。",
+          opts:["数据库分析师与数据建模者","系统分析师","数据管理员 Data Administrators","用户"], a:2,
+          exp:"Data Administrators 负责现有数据库（existing databases），确保数据完整性（integrity）与一致性（consistency）。"
+        }
+      ]
+    }
+  ];
+
+  function qTypeText(t){ return t === "judge" ? "判断题" : "单选题"; }
+
+  function renderOptions(q){
+    var opts = q.opts.map(function(o,i){
+      return '<button type="button" class="opt" data-i="'+i+'"><span class="ol">'+LETTERS[i]+'</span><span class="ot">'+o+'</span></button>';
+    }).join("");
+    return '<div class="opts">'+opts+'</div>';
+  }
+
+  function renderQuestion(sec, qi){
+    var q = sec.questions[qi];
+    var key = sec.id + "-q" + (qi+1);
+    return '<div class="q" data-key="'+key+'" data-answer="'+q.a+'">'+
+      '<div class="q-meta"><span class="tagq">'+qTypeText(q.type)+'</span><span style="font-size:12px;color:#8a90a3">第 '+sec.no+' 组 · 题 '+(qi+1)+'</span></div>'+
+      '<div class="q-text">'+q.q+'</div>'+
+      renderOptions(q)+
+      '<div class="fb" data-fb="'+key+'"></div>'+
+    '</div>';
+  }
+
+  function chips(sec){
+    var out = [];
+    if (sec.focus && sec.focus.length) out.push('<span class="chip chip-focus">重点</span>');
+    if (sec.hard && sec.hard.length) out.push('<span class="chip chip-hard">难点</span>');
+    if (sec.pit && sec.pit.length) out.push('<span class="chip chip-pit">易错点</span>');
+    return '<div class="chips">'+out.join("")+'</div>';
+  }
+
+  function ulOf(arr){
+    if (!arr) return "";
+    return '<ul>'+arr.map(function(x){ return "<li>"+x+"</li>"; }).join("")+'</ul>';
+  }
+
+  function renderSection(sec){
+    var qs = sec.questions.map(function(_, i){ return renderQuestion(sec, i); }).join("");
+    return '<section class="card" id="'+sec.id+'">'+
+      '<div class="card-head"><div class="no">'+sec.no+'</div>'+
+      '<div class="titles"><h2>'+sec.zh+'</h2><div class="en">'+sec.en+'</div></div>'+
+      chips(sec)+'</div>'+
+      '<div class="body">'+
+        '<div class="blk blk-sum"><h3>📚 知识点</h3>'+ulOf(sec.summary)+'</div>'+
+        '<div class="igrid">'+
+          '<div class="blk ig ig-focus"><h3>🎯 重点</h3>'+ulOf(sec.focus)+'</div>'+
+          '<div class="blk ig ig-hard"><h3>🧠 难点</h3>'+ulOf(sec.hard)+'</div>'+
+          '<div class="blk ig ig-pit"><h3>⚠️ 易错点</h3>'+ulOf(sec.pit)+'</div>'+
+        '</div>'+
+        '<div class="quiz"><h3>✏️ 练习自测</h3><p class="qhint">每个知识点 2 题，共 '+sec.questions.length+' 题。点击选项作答，系统会给出正误判断与解析。</p>'+qs+'</div>'+
+      '</div>'+
+    '</section>';
+  }
+
+  function renderAll(){
+    var map = document.getElementById("map");
+    var side = document.getElementById("side");
+    map.innerHTML = SECTIONS.map(function(s){
+      return '<a href="#'+s.id+'">'+s.no+' '+s.zh+'</a>';
+    }).join("");
+    side.innerHTML = SECTIONS.map(function(s){
+      return '<a class="nav-i" href="#'+s.id+'"><span class="num">'+s.no+'</span><span>'+s.zh+'</span><span class="cnt" id="cnt-'+s.id+'">0/2</span></a>';
+    }).join("");
+    document.getElementById("content").innerHTML = SECTIONS.map(renderSection).join("");
+    updateProgress();
+  }
+
+  function updateProgress(){
+    var answered = 0, right = 0, per = {};
+    Object.keys(state).forEach(function(k){
+      var part = k.split("-q")[0];
+      per[part] = per[part] || {a:0,r:0};
+      per[part].a++;
+      if (state[k].correct) per[part].r++;
+    });
+    Object.keys(per).forEach(function(id){
+      var st = per[id];
+      answered += st.a; right += st.r;
+      var cnt = document.getElementById("cnt-"+id);
+      if (cnt){
+        cnt.textContent = st.a + "/2";
+        cnt.className = "cnt" + (st.a === 2 ? (st.r === 2 ? " good" : " mix") : "");
+      }
+    });
+    document.getElementById("stAns").textContent = answered;
+    document.getElementById("stRight").textContent = right;
+    document.getElementById("pbar").style.width = (answered / 16 * 100) + "%";
+    var st = document.getElementById("stState");
+    if (answered === 0) st.textContent = "开始答题吧～";
+    else if (answered === 16 && right === 16) st.textContent = "🎉 全部答对，太棒了！";
+    else if (answered === 16) st.textContent = "已完成全部 16 题，建议复习红色（易错）标注后再来一次。";
+    else st.textContent = "继续加油！完成全部题目即可看到总评。";
+  }
+
+  function showFeedback(key){
+    var fb = document.querySelector('[data-fb="'+key+'"]');
+    if (!fb) return;
+    var s = state[key];
+    var ok = s.correct;
+    var card = fb.closest(".q");
+    var ansIdx = parseInt(card.dataset.answer, 10);
+    var q = null;
+    SECTIONS.some(function(sec){
+      for (var i=0;i<sec.questions.length;i++){
+        if (sec.id + "-q" + (i+1) === key){ q = sec.questions[i]; return true; }
+      }
+      return false;
+    });
+    if (!q) return;
+    fb.className = "fb show " + (ok ? "fb-ok" : "fb-bad");
+    fb.innerHTML = '<b>'+(ok ? "✅ 回答正确" : "❌ 回答错误")+'</b>　正确答案：'+LETTERS[ansIdx]+'. '+q.opts[ansIdx]+'<div class="exp">💡 解析：'+q.exp+'</div>';
+  }
+
+  function applyMark(key){
+    var s = state[key];
+    var card = document.querySelector('.q[data-key="'+key+'"]');
+    if (!card) return;
+    var opts = card.querySelectorAll(".opt");
+    var ansIdx = parseInt(card.dataset.answer,10);
+    Array.prototype.forEach.call(opts, function(btn){
+      btn.disabled = true;
+      var i = parseInt(btn.dataset.i,10);
+      if (i === ansIdx) btn.classList.add("right");
+      else if (i === s.sel) btn.classList.add("wrong");
+    });
+  }
+
+  function choose(btn){
+    var card = btn.closest(".q");
+    var key = card.dataset.key;
+    if (state[key]) return;
+    var sel = parseInt(btn.dataset.i,10);
+    var ans = parseInt(card.dataset.answer,10);
+    state[key] = {sel: sel, correct: sel === ans};
+    applyMark(key);
+    showFeedback(key);
+    updateProgress();
+  }
+
+  function bindEvents(){
+    document.addEventListener("click", function(e){
+      var btn = e.target.closest(".opt");
+      if (btn) choose(btn);
+    });
+    document.getElementById("btnReset").addEventListener("click", function(){ state = {}; renderAll(); });
+    document.getElementById("btnPrint").addEventListener("click", function(){ window.print(); });
+  }
+
+  function scrollSpy(){
+    var links = Array.prototype.slice.call(document.querySelectorAll("#side .nav-i"));
+    var secs = SECTIONS.map(function(s){ return document.getElementById(s.id); });
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){
+          links.forEach(function(a){
+            a.classList.toggle("active", a.getAttribute("href") === "#" + en.target.id);
+          });
+        }
+      });
+    }, {rootMargin:"-15% 0px -70% 0px"});
+    secs.forEach(function(s){ if (s) obs.observe(s); });
+  }
+
+  renderAll();
+  bindEvents();
+  scrollSpy();
+})();
+</script>
+</body>
+</html>

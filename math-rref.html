@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>线性代数 Chapter 2 复习 | 矩阵向量乘法 · 消元法 · RREF</title>
+<style>
+  :root{
+    --bg:#eef2f8; --card:#ffffff; --ink:#15202b; --ink-soft:#3c4c5e; --muted:#65788c;
+    --line:#dbe3ee; --brand:#2749c8; --brand-soft:#e7ecfb;
+    --key:#1f5fd0; --key-soft:#e6efff; --hard:#7a3fd0; --hard-soft:#f0e8ff;
+    --trap:#d1502c; --trap-soft:#ffeee7; --ok:#128a5e; --ok-soft:#e2f7ee;
+    --pivot:#fff2b8; --pivot-strong:#ffd84d;
+    --shadow:0 1px 2px rgba(21,32,43,.06),0 6px 22px rgba(21,32,43,.07);
+    --math:"Cambria Math","Latin Modern Math","Times New Roman",Georgia,serif;
+    --sans:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --radius:14px;
+  }
+  html[data-theme="dark"]{
+    --bg:#0e131a; --card:#161e29; --ink:#e8eef7; --ink-soft:#c3cfdd; --muted:#93a5b9;
+    --line:#26313f; --brand:#7f9bff; --brand-soft:#1b2540;
+    --key:#79a4ff; --key-soft:#182642; --hard:#b28bff; --hard-soft:#241c3c;
+    --trap:#ff9066; --trap-soft:#3a211a; --ok:#4fd6a2; --ok-soft:#122b23;
+    --pivot:#4a3d10; --pivot-strong:#c9a227;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 26px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.75;-webkit-font-smoothing:antialiased}
+  i,.mi{font-family:var(--math);font-style:italic;font-size:1.06em}
+  b,strong{font-weight:650}
+  sub,sup{font-size:.68em;line-height:0}
+  code{font-family:ui-monospace,Consolas,monospace;background:var(--brand-soft);padding:.08em .38em;border-radius:5px;font-size:.9em}
+  header.top{position:sticky;top:0;z-index:40;background:linear-gradient(100deg,var(--brand),#4a2ecb 92%);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 4px 22px rgba(24,40,110,.28)}
+  header.top h1{margin:0;font-size:18.5px;font-weight:650;line-height:1.35}
+  header.top .sub{font-size:12.5px;opacity:.85;margin-top:2px}
+  header.top .spacer{flex:1 1 auto}
+  .top-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .tbtn{border:1px solid rgba(255,255,255,.42);background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:6px 13px;font-family:inherit;font-size:13px;cursor:pointer;transition:.16s}
+  .tbtn:hover{background:rgba(255,255,255,.26)}
+  .tbtn.on{background:#fff;color:var(--brand);border-color:#fff;font-weight:600}
+  .layout{display:flex;gap:22px;max-width:1400px;margin:0 auto;padding:22px 22px 90px;align-items:flex-start}
+  aside.side{position:sticky;top:78px;flex:0 0 262px;max-height:calc(100vh - 100px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 14px;box-shadow:var(--shadow)}
+  aside.side h2{font-size:12.5px;letter-spacing:.14em;color:var(--muted);margin:0 0 10px 6px;font-weight:650}
+  nav.toc{display:flex;flex-direction:column;gap:3px;margin-bottom:16px}
+  nav.toc a{display:flex;gap:9px;align-items:baseline;color:var(--ink-soft);text-decoration:none;font-size:14px;padding:7px 10px;border-radius:9px;transition:.14s;border-left:3px solid transparent}
+  nav.toc a .n{font-family:var(--math);font-style:italic;color:var(--muted);font-size:13px;min-width:16px}
+  nav.toc a:hover{background:var(--brand-soft);color:var(--brand)}
+  nav.toc a.active{background:var(--brand-soft);color:var(--brand);font-weight:600;border-left-color:var(--brand)}
+  .progress-box{border-top:1px dashed var(--line);padding-top:14px}
+  .pbar{height:9px;border-radius:999px;background:var(--brand-soft);overflow:hidden;margin:8px 0 6px}
+  .pbar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),#4a2ecb);transition:width .35s ease}
+  .pnum{font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between}
+  .side small{color:var(--muted);font-size:11.5px;display:block;line-height:1.6;margin-top:10px}
+  main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:22px}
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:80px}
+  .mod-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:15px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--brand-soft),transparent)}
+  .mod-num{font-family:var(--math);font-style:italic;font-size:15px;font-weight:700;color:#fff;background:var(--brand);border-radius:9px;padding:2px 11px;box-shadow:0 3px 10px rgba(39,73,200,.3)}
+  .mod-head h2{margin:0;font-size:18px;font-weight:650}
+  .mod-head .from{margin-left:auto;font-size:12px;color:var(--muted);font-family:var(--math);font-style:italic}
+  .mod-body{padding:6px 20px 20px}
+  h3.sec{font-size:14px;margin:20px 0 9px;font-weight:650;display:flex;align-items:center;gap:8px}
+  h3.sec::before{content:"";width:4px;height:15px;border-radius:2px;background:var(--brand)}
+  p{margin:.5em 0}
+  ul,ol{margin:.45em 0 .6em;padding-left:1.35em}
+  li{margin:.3em 0}
+  li::marker{color:var(--muted)}
+  .tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+  .tag{font-size:11.5px;padding:2.5px 10px;border-radius:999px;font-weight:650;border:1px solid transparent;white-space:nowrap}
+  .tag.key{background:var(--key-soft);color:var(--key);border-color:var(--key)}
+  .tag.hard{background:var(--hard-soft);color:var(--hard);border-color:var(--hard)}
+  .tag.trap{background:var(--trap-soft);color:var(--trap);border-color:var(--trap)}
+  .box{border-radius:11px;padding:12px 15px 13px;margin:12px 0;border:1px solid}
+  .box > .bt{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:7px;margin-bottom:4px}
+  .box.key{background:var(--key-soft);border-color:#a9c6f5}
+  .box.key > .bt{color:var(--key)}
+  .box.hard{background:var(--hard-soft);border-color:#c9aef0}
+  .box.hard > .bt{color:var(--hard)}
+  .box.trap{background:var(--trap-soft);border-color:#f2b9a4}
+  .box.trap > .bt{color:var(--trap)}
+  .box ul{margin:.25em 0 .1em}
+  .box li{margin:.26em 0}
+  .mtx{display:inline-flex;align-items:stretch;vertical-align:middle;margin:.15em .3em;line-height:1.35}
+  .mtx .grid{display:grid;gap:.18em .7em;padding:.3em .34em;align-items:center}
+  .mtx .cell{text-align:center;font-family:var(--math);font-style:normal;font-size:1.02em;padding:0 .12em;border-radius:4px;min-width:1.1em}
+  .mtx .cell.pivotcol{background:var(--pivot)}
+  .mtx .cell.pivotentry{background:var(--pivot-strong);font-weight:700;color:#3a2c00}
+  .mtx .cell.aug{border-right:2px solid var(--brand);margin-right:.34em}
+  .mtx .brk{width:.44em;border:2px solid var(--ink);flex:0 0 auto}
+  .mtx .brk.l{border-right:none;border-radius:4px 0 0 4px}
+  .mtx .brk.r{border-left:none;border-radius:0 4px 4px 0}
+  .mrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0}
+  .mnote{color:var(--muted);font-size:13px}
+  table.tb{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  table.tb th,table.tb td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+  table.tb thead th{background:var(--brand-soft);color:var(--brand);font-weight:650}
+  .quiz{margin-top:18px;border-top:1px dashed var(--line);padding-top:6px}
+  .quiz > .qhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 4px}
+  .quiz > .qhead h3{margin:0;font-size:15px;font-weight:650}
+  .q{border:1px solid var(--line);border-radius:11px;padding:13px 15px 14px;margin:11px 0;background:#f6f8fc}
+  html[data-theme="dark"] .q{background:#131a24}
+  .q .qh{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
+  .q .qno{font-size:12px;font-weight:700;color:var(--brand);background:var(--brand-soft);border-radius:6px;padding:1px 8px;font-family:var(--math);font-style:italic}
+  .q .qtxt{font-weight:600;flex:1 1 260px}
+  .q .qbody{margin:8px 0 0}
+  .q .acts{display:flex;gap:9px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .btn{border:1px solid var(--brand);background:transparent;color:var(--brand);border-radius:8px;padding:5px 13px;font-family:inherit;font-size:13px;cursor:pointer;transition:.15s;font-weight:600}
+  .btn:hover{background:var(--brand-soft)}
+  label.done{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none}
+  label.done input{width:15px;height:15px;accent-color:var(--ok);cursor:pointer}
+  label.done.checked{color:var(--ok);font-weight:650}
+  .answer{display:none;margin-top:11px;border-left:3px solid var(--ok);background:var(--ok-soft);border-radius:0 9px 9px 0;padding:10px 14px}
+  .answer.open{display:block;animation:fade .22s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+  .answer .alabel{font-weight:700;color:var(--ok);font-size:13px;margin-bottom:3px}
+  .answer ol,.answer ul{margin:.3em 0 .2em}
+  .note-inline{font-size:13px;color:var(--muted)}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 2px}
+  .chip{border:1px solid var(--line);border-radius:10px;padding:8px 13px;font-size:13.5px;background:#f6f8fc}
+  html[data-theme="dark"] .chip{background:#131a24}
+  .chip b{color:var(--brand)}
+  .callout{border-radius:11px;padding:13px 16px;margin:12px 0;background:var(--brand-soft);border:1px solid #b9c9f2}
+  .callout .ct{font-weight:700;color:var(--brand);font-size:13.5px;margin-bottom:3px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:6px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .dot.k{background:var(--key)}.dot.h{background:var(--hard)}.dot.t{background:var(--trap)}
+  .flow{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+  .flow .step{border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:9px;padding:8px 13px;background:#f6f8fc;font-size:14px}
+  html[data-theme="dark"] .flow .step{background:#131a24}
+  .flow .arrow{color:var(--muted);text-align:center;font-size:13px;line-height:1}
+  #toTop{position:fixed;right:22px;bottom:22px;z-index:50;display:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--brand);font-size:19px;cursor:pointer;box-shadow:var(--shadow)}
+  #toTop.show{display:block}
+  footer.foot{max-width:1400px;margin:0 auto;padding:0 22px 34px;color:var(--muted);font-size:12.5px;text-align:center}
+  @media (max-width:960px){
+    .layout{flex-direction:column;padding:16px 13px 80px}
+    aside.side{position:static;flex:1 1 auto;width:100%;max-height:none}
+    nav.toc{flex-direction:row;flex-wrap:wrap}
+    nav.toc a{border-left:none;border-bottom:3px solid transparent}
+    nav.toc a.active{border-left:none;border-bottom-color:var(--brand)}
+    .mtx .grid{gap:.15em .5em}
+  }
+  @media print{
+    header.top,aside.side,#toTop,.acts{display:none!important}
+    body{background:#fff}
+    .layout{display:block;padding:0}
+    section.card{box-shadow:none;border-color:#bbb;break-inside:avoid}
+    .answer{display:block!important}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>线性代数 Chapter 2 复习：矩阵向量乘法 · 消元法 · RREF</h1>
+    <div class="sub">来源讲义：ISOM2005 Linear Algebra, Chapter 2 Solving Linear Equations — Florence Ho, University of Macau（1st Sem, 2026/2027）</div>
+  </div>
+  <div class="spacer"></div>
+  <div class="top-actions">
+    <button class="tbtn" id="btnExpandAll">展开全部答案</button>
+    <button class="tbtn" id="btnCollapseAll">收起全部答案</button>
+    <button class="tbtn" id="btnReset">重置进度</button>
+    <button class="tbtn" id="btnTheme">深色模式</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="side">
+    <h2>知识地图</h2>
+    <nav class="toc">
+      <a href="#overview"><span class="n">0</span><span>复习导航与使用方法</span></a>
+      <a href="#m1"><span class="n">1</span><span>矩阵与向量的乘法</span></a>
+      <a href="#m2"><span class="n">2</span><span>消元法与回代</span></a>
+      <a href="#m3"><span class="n">3</span><span>增广矩阵与高斯消元（REF / RREF）</span></a>
+      <a href="#m4"><span class="n">4</span><span>RREF 与线性组合（列对应原理）</span></a>
+      <a href="#m5"><span class="n">5</span><span>RREF 与线性无关</span></a>
+      <a href="#m6"><span class="n">6</span><span>RREF 与秩（解的结构）</span></a>
+      <a href="#exam"><span class="n">7</span><span>综合自测（5 题）</span></a>
+      <a href="#cheat"><span class="n">8</span><span>一页速查表</span></a>
+    </nav>
+    <div class="progress-box">
+      <h2 style="margin:0 0 2px 0">掌握进度</h2>
+      <div class="pbar"><i id="pfill"></i></div>
+      <div class="pnum"><span id="ptext">0 / 17 题已掌握</span><span id="ppct">0%</span></div>
+      <small>每题解析下方勾选「已掌握」即可自动记录；进度保存在本机浏览器（localStorage），刷新不会丢失。</small>
+    </div>
+  </aside>
+
+  <main>
+
+  <section class="card" id="overview">
+    <div class="mod-head">
+      <span class="mod-num">0</span>
+      <h2>复习导航与使用方法</h2>
+      <span class="from">6 个知识模块 · 17 道练习</span>
+    </div>
+    <div class="mod-body">
+      <p>本网页把讲义 <i>Chapter 2: Solving Linear Equations</i> 的全部内容整理成 <b>6 个知识模块</b>。每个模块都包含：知识点梳理 → <span class="tag key">重点</span> <span class="tag hard">难点</span> <span class="tag trap">易错点</span> → <b>2 道配套练习（附完整解析）</b>。最后附 <b>综合自测</b> 与 <b>一页速查表</b>。</p>
+      <div class="chips">
+        <div class="chip"><b>模块 1</b> · <i>Ax</i> = <i>b</i> 的两种算法与运算性质</div>
+        <div class="chip"><b>模块 2</b> · 等价方程组与三种初等行变换</div>
+        <div class="chip"><b>模块 3</b> · 增广矩阵、REF / RREF、高斯消元</div>
+        <div class="chip"><b>模块 4</b> · 列对应原理与行 / 列对比</div>
+        <div class="chip"><b>模块 5</b> · 主元列与线性无关</div>
+        <div class="chip"><b>模块 6</b> · 秩、零化度与解的结构</div>
+      </div>
+
+      <h3 class="sec">标记说明</h3>
+      <div class="legend">
+        <span><i class="dot k"></i><span class="tag key">重点</span> 必考、必须熟练</span>
+        <span><i class="dot h"></i><span class="tag hard">难点</span> 容易卡住、需要理解</span>
+        <span><i class="dot t"></i><span class="tag trap">易错点</span> 阅卷高频扣分处</span>
+      </div>
+
+      <h3 class="sec">怎么用这个网页复习</h3>
+      <ol>
+        <li>先看每个模块的「知识点」与重点 / 难点 / 易错点，把讲义原文的 <i>E.g.1 / E.g.2 / E.g.3</i> 跟着算一遍。</li>
+        <li>再做 2 道配套练习：<b>先自己写在纸上，再点「显示答案与解析」</b>对照。</li>
+        <li>做对后勾选「已掌握」，左侧进度条会自动记录（保存在本机浏览器，刷新不丢）。</li>
+        <li>全部模块过完，做「综合自测」，最后用「一页速查表」做考前 5 分钟回顾。</li>
+      </ol>
+
+      <div class="callout">
+        <div class="ct">📌 讲义三条主线（Outlines）</div>
+        <ol style="margin:.2em 0 0">
+          <li>Matrix-vector Multiplication（矩阵与向量的乘法）</li>
+          <li>How to Solve a System of Linear Equations（方程组的解法）</li>
+          <li>What can RREF do?（RREF 能做什么：线性组合、线性无关、秩与解的结构）</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="m1">
+    <div class="mod-head">
+      <span class="mod-num">01</span>
+      <h2>矩阵与向量的乘法</h2>
+      <span class="from">Matrix-vector Multiplication</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 核心恒等式：矩阵乘向量 = 矩阵各列的线性组合</b></p>
+      <div class="mrow">
+        <i>Ax</i> = <i>b</i> <span class="mi">&#8660;</span>
+        <i>x</i><sub>1</sub><matrix data="a11; a21; ...; am1"></matrix>
+        + <i>x</i><sub>2</sub><matrix data="a12; a22; ...; am2"></matrix>
+        + ⋯ + <i>x<sub>n</sub></i><matrix data="a1n; a2n; ...; amn"></matrix>
+        = <matrix data="b1; b2; ...; bm"></matrix>
+      </div>
+      <p class="mnote">即 <i>Ax</i> = <i>x</i><sub>1</sub><i>a</i><sub>1</sub> + <i>x</i><sub>2</sub><i>a</i><sub>2</sub> + ⋯ + <i>x<sub>n</sub></i><i>a<sub>n</sub></i>，其中 <i>a<sub>i</sub></i> 是 <i>A</i> 的第 <i>i</i> 列。「方程组有解」与「<i>b</i> 能写成 <i>A</i> 的列的组合」是同一件事。</p>
+
+      <p><b>2) 定义条件（维度规则）</b></p>
+      <ul>
+        <li>只有当 <b>向量的长度 = 矩阵的列数</b> 时，<i>Ax</i> 才有定义。</li>
+        <li><i>A</i><sub><i>m</i>×<i>n</i></sub> · <i>x</i><sub><i>n</i>×1</sub> = <i>b</i><sub><i>m</i>×1</sub>：结果向量的长度 = 矩阵的 <b>行数</b>。</li>
+      </ul>
+
+      <p><b>3) 运算性质</b>（设 <i>A</i>, <i>B</i> 均为 <i>m</i>×<i>n</i>，<i>w</i>, <i>v</i> ∈ ℝ<sup><i>n</i></sup>，<i>c</i> 为标量）</p>
+      <ul>
+        <li><i>A</i>(<i>w</i> + <i>v</i>) = <i>Aw</i> + <i>Av</i></li>
+        <li><i>A</i>(<i>cw</i>) = <i>c</i>(<i>Aw</i>) = (<i>cA</i>)<i>w</i></li>
+        <li>(<i>A</i> + <i>B</i>)<i>w</i> = <i>Aw</i> + <i>Bw</i></li>
+        <li><i>Iw</i> = <i>w</i>（<i>I</i> 为 <i>n</i>×<i>n</i> 单位阵）</li>
+      </ul>
+      <p>以及最关键的一条：<b>若 <i>Aw</i> = <i>Bw</i> 对所有 <i>w</i> ∈ ℝ<sup><i>n</i></sup> 都成立，则 <i>A</i> = <i>B</i>。</b></p>
+
+      <p><b>4) 证明工具：标准向量 <i>e<sub>i</sub></i></b>。设 <i>e<sub>i</sub></i> ∈ ℝ<sup><i>n</i></sup> 是第 <i>i</i> 个分量为 1、其余为 0 的向量，则 <i>Ae<sub>i</sub></i> = <i>a<sub>i</sub></i>，即 <i>A</i> 的第 <i>i</i> 列。</p>
+      <div class="flow">
+        <div class="step">取 <i>w</i> = <i>e</i><sub>1</sub>：<i>Ae</i><sub>1</sub> = <i>a</i><sub>1</sub>，<i>Be</i><sub>1</sub> = <i>b</i><sub>1</sub>，由 <i>Ae</i><sub>1</sub> = <i>Be</i><sub>1</sub> ⇒ <i>a</i><sub>1</sub> = <i>b</i><sub>1</sub></div>
+        <div class="arrow">↓</div>
+        <div class="step">依次取 <i>e</i><sub>2</sub>, <i>e</i><sub>3</sub>, …, <i>e<sub>n</sub></i> ⇒ <i>a</i><sub>2</sub> = <i>b</i><sub>2</sub>, …, <i>a<sub>n</sub></i> = <i>b<sub>n</sub></i></div>
+        <div class="arrow">↓</div>
+        <div class="step">每一列都相同 ⇒ <b><i>A</i> = <i>B</i></b></div>
+      </div>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li>会算 <i>Ax</i> 的 <b>两种方法</b>：① 行点积法（<i>b<sub>i</sub></i> = 第 <i>i</i> 行 · <i>x</i>）；② 列组合法（<i>x</i> 的分量作为 <i>A</i> 各列的系数）。</li>
+          <li>维度规则 (<i>m</i>×<i>n</i>)(<i>n</i>×1) = (<i>m</i>×1)，用来判断乘法是否有意义。</li>
+          <li>四条运算性质 +「对所有 <i>w</i> 成立 ⇒ <i>A</i> = <i>B</i>」。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li>「对所有 <i>w</i> ∈ ℝ<sup><i>n</i></sup> 都有 <i>Aw</i> = <i>Bw</i> ⇒ <i>A</i> = <i>B</i>」的证明：要想到用 <b>标准向量</b> <i>e<sub>i</sub></i> 把矩阵“按列拆开”逐列比较。</li>
+          <li>把 <i>Ax</i> 同时看成“行点积”与“列的组合”，并能在两种视角间自由切换（模块 4、6 都要用“列的组合”视角）。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>维度不匹配还硬算：<i>A</i> 的列数必须等于 <i>x</i> 的分量个数，结果长度等于 <i>A</i> 的行数。</li>
+          <li>把矩阵乘向量当成“对应元素相乘”（那不是 <i>Ax</i>）。</li>
+          <li>只验证几个特殊的 <i>w</i> 就断言 <i>A</i> = <i>B</i> —— 必须是 <b>所有</b> <i>w</i> 都成立。</li>
+          <li><i>Iw</i> = <i>w</i> 中的单位阵 <i>I</i> 必须是 <i>n</i>×<i>n</i>（与 <i>w</i> 同阶），写成别的阶数就不成立。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m1q1">
+          <div class="qh"><span class="qno">Q1.1</span><span class="qtxt">计算 <i>Ax</i>，并用“列的组合”验证。</span></div>
+          <div class="qbody">
+            <div class="mrow">
+              <i>A</i> = <matrix data="1 2 3; 0 -1 4"></matrix><span class="mnote">(2×3)</span>
+              &nbsp;<i>x</i> = <matrix data="2; -1; 3"></matrix><span class="mnote">(3×1)</span>
+            </div>
+            <div class="note-inline">要求：(a) 用行点积法求 <i>Ax</i>；(b) 用 <i>x</i><sub>1</sub><i>a</i><sub>1</sub> + <i>x</i><sub>2</sub><i>a</i><sub>2</sub> + <i>x</i><sub>3</sub><i>a</i><sub>3</sub> 验证；(c) 说明结果为什么是 2 维向量。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m1q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：<i>Ax</i> = (9, 13)<sup>T</sup></div>
+            <p><b>(a) 行点积法</b>（每一行与 <i>x</i> 做点积）：</p>
+            <ul>
+              <li>第 1 行：1·2 + 2·(−1) + 3·3 = 2 − 2 + 9 = <b>9</b></li>
+              <li>第 2 行：0·2 + (−1)·(−1) + 4·3 = 0 + 1 + 12 = <b>13</b></li>
+            </ul>
+            <div class="mrow"><i>Ax</i> = <matrix data="9; 13"></matrix></div>
+            <p><b>(b) 列组合法</b>：2<i>a</i><sub>1</sub> + (−1)<i>a</i><sub>2</sub> + 3<i>a</i><sub>3</sub></p>
+            <div class="mrow">
+              2<matrix data="1; 0"></matrix> + (−1)<matrix data="2; -1"></matrix> + 3<matrix data="3; 4"></matrix>
+              = <matrix data="2; 0"></matrix> + <matrix data="-2; 1"></matrix> + <matrix data="9; 12"></matrix>
+              = <matrix data="9; 13"></matrix> ✔
+            </div>
+            <p><b>(c)</b> <i>A</i> 是 2×3（2 行 3 列），<i>x</i> 长度为 3 = <i>A</i> 的列数，故可以相乘；结果的维度等于 <i>A</i> 的 <b>行数</b> 2。</p>
+            <p class="note-inline">💡 列组合法也解释了“为什么 <i>Ax</i> 一定落在 <i>A</i> 的列空间中”。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m1q2">
+          <div class="qh"><span class="qno">Q1.2</span><span class="qtxt">两种算法算同一个 <i>Aw</i>，并检验 <i>A</i>(2<i>w</i>) = 2(<i>Aw</i>)。</span></div>
+          <div class="qbody">
+            <div class="mrow"><i>A</i> = <matrix data="2 1; 0 3"></matrix>&nbsp;<i>w</i> = <matrix data="4; -1"></matrix></div>
+            <div class="note-inline">要求：(a) 行点积法求 <i>Aw</i>；(b) 列组合法求 <i>Aw</i> 并核对；(c) 判断并验证 <i>A</i>(2<i>w</i>) = 2(<i>Aw</i>)。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m1q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：<i>Aw</i> = (7, −3)<sup>T</sup>，且 <i>A</i>(2<i>w</i>) = 2(<i>Aw</i>) 成立</div>
+            <p><b>(a) 行点积</b>：第 1 行 2·4 + 1·(−1) = 7；第 2 行 0·4 + 3·(−1) = −3</p>
+            <div class="mrow"><i>Aw</i> = <matrix data="7; -3"></matrix></div>
+            <p><b>(b) 列组合</b>：4<matrix data="2; 0"></matrix> + (−1)<matrix data="1; 3"></matrix> = <matrix data="8; 0"></matrix> + <matrix data="-1; -3"></matrix> = <matrix data="7; -3"></matrix> ✔ 两种方法结果一致</p>
+            <p><b>(c)</b> 2<i>w</i> = (8, −2)<sup>T</sup>。用列组合：8(2, 0)<sup>T</sup> + (−2)(1, 3)<sup>T</sup> = (16, 0)<sup>T</sup> + (−2, −6)<sup>T</sup> = (14, −6)<sup>T</sup> = 2·(7, −3)<sup>T</sup> ✔</p>
+            <p>成立，这正是性质 <i>A</i>(<i>cw</i>) = <i>c</i>(<i>Aw</i>)：标量可以自由提进提出。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="m2">
+    <div class="mod-head">
+      <span class="mod-num">02</span>
+      <h2>消元法与回代</h2>
+      <span class="from">Elimination &amp; Back Substitution</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 等价方程组</b>：两个线性方程组 <b>等价</b> ⇔ 它们的 <b>解集完全相同</b>。消元的本质就是用等价变形把方程组化得越来越“简单”，但解集始终不变。</p>
+
+      <p><b>2) 三种初等行变换</b>（Elementary Row Operations）</p>
+      <table class="tb">
+        <thead><tr><th style="width:30%">类型</th><th style="width:26%">记法</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>① 互换（Interchange）</td><td><i>R<sub>i</sub></i> ↔ <i>R<sub>j</sub></i></td><td>交换两行的位置</td></tr>
+          <tr><td>② 缩放（Scaling）</td><td><i>kR<sub>i</sub></i> → <i>R<sub>i</sub></i>，<i>k</i> ≠ 0</td><td>某一行乘以 <b>非零</b> 常数</td></tr>
+          <tr><td>③ 行加（Row Addition）</td><td><i>R<sub>i</sub></i> + <i>kR<sub>j</sub></i> → <i>R<sub>i</sub></i>，<i>i</i> ≠ <i>j</i></td><td>把另一行的倍数加到某一行</td></tr>
+        </tbody>
+      </table>
+      <p>这三类操作都是 <b>可逆</b> 的，且逆操作仍是同一类型的行操作 —— 这正是“解集不变”的根本原因。</p>
+
+      <p><b>3) 讲义原例（Elimination and Back Substitution）</b></p>
+      <div class="mrow">
+        <matrix data="1 3 | 2; 3 1 | 8"></matrix>
+        <span class="mnote">eq.(2)×3</span> ⟶
+        <matrix data="1 3 | 2; 9 3 | 24"></matrix>
+        <span class="mnote">eq.(2)+eq.(1)×(−1)</span> ⟶
+        <matrix data="1 3 | 2; 8 0 | 22"></matrix>
+      </div>
+      <div class="mrow">
+        <matrix data="1 3 | 2; 1 0 | 11/4"></matrix>
+        <span class="mnote">eq.(1)−eq.(2) 后 ×1/3</span> ⟶
+        <matrix data="0 1 | -1/4; 1 0 | 11/4"></matrix>
+        <span class="mnote">互换两行</span> ⟶
+        <matrix data="1 0 | 11/4; 0 1 | -1/4"></matrix>
+      </div>
+      <p class="mnote">回代（Back Substitution）：由 <i>x</i><sub>1</sub> = 11/4 代回第一式 <i>x</i><sub>1</sub> + 3<i>x</i><sub>2</sub> = 2，得 <i>x</i><sub>2</sub> = −1/4。</p>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li>「等价 = 解集相同」，三种初等行变换都能产生等价方程组。</li>
+          <li>三种行变换的 <b>记法与写法</b>：<i>R<sub>i</sub></i> ↔ <i>R<sub>j</sub></i>、<i>kR<sub>i</sub></i> → <i>R<sub>i</sub></i>、<i>R<sub>i</sub></i> + <i>kR<sub>j</sub></i> → <i>R<sub>i</sub></i>。</li>
+          <li>解题两步走：<b>消元</b>（化成阶梯形 / 化简阶梯形）→ <b>回代</b>（从最后一行往上解）。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li>为什么缩放倍数 <i>k</i> 必须 <b>非零</b>：<i>k</i> = 0 会把整行抹成 0，等于丢掉一条方程，解集被放大（不再等价）。</li>
+          <li>为什么只能做 <b>行</b> 变换：对方程组来说，交换 / 缩放列相当于改变未知数的含义，一般会改变解集。</li>
+          <li>把「用行变换解方程」与「用矩阵语言解方程」对应起来（见模块 3）。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>用 <i>R<sub>i</sub></i> → 0·<i>R<sub>i</sub></i> “消掉”某行 → 解集变大，属于非法操作。</li>
+          <li>只对系数做变换而忘记 <b>常数项（增广列）</b>：整行要一起变，不能漏最后一列。</li>
+          <li>做列变换（如 <i>C</i><sub>2</sub> → 2<i>C</i><sub>2</sub>、交换两列）—— 那不等价于原方程组。</li>
+          <li>回代时符号写错，或把 <i>x</i><sub>1</sub>、<i>x</i><sub>2</sub> 的位置对应错。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m2q1">
+          <div class="qh"><span class="qno">Q2.1</span><span class="qtxt">用消元 + 回代解方程组，并写出增广矩阵的化简过程。</span></div>
+          <div class="qbody">
+            <p><i>x</i><sub>1</sub> + 2<i>x</i><sub>2</sub> = 3 &nbsp;&nbsp;&nbsp; (1)<br>
+               2<i>x</i><sub>1</sub> + 5<i>x</i><sub>2</sub> = 8 &nbsp;&nbsp;&nbsp; (2)</p>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m2q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：<i>x</i><sub>1</sub> = −1，<i>x</i><sub>2</sub> = 2</div>
+            <p><b>消元</b>：<i>R</i><sub>2</sub> ← <i>R</i><sub>2</sub> − 2<i>R</i><sub>1</sub>（第二行减去第一行的 2 倍）</p>
+            <div class="mrow">
+              <matrix data="1 2 | 3; 2 5 | 8"></matrix> ⟶
+              <matrix data="1 2 | 3; 0 1 | 2"></matrix>
+            </div>
+            <p>第二行给出 <i>x</i><sub>2</sub> = 2。<b>回代</b>：<i>x</i><sub>1</sub> = 3 − 2<i>x</i><sub>2</sub> = 3 − 4 = −1。</p>
+            <p>继续消元（<i>R</i><sub>1</sub> ← <i>R</i><sub>1</sub> − 2<i>R</i><sub>2</sub>）可得 RREF：</p>
+            <div class="mrow">
+              <matrix data="1 2 | 3; 0 1 | 2"></matrix> ⟶
+              <matrix data="1 0 | -1; 0 1 | 2"></matrix>
+              <span class="mnote">已经是 RREF，可直接读出解</span>
+            </div>
+            <p>检验：2·(−1) + 5·2 = −2 + 10 = 8 ✔；(−1) + 4 = 3 ✔</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m2q2">
+          <div class="qh"><span class="qno">Q2.2</span><span class="qtxt">判断下列操作是否为合法的初等行变换，并说明理由。</span></div>
+          <div class="qbody">
+            <ol type="a" style="margin:.2em 0">
+              <li><i>R</i><sub>2</sub> → 0·<i>R</i><sub>2</sub></li>
+              <li><i>R</i><sub>1</sub> → <i>R</i><sub>1</sub> − 3<i>R</i><sub>2</sub></li>
+              <li><i>C</i><sub>2</sub> → 2<i>C</i><sub>2</sub>（把第 2 <b>列</b> 乘 2）</li>
+              <li><i>R</i><sub>1</sub> ↔ <i>R</i><sub>3</sub></li>
+              <li><i>R</i><sub>3</sub> → <i>R</i><sub>3</sub> + 2<i>R</i><sub>1</sub></li>
+              <li><i>R</i><sub>2</sub> → 5<i>R</i><sub>2</sub></li>
+            </ol>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m2q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：合法的是 (b) (d) (e) (f)；不合法的是 (a) (c)</div>
+            <table class="tb">
+              <thead><tr><th style="width:14%">小题</th><th style="width:16%">判断</th><th>理由</th></tr></thead>
+              <tbody>
+                <tr><td>(a)</td><td>✗ 不合法</td><td>缩放要求 <i>k</i> ≠ 0。乘 0 会把整行变成 0，丢掉一条方程，解集被放大。</td></tr>
+                <tr><td>(b)</td><td>✔ 合法</td><td>第三类行加：<i>R</i><sub>1</sub> + (−3)<i>R</i><sub>2</sub> → <i>R</i><sub>1</sub>，且 <i>i</i> ≠ <i>j</i>。</td></tr>
+                <tr><td>(c)</td><td>✗ 不合法</td><td>只能对 <b>行</b> 操作。<b>列</b> 变换（缩放 / 换列）一般会改变解集，相当于改了未知数的含义。</td></tr>
+                <tr><td>(d)</td><td>✔ 合法</td><td>第一类互换，只是改变方程书写顺序，解集不变。</td></tr>
+                <tr><td>(e)</td><td>✔ 合法</td><td>第三类行加：<i>R</i><sub>3</sub> + 2<i>R</i><sub>1</sub> → <i>R</i><sub>3</sub>，且 <i>i</i> ≠ <i>j</i>。</td></tr>
+                <tr><td>(f)</td><td>✔ 合法</td><td>第二类缩放，<i>k</i> = 5 ≠ 0（逆操作为 <i>R</i><sub>2</sub> → (1/5)<i>R</i><sub>2</sub>）。</td></tr>
+              </tbody>
+            </table>
+            <p class="note-inline">💡 一句话口诀：<b>换行、非零倍行、行加行 —— 可以；碰列、乘零 —— 不行。</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="m3">
+    <div class="mod-head">
+      <span class="mod-num">03</span>
+      <h2>增广矩阵与高斯消元（REF / RREF）</h2>
+      <span class="from">Augmented Matrix &amp; Gaussian Elimination</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 方程组 ⇔ <i>Ax</i> = <i>b</i> ⇔ 增广矩阵</b>：把常数项 <i>b</i> 作为最后一列接在系数矩阵右边，记作 [<i>A</i>|<i>b</i>]，尺寸为 <i>m</i>×(<i>n</i>+1)。</p>
+      <div class="mrow">
+        <matrix data="a11 a12 ... a1n b1; a21 a22 ... a2n b2; ... ... ... ... ...; am1 am2 ... amn bm"></matrix>
+        <span class="mnote">= &nbsp;[<i>A</i> | <i>b</i>]，<i>m</i>×(<i>n</i>+1)</span>
+      </div>
+
+      <p><b>2) 主元（leading entry / pivot）</b>：若某一行不全为 0，则该行 <b>最左边的非零元</b> 称为这一行的主元。</p>
+
+      <p><b>3) 行阶梯形（Row Echelon Form, REF）</b>：</p>
+      <ul>
+        <li>每个非零行都位于所有零行 <b>之上</b>；</li>
+        <li>主元呈阶梯状：<b>下面各行的主元都在上一行主元的右边</b>。</li>
+      </ul>
+
+      <p><b>4) 化简行阶梯形（Reduced Row Echelon Form, RREF）</b>：在 REF 的基础上，<b>主元所在列都是标准向量</b>，即主元 = 1，且该列其余元素全为 0。RREF 是 <b>唯一</b> 的。</p>
+      <p><b>高斯消元（Gaussian Elimination）</b> 就是用初等行变换求矩阵 RREF 的算法。</p>
+
+      <p><b>5) 讲义经典例题（E.g.1）</b></p>
+      <div class="mrow">
+        <i>A</i> = <matrix data="1 0 4 2; 1 2 6 2; 2 0 8 8; 2 1 9 4"></matrix>
+        <span class="mnote">求它的 REF 与 RREF</span>
+      </div>
+      <div class="mrow">
+        REF：<matrix data="1 0 4 2; 0 2 2 0; 0 0 0 4; 0 0 0 0"></matrix>
+        <span class="mnote">（主元不必是 1）</span>
+        &nbsp;&nbsp;
+        RREF：<matrix data="1 0 4 0; 0 1 1 0; 0 0 0 1; 0 0 0 0" pivot="1,2,4"></matrix>
+      </div>
+      <p class="mnote">注意：同一个矩阵的 REF 不唯一（上图只是其中一种），但 <b>RREF 唯一</b>。黄色高亮的是主元所在的列（第 1、2、4 列）。</p>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li>能把方程组写成增广矩阵，并用行变换一步步化简。</li>
+          <li>能判断一个矩阵是 REF 还是 RREF：<b>零行在底 + 主元右移 + 主元列为标准向量</b>。</li>
+          <li>RREF 可以“直接读出”解（每个主元列对应的变量 = 该行最后一列的常数）。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li>理解 <b>RREF 的唯一性</b>（与 REF 不唯一相对）。</li>
+          <li>区分 REF 与 RREF：REF 只要求“阶梯”，RREF 还要求主元列干净。</li>
+          <li>消元时判断“先处理哪一列、用哪一行做主元”会让计算更省力。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>把“任意非零元”都当主元 —— 主元是每行 <b>最左边</b> 的非零元，每行只有一个。</li>
+          <li>在 REF 中要求主元必须为 1（不必）；反过来在 RREF 中主元列还留着别的非零数（不合格）。</li>
+          <li>零行没有放到最底下。</li>
+          <li>消元过程中动了某一列（列不能乘 <i>k</i>，也不能换列）。</li>
+          <li>只写 RREF 而漏掉“零行的个数”，导致后面算秩时出错。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m3q1">
+          <div class="qh"><span class="qno">Q3.1</span><span class="qtxt">判断该矩阵是否为 REF？是否为 RREF？说明理由。</span></div>
+          <div class="qbody">
+            <div class="mrow"><i>M</i> = <matrix data="1 2 3; 0 0 1; 0 0 0"></matrix></div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m3q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：是 REF，但 <b>不是</b> RREF</div>
+            <p><b>是 REF 的理由</b>：第 3 行是零行且在底部；非零行（第 1、2 行）的主元分别在第 1 列与第 3 列，第 2 行的主元在第 1 行主元的右边 ➜ 满足阶梯形。</p>
+            <p><b>不是 RREF 的理由</b>：第 2 行的主元在第 3 列，但该列并不“干净” —— 第 1 行第 3 列还有 3，不是 0。</p>
+            <p>继续做 <i>R</i><sub>1</sub> ← <i>R</i><sub>1</sub> − 3<i>R</i><sub>2</sub> 才能得到 RREF：</p>
+            <div class="mrow">
+              <matrix data="1 2 3; 0 0 1; 0 0 0"></matrix> ⟶
+              <matrix data="1 2 0; 0 0 1; 0 0 0" pivot="1,3"></matrix>
+            </div>
+            <p class="note-inline">💡 判定口诀：<b>先看零行在不在底，再看主元右移，最后看主元列是否干净（是否标准向量）。</b></p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m3q2">
+          <div class="qh"><span class="qno">Q3.2</span><span class="qtxt">用高斯消元求讲义 E.g.1 矩阵的 RREF。</span></div>
+          <div class="qbody">
+            <div class="mrow">
+              <i>A</i> = <matrix data="1 0 4 2; 1 2 6 2; 2 0 8 8; 2 1 9 4"></matrix>
+            </div>
+            <div class="note-inline">要求：写清每一步行变换，最后指出主元列与秩。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m3q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：RREF = (1 0 4 0; 0 1 1 0; 0 0 0 1; 0 0 0 0)，秩 = 3</div>
+            <p><b>第 1 步</b>：用第 1 行消去第 1 列（<i>R</i><sub>2</sub> − <i>R</i><sub>1</sub>，<i>R</i><sub>3</sub> − 2<i>R</i><sub>1</sub>，<i>R</i><sub>4</sub> − 2<i>R</i><sub>1</sub>）</p>
+            <div class="mrow">
+              <matrix data="1 0 4 2; 1 2 6 2; 2 0 8 8; 2 1 9 4"></matrix> ⟶
+              <matrix data="1 0 4 2; 0 2 2 0; 0 0 0 4; 0 1 1 0"></matrix>
+            </div>
+            <p><b>第 2 步</b>：用第 2 行消去第 4 行的第 2 列：<i>R</i><sub>4</sub> ← <i>R</i><sub>4</sub> − (1/2)<i>R</i><sub>2</sub> = (0,1,1,0) − (0,1,1,0) = (0,0,0,0)，零行自然落在最底部</p>
+            <div class="mrow">
+              <matrix data="1 0 4 2; 0 2 2 0; 0 0 0 4; 0 1 1 0"></matrix> ⟶
+              <matrix data="1 0 4 2; 0 2 2 0; 0 0 0 4; 0 0 0 0"></matrix>
+            </div>
+            <p><b>第 3 步</b>：缩放使主元为 1：<i>R</i><sub>2</sub> ← (1/2)<i>R</i><sub>2</sub>，<i>R</i><sub>3</sub> ← (1/4)<i>R</i><sub>3</sub></p>
+            <div class="mrow">
+              <matrix data="1 0 4 2; 0 2 2 0; 0 0 0 4; 0 0 0 0"></matrix> ⟶
+              <matrix data="1 0 4 2; 0 1 1 0; 0 0 0 1; 0 0 0 0"></matrix>
+            </div>
+            <p><b>第 4 步</b>：把主元列上方清干净：<i>R</i><sub>1</sub> ← <i>R</i><sub>1</sub> − 2<i>R</i><sub>3</sub></p>
+            <div class="mrow">
+              <matrix data="1 0 4 2; 0 1 1 0; 0 0 0 1; 0 0 0 0"></matrix> ⟶
+              <matrix data="1 0 4 0; 0 1 1 0; 0 0 0 1; 0 0 0 0" pivot="1,2,4"></matrix>
+            </div>
+            <p>主元位于第 <b>1、2、4</b> 列，共 3 个 ➜ 秩 <i>r</i>(<i>A</i>) = 3，非主元列是第 3 列。</p>
+            <p class="note-inline">💡 也可用另一种顺序得到不同的 REF（如 (1 0 4 2; 0 2 2 0; 0 0 0 4; 0 0 0 0)），但 RREF 一定唯一。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="m4">
+    <div class="mod-head">
+      <span class="mod-num">04</span>
+      <h2>RREF 与线性组合（列对应原理）</h2>
+      <span class="from">RREF v.s. Linear Combination</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 列对应原理（Column Correspondence Principle）</b>：设 <i>A</i> = [<i>a</i><sub>1</sub>, …, <i>a<sub>n</sub></i>] 的 RREF 是 <i>R</i> = [<i>r</i><sub>1</sub>, …, <i>r<sub>n</sub></i>]。</p>
+      <ul>
+        <li>初等行变换 <b>不改变非零行的个数</b>。</li>
+        <li>若 <i>a<sub>i</sub></i> 是 <i>A</i> 其他列的组合（系数为 <i>c</i>），则 <i>r<sub>i</sub></i> 也是 <i>R</i> 对应列以 <b>相同系数</b> <i>c</i> 的组合；反之亦然。</li>
+        <li>若 [<i>A</i>|<i>b</i>] 的 RREF 为 [<i>R</i>|<i>b</i>′]，则 <i>Ax</i> = <i>b</i> 与 <i>Rx</i> = <i>b</i>′ <b>解集相同</b>；<i>Ax</i> = 0 与 <i>Rx</i> = 0 也解集相同。</li>
+      </ul>
+      <p class="mnote">一句话：<b>行变换改变的是行之间的关系，保持的是列之间的关系。</b>（题目里说的“non-zero row”指对应的方程是真正起作用的，而不是物理上全为 0 的行。）</p>
+
+      <p><b>2) 最关键的对比表（讲义 Original Matrix v.s. RREF）</b></p>
+      <table class="tb">
+        <thead><tr><th style="width:20%"></th><th>行（Rows）</th><th>列（Columns）</th></tr></thead>
+        <tbody>
+          <tr><td><b>关系是否保持</b></td><td>❌ 行之间的关系 <b>改变</b></td><td>✔ 列之间的关系 <b>不变</b></td></tr>
+          <tr><td><b>张成空间</b></td><td>✔ 行的张成空间 <b>相同</b></td><td>❌ 列的张成空间 <b>不同</b></td></tr>
+        </tbody>
+      </table>
+
+      <p><b>3) 讲义验证例（E.g.2）</b>：<i>A</i> = <matrix data="1 2 5; 2 -1 0"></matrix>，其中 <i>a</i><sub>3</sub> = <i>a</i><sub>1</sub> + 2<i>a</i><sub>2</sub>（验证：(1,2) + 2(2,−1) = (5,0) ✔）。做任意一种行变换后，同样的关系仍成立：</p>
+      <table class="tb">
+        <thead><tr><th style="width:26%">行变换</th><th>得到的矩阵</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td>① 缩放：<i>R</i><sub>1</sub> ← 3<i>R</i><sub>1</sub></td><td><matrix data="3 6 15; 2 -1 0"></matrix></td><td><i>b</i><sub>3</sub> = <i>b</i><sub>1</sub> + 2<i>b</i><sub>2</sub>：(15,0) = (3,2) + 2(6,−1) ✔</td></tr>
+          <tr><td>② 行加：<i>R</i><sub>2</sub> ← <i>R</i><sub>2</sub> + 3<i>R</i><sub>1</sub></td><td><matrix data="1 2 5; 5 5 15"></matrix></td><td><i>c</i><sub>1</sub> + 2<i>c</i><sub>2</sub> = (1,5) + (4,10) = (5,15) = <i>c</i><sub>3</sub> ✔</td></tr>
+          <tr><td>③ 互换：<i>R</i><sub>1</sub> ↔ <i>R</i><sub>2</sub></td><td><matrix data="2 -1 0; 1 2 5"></matrix></td><td><i>d</i><sub>3</sub> = <i>d</i><sub>1</sub> + 2<i>d</i><sub>2</sub>：(0,5) = (2,1) + 2(−1,2) ✔</td></tr>
+        </tbody>
+      </table>
+      <p class="mnote">② 的验证：<i>c</i><sub>1</sub> = (1,5)，<i>c</i><sub>2</sub> = (2,5)，<i>c</i><sub>1</sub> + 2<i>c</i><sub>2</sub> = (1+4, 5+10) = (5,15) = <i>c</i><sub>3</sub> ✔</p>
+
+      <p><b>4) 讲义例题（E.g.3）</b></p>
+      <div class="mrow">
+        <i>A</i> = <matrix data="1 2 -1 2 1 2; -1 -2 1 2 3 6; 2 4 -3 2 0 3; -3 -6 2 0 3 9"></matrix>
+        <span class="mnote">，其 RREF 为</span>
+        <i>R</i> = <matrix data="1 2 0 0 -1 -5; 0 0 1 0 0 -3; 0 0 0 1 1 2; 0 0 0 0 0 0" pivot="1,3,4"></matrix>
+      </div>
+      <p class="mnote">黄色列（第 1、3、4 列）是主元列。<i>R</i> 中的非主元列都是主元列的线性组合：<i>r</i><sub>2</sub> = 2<i>r</i><sub>1</sub>，<i>r</i><sub>5</sub> = <i>r</i><sub>4</sub> − <i>r</i><sub>1</sub>，<i>r</i><sub>6</sub> = 2<i>r</i><sub>4</sub> − 3<i>r</i><sub>3</sub> − 5<i>r</i><sub>1</sub>。由列对应原理，<i>A</i> 的列满足完全相同的系数关系：<i>a</i><sub>2</sub> = 2<i>a</i><sub>1</sub>，<i>a</i><sub>5</sub> = <i>a</i><sub>4</sub> − <i>a</i><sub>1</sub>，<i>a</i><sub>6</sub> = 2<i>a</i><sub>4</sub> − 3<i>a</i><sub>3</sub> − 5<i>a</i><sub>1</sub>。</p>
+      <p>同时，<i>Ax</i> = 0 有无穷多解，例如 <i>x</i><sub>1</sub> = (−2, 1, 0, 0, 0, 0)<sup>T</sup>（对应 <i>−2a</i><sub>1</sub> + <i>a</i><sub>2</sub> = 0）与 <i>x</i><sub>2</sub> = (1, 0, 0, −1, 1, 0)<sup>T</sup>（对应 <i>a</i><sub>1</sub> − <i>a</i><sub>4</sub> + <i>a</i><sub>5</sub> = 0）。</p>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li>列之间的线性关系在行变换下 <b>完全不变</b>（系数一一对应）—— 这是后面求最大无关组、解方程组的理论基础。</li>
+          <li>行 / 列对比表：<b>行关系变、行空间不变；列关系不变、列空间变</b>。</li>
+          <li>会用 <i>R</i> 中“非主元列 = 主元列的组合”推出 <i>A</i> 中对应的关系，从而构造 <i>Ax</i> = 0 的解。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li>“行的张成空间不变，但列的张成空间改变”这组对比非常反直觉，要结合“行变换 = 行向量的线性组合重新组装”来理解。</li>
+          <li>把“列关系不变”与“<i>Ax</i> = 0 的解不变”联系起来（解向量的分量就是列之间的组合系数）。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>以为 <b>列空间</b>（span of columns）也不变 —— 错，列空间通常会变；不变的是列之间的 <b>关系</b>。</li>
+          <li>把 <i>R</i> 的列直接用做 <i>A</i> 的列空间的基 —— 应该用 <i>A</i> 中与 <i>R</i> 主元列 <b>位置对应</b> 的那些列。</li>
+          <li>只记结论不看列号：系数的对应必须严格按列号一一对应，不能乱配。</li>
+          <li>把“行变换不改变非零行个数”误记成“不改变非零元素个数”。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m4q1">
+          <div class="qh"><span class="qno">Q4.1</span><span class="qtxt">验证列关系在行变换下保持不变。</span></div>
+          <div class="qbody">
+            <p>设 <i>A</i> = <matrix data="1 2 5; 2 -1 0"></matrix>，已知 <i>a</i><sub>3</sub> = <i>a</i><sub>1</sub> + 2<i>a</i><sub>2</sub>。对 <i>A</i> 施行 <i>R</i><sub>2</sub> ← <i>R</i><sub>2</sub> + 3<i>R</i><sub>1</sub> 得到 <i>C</i>，验证 <i>c</i><sub>3</sub> = <i>c</i><sub>1</sub> + 2<i>c</i><sub>2</sub>。</p>
+            <div class="note-inline">要求：先写出 <i>C</i>，再逐列验证。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m4q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：<i>C</i> = (1 2 5; 5 5 15)，且 <i>c</i><sub>1</sub> + 2<i>c</i><sub>2</sub> = (5, 15)<sup>T</sup> = <i>c</i><sub>3</sub> ✔</div>
+            <p><b>先验证原关系</b>：<i>a</i><sub>1</sub> = (1,2)<sup>T</sup>，<i>a</i><sub>2</sub> = (2,−1)<sup>T</sup>，<i>a</i><sub>1</sub> + 2<i>a</i><sub>2</sub> = (1+4, 2−2)<sup>T</sup> = (5, 0)<sup>T</sup> = <i>a</i><sub>3</sub> ✔</p>
+            <p><b>做行变换</b>：第 2 行 (2, −1, 0) + 3·第 1 行 (1, 2, 5) = (2+3, −1+6, 0+15) = (5, 5, 15)</p>
+            <div class="mrow"><i>C</i> = <matrix data="1 2 5; 5 5 15"></matrix></div>
+            <p><b>逐列读出</b>：<i>c</i><sub>1</sub> = (1,5)<sup>T</sup>，<i>c</i><sub>2</sub> = (2,5)<sup>T</sup>，<i>c</i><sub>3</sub> = (5,15)<sup>T</sup>。</p>
+            <p><i>c</i><sub>1</sub> + 2<i>c</i><sub>2</sub> = (1+4, 5+10)<sup>T</sup> = (5, 15)<sup>T</sup> = <i>c</i><sub>3</sub> ✔ 关系与系数都保持不变。</p>
+            <p class="note-inline">💡 注意：<i>A</i> 与 <i>C</i> 的 <b>列空间不同</b>（例如 (1,2)<sup>T</sup> ∉ col(<i>C</i>)），但列之间的 <b>关系</b> 相同。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m4q2">
+          <div class="qh"><span class="qno">Q4.2</span><span class="qtxt">由 <i>R</i> 的列关系写出 <i>A</i> 的列关系。</span></div>
+          <div class="qbody">
+            <div class="mrow">
+              <i>A</i> 的 RREF 为 <i>R</i> = <matrix data="1 2 0 0 -1 -5; 0 0 1 0 0 -3; 0 0 0 1 1 2; 0 0 0 0 0 0" pivot="1,3,4"></matrix>
+            </div>
+            <div class="note-inline">要求：(a) 写出 <i>r</i><sub>2</sub>, <i>r</i><sub>5</sub>, <i>r</i><sub>6</sub> 关于主元列 <i>r</i><sub>1</sub>, <i>r</i><sub>3</sub>, <i>r</i><sub>4</sub> 的表达式；(b) 由列对应原理写出 <i>a</i><sub>2</sub>, <i>a</i><sub>5</sub>, <i>a</i><sub>6</sub> 的关系；(c) 写出一个 <i>Ax</i> = 0 的非零解。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m4q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(a) <i>r</i><sub>2</sub> = 2<i>r</i><sub>1</sub>，<i>r</i><sub>5</sub> = <i>r</i><sub>4</sub> − <i>r</i><sub>1</sub>，<i>r</i><sub>6</sub> = 2<i>r</i><sub>4</sub> − 3<i>r</i><sub>3</sub> − 5<i>r</i><sub>1</sub></div>
+            <p><b>(a) 直接从 <i>R</i> 的列读出</b>（主元列就是标准向量 <i>e</i><sub>1</sub>, <i>e</i><sub>2</sub>, <i>e</i><sub>3</sub>，非主元列的每个分量就是对应主元列的系数）：</p>
+            <ul>
+              <li>第 2 列 = (2, 0, 0, 0)<sup>T</sup> = 2·第 1 列 ➜ <i>r</i><sub>2</sub> = 2<i>r</i><sub>1</sub></li>
+              <li>第 5 列 = (−1, 0, 1, 0)<sup>T</sup> = 1·第 4 列 + (−1)·第 1 列 ➜ <i>r</i><sub>5</sub> = <i>r</i><sub>4</sub> − <i>r</i><sub>1</sub></li>
+              <li>第 6 列 = (−5, −3, 2, 0)<sup>T</sup> = 2·第 4 列 + (−3)·第 3 列 + (−5)·第 1 列 ➜ <i>r</i><sub>6</sub> = 2<i>r</i><sub>4</sub> − 3<i>r</i><sub>3</sub> − 5<i>r</i><sub>1</sub></li>
+            </ul>
+            <p><b>(b) 由列对应原理</b>（系数完全一样）：</p>
+            <div class="mrow">
+              <i>a</i><sub>2</sub> = 2<i>a</i><sub>1</sub>，&nbsp; <i>a</i><sub>5</sub> = <i>a</i><sub>4</sub> − <i>a</i><sub>1</sub>，&nbsp; <i>a</i><sub>6</sub> = 2<i>a</i><sub>4</sub> − 3<i>a</i><sub>3</sub> − 5<i>a</i><sub>1</sub>
+            </div>
+            <p><b>(c)</b> 把关系整理成“…= 0”即可得到解：由 <i>a</i><sub>2</sub> − 2<i>a</i><sub>1</sub> = 0 得</p>
+            <div class="mrow">
+              <i>x</i> = <matrix data="-2; 1; 0; 0; 0; 0"></matrix>
+              <span class="mnote">（对应 <i>−2a</i><sub>1</sub> + <i>a</i><sub>2</sub> = 0）</span>
+            </div>
+            <p>同理，由 <i>a</i><sub>1</sub> − <i>a</i><sub>4</sub> + <i>a</i><sub>5</sub> = 0 得 (1, 0, 0, −1, 1, 0)<sup>T</sup>；由 <i>−5a</i><sub>1</sub> − 3<i>a</i><sub>3</sub> + 2<i>a</i><sub>4</sub> − <i>a</i><sub>6</sub> = 0 得 (5, 0, 3, −2, 0, 1)<sup>T</sup>。</p>
+            <p class="note-inline">💡 这三个向量正好构成 <i>Ax</i> = 0 解空间的一组基，维数为 3 = 非主元列个数。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="m5">
+    <div class="mod-head">
+      <span class="mod-num">05</span>
+      <h2>RREF 与线性无关</h2>
+      <span class="from">RREF v.s. Independent</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 主元列 = 最大线性无关组</b>：在 <i>R</i> 中，主元列（上例的 <i>r</i><sub>1</sub>, <i>r</i><sub>3</sub>, <i>r</i><sub>4</sub>）线性无关；而每一个 <b>非主元列</b> 都是它前面主元列的线性组合。这个“哪些列无关”的结论可以原样搬回 <i>A</i>。</p>
+      <p><b>2) 判据</b>：<i>A</i> 的列向量组线性无关 ⇔ <i>A</i> 的 RREF 中 <b>每一列都有主元</b>（不存在非主元列）。</p>
+      <p><b>3) 三种典型形状</b>（讲义 <i>RREF v.s. Independent</i>）：</p>
+      <table class="tb">
+        <thead><tr><th style="width:34%">矩阵形状与假设</th><th>RREF 的形式</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><i>A</i><sub><i>n</i>×<i>n</i></sub> 方阵，所有列线性无关</td>
+            <td><matrix data="1 0 ... 0; 0 1 ... 0; ... ... ... ...; 0 0 ... 1"></matrix> = <i>I<sub>n</sub></i></td>
+            <td>RREF 就是单位阵，秩 = <i>n</i></td>
+          </tr>
+          <tr>
+            <td><i>A</i><sub><i>m</i>×<i>n</i></sub>，<i>m</i> &gt; <i>n</i>，所有列线性无关</td>
+            <td>上面 <i>n</i> 行为 <i>I<sub>n</sub></i>，下面 <i>m</i>−<i>n</i> 行全为 0</td>
+            <td>每列都有主元，秩 = <i>n</i>（满列秩）</td>
+          </tr>
+          <tr>
+            <td><i>A</i><sub><i>m</i>×<i>n</i></sub>，<i>m</i> &lt; <i>n</i></td>
+            <td>最多 <i>m</i> 个主元，至少有 <i>n</i>−<i>m</i> 个非主元列</td>
+            <td><b>不可能</b>所有列都无关：<b>ℝ<sup><i>m</i></sup> 中超过 <i>m</i> 个向量必线性相关</b></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="mnote">推导思路：RREF 中主元个数 ≤ 行数 <i>m</i>，而“所有列无关”要求主元个数 = 列数 <i>n</i>，于是必须 <i>n</i> ≤ <i>m</i>。</p>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li><b>主元列 ⇔ 最大线性无关组</b>；非主元列 ⇔ 对应 <b>自由变量</b>。</li>
+          <li>“列线性无关 ⇔ 每一列都有主元 ⇔ RREF 中没有非主元列”。</li>
+          <li>常见形状结论：方阵列无关 ➜ RREF = <i>I<sub>n</sub></i>；<i>m</i> &gt; <i>n</i> ➜ 上 <i>I<sub>n</sub></i>、下全 0。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li>把“主元列构成一个最大无关组”与“列空间的张成”结合起来：最大无关组不唯一，但 <b>个数（= 秩）唯一</b>。</li>
+          <li>理解为什么 <i>m</i> &lt; <i>n</i> 时列一定相关（主元 ≤ <i>m</i> &lt; <i>n</i>）。</li>
+          <li>“非主元列是 <b>前面</b> 主元列的组合”这一句里的“前面”很关键（由 RREF 的阶梯结构保证）。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>“矩阵里 0 很多 ⇒ 一定相关”是错的，必须看主元个数。</li>
+          <li>以为非主元列可以直接丢掉不看 —— 它不能“被单独保留成无关”，但它的存在说明该列可由前面的主元列表示。</li>
+          <li>漏掉“列数 &gt; 行数 ⇒ 必相关”这条最常考的结论。</li>
+          <li>把“没有非主元列（列无关）”与“没有零行（行张满 ℝ<sup><i>m</i></sup>）”混为一谈，这两件事完全不同。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m5q1">
+          <div class="qh"><span class="qno">Q5.1</span><span class="qtxt">判断向量组是否线性无关；若相关，给出一个最大无关组。</span></div>
+          <div class="qbody">
+            <p>向量组：(1, 0, 0)<sup>T</sup>，(0, 1, 0)<sup>T</sup>，(1, 1, 0)<sup>T</sup></p>
+            <div class="note-inline">要求：把它们按列摆成矩阵 <i>M</i>，求出 RREF，判断相关性并指出最大无关组。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m5q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：线性<b>相关</b>；最大无关组为 {(1,0,0)<sup>T</sup>, (0,1,0)<sup>T</sup>}，秩 = 2</div>
+            <p>按列摆成矩阵并求 RREF：</p>
+            <div class="mrow">
+              <i>M</i> = <matrix data="1 0 1; 0 1 1; 0 0 0"></matrix>
+              <span class="mnote">已经是 RREF</span>
+            </div>
+            <p>第 3 列没有主元（主元在第 1、2 列），第 3 列 = 第 1 列 + 第 2 列 ➜ 向量组相关。</p>
+            <p>主元列对应的向量 {(1,0,0)<sup>T</sup>, (0,1,0)<sup>T</sup>} 构成一个最大线性无关组，秩 = 主元个数 = 2。</p>
+            <p class="note-inline">💡 也可以直接看出：<i>v</i><sub>3</sub> = <i>v</i><sub>1</sub> + <i>v</i><sub>2</sub>。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m5q2">
+          <div class="qh"><span class="qno">Q5.2</span><span class="qtxt">3×5 矩阵的所有列能否线性无关？</span></div>
+          <div class="qbody">
+            <p>设 <i>A</i> 是 3×5 矩阵。(a) <i>A</i> 的所有列能否线性无关？(b) 若要求所有列线性无关，<i>A</i> 的形状必须满足什么条件？</p>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m5q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(a) 不能；(b) 必须 列数 ≤ 行数，即 <i>n</i> ≤ <i>m</i></div>
+            <p><b>(a)</b> 不能。理由一：ℝ<sup>3</sup> 中超过 3 个向量必定线性相关，这里 5 &gt; 3。理由二（等价）：RREF 中主元个数 ≤ 行数 3，而 5 列中最多 3 个主元，至少有 5 − 3 = 2 个非主元列（自由变量），所以列必相关。</p>
+            <p><b>(b)</b> 需要 <i>n</i> ≤ <i>m</i>。此时每一列都是主元列，RREF 的形式为：上面 <i>n</i> 行是 <i>I<sub>n</sub></i>，下面 <i>m</i>−<i>n</i> 行全为 0；秩 = <i>n</i>，即满列秩。</p>
+            <div class="mrow">
+              <i>m</i> &gt; <i>n</i> 且列全无关时的 RREF：<matrix data="1 0 ... 0; 0 1 ... 0; ... ... ... ...; 0 0 ... 1; 0 0 ... 0; ... ... ... ..."></matrix>
+            </div>
+            <p class="note-inline">💡 对应讲义结论：<b>More than <i>m</i> vectors in ℝ<sup><i>m</i></sup> must be dependent.</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="m6">
+    <div class="mod-head">
+      <span class="mod-num">06</span>
+      <h2>RREF 与秩（解的结构与相容性）</h2>
+      <span class="from">RREF v.s. Rank</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 秩与零化度</b></p>
+      <ul>
+        <li>秩 <i>r</i>(<i>A</i>)：<i>A</i> 中最大线性无关 <b>列</b> 的个数。</li>
+        <li><b><i>r</i>(<i>A</i>) = <i>r</i>(<i>R</i>) = 主元列的个数 = <i>R</i> 中非零行的个数。</b></li>
+        <li>零化度（Nullity）= <b><i>n</i> − <i>r</i>(<i>A</i>)</b>，其中 <i>n</i> 是 <b>列数</b>（注意不是行数）。</li>
+        <li>满秩（full rank）：<i>r</i>(<i>A</i>) = min{<i>m</i>, <i>n</i>}。</li>
+      </ul>
+
+      <p><b>2) 变量分类</b>：若方程组有无穷多解，<b>自由变量（free variables）</b> 对应 <b>没有主元的列</b>，其余变量称为 <b>基本变量（basic variables）</b>。</p>
+
+      <p><b>3) 无解的判据</b>：给定 <i>Ax</i> = <i>b</i>，若 <i>b</i> 不在 <i>A</i> 的列张成的空间中（<i>b</i> ∉ Span{<i>a</i><sub>1</sub>, …, <i>a<sub>n</sub></i>}），则方程组不相容（无解）。此时 [<i>A</i>|<i>b</i>] 的 RREF 形如：</p>
+      <div class="mrow">
+        [<i>R</i>|<i>b</i>′] = <matrix data="* * * * * *; * * * * * *; * * * * * *; 0 0 0 0 0 d; 0 0 0 0 0 0; 0 0 0 0 0 0"></matrix>
+        <span class="mnote">(<i>d</i> ≠ 0) &nbsp;⇔&nbsp; <i>r</i>(<i>A</i>) ≠ <i>r</i>([<i>A</i>|<i>b</i>])</span>
+      </div>
+      <p class="mnote">也就是出现了形如「0 = <i>d</i>」的矛盾行：只有最后一列非零。</p>
+
+      <p><b>4) 解的结构（三分类）</b></p>
+      <table class="tb">
+        <thead><tr><th style="width:26%">情形</th><th>判据</th><th>解的情况</th></tr></thead>
+        <tbody>
+          <tr><td>无解</td><td><i>r</i>(<i>A</i>) ≠ <i>r</i>([<i>A</i>|<i>b</i>])</td><td>[<i>R</i>|<i>b</i>′] 出现 (0 … 0 | <i>d</i>)，<i>d</i> ≠ 0</td></tr>
+          <tr><td>唯一解</td><td><i>r</i>(<i>A</i>) = <i>r</i>([<i>A</i>|<i>b</i>]) = <i>n</i></td><td>有解且无自由变量</td></tr>
+          <tr><td>无穷多解</td><td><i>r</i>(<i>A</i>) = <i>r</i>([<i>A</i>|<i>b</i>]) &lt; <i>n</i></td><td>有解且有 <i>n</i> − <i>r</i>(<i>A</i>) 个自由变量</td></tr>
+        </tbody>
+      </table>
+
+      <p><b>5) 相容性等价链（对每个 <i>b</i> 都有解）</b></p>
+      <div class="flow">
+        <div class="step"><i>Ax</i> = <i>b</i> 对每个 <i>b</i> 都相容</div>
+        <div class="arrow">⇕</div>
+        <div class="step">每个 <i>b</i> 都是 <i>A</i> 的列的线性组合</div>
+        <div class="arrow">⇕</div>
+        <div class="step">[<i>R</i>|<i>b</i>′] <b>不能</b> 有一行只在最后一列非零（这蕴含 <i>m</i> ≤ <i>n</i>）</div>
+        <div class="arrow">⇕</div>
+        <div class="step"><i>R</i> 不能有零行</div>
+        <div class="arrow">⇕</div>
+        <div class="step"><i>A</i> 的每一行都有主元</div>
+        <div class="arrow">⇕</div>
+        <div class="step"><i>r</i>(<i>A</i>) = <i>m</i>，且每个 <i>b</i> ∈ Span{<i>a</i><sub>1</sub>, …, <i>a<sub>n</sub></i>}</div>
+        <div class="arrow">⇕</div>
+        <div class="step">Span{<i>a</i><sub>1</sub>, …, <i>a<sub>n</sub></i>} = ℝ<sup><i>m</i></sup>，即 <b><i>m</i> 个线性无关的向量可以张满 ℝ<sup><i>m</i></sup></b></div>
+      </div>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li>会算秩：<b>数主元列</b>（等价于数 RREF 的非零行）。</li>
+          <li>零化度 = <i>n</i> − <i>r</i>(<i>A</i>)；自由变量个数 = 非主元列个数。</li>
+          <li>用 <i>r</i>(<i>A</i>) 与 <i>r</i>([<i>A</i>|<i>b</i>]) 判断无解；用 <i>r</i>(<i>A</i>) 与 <i>n</i> 判断唯一 / 无穷多解。</li>
+          <li>相容性等价链（尤其是 <i>r</i>(<i>A</i>) = <i>m</i> ⇔ <i>R</i> 无零行 ⇔ 列张满 ℝ<sup><i>m</i></sup>）。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li>把「<i>R</i> 有零行」与「存在无解的 <i>b</i>」正确挂钩：<i>R</i> 有零行只是说 <b>存在</b> 使系统无解的 <i>b</i>，并不代表某个具体的 <i>b</i> 一定无解。</li>
+          <li>理解“对每个 <i>b</i> 都相容 ⇒ <i>m</i> ≤ <i>n</i>”（列数不能少于行数）。</li>
+          <li>区分“主元个数”与“行数”这两个不同的量。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>零化度写成 <i>m</i> − <i>r</i>(<i>A</i>) —— 应为 <b><i>n</i> − <i>r</i>(<i>A</i>)</b>。</li>
+          <li>只看 <i>A</i> 的 RREF 就判断有无解 —— 判断相容性必须看 <b>增广矩阵 [<i>A</i>|<i>b</i>]</b> 的 RREF。</li>
+          <li>“方程个数 ≥ 未知数个数 ⇒ 一定有解”是错的（<i>m</i> ≥ <i>n</i> 不保证相容）。</li>
+          <li>把“某个 <i>b</i> 有解”与“每个 <i>b</i> 都有解”混为一谈。</li>
+          <li>“<i>R</i> 有零行 ⇒ 系统无解”也是错的（那要看具体的 <i>b</i>）。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m6q1">
+          <div class="qh"><span class="qno">Q6.1</span><span class="qtxt">求秩与零化度，并说明 <i>Ax</i> = 0 的解的情况。</span></div>
+          <div class="qbody">
+            <div class="mrow">
+              <i>A</i> = <matrix data="1 2 -1 2 1 2; -1 -2 1 2 3 6; 2 4 -3 2 0 3; -3 -6 2 0 3 9"></matrix>
+              <span class="mnote">RREF 见模块 4</span>
+            </div>
+            <div class="note-inline">要求：(a) 求 <i>r</i>(<i>A</i>)；(b) 求 nullity；(c) 说明 <i>Ax</i> = 0 有多少解、自由变量有几个；(d) 写出两个非零解。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m6q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：<i>r</i>(<i>A</i>) = 3，nullity = 3，<i>Ax</i> = 0 有无穷多解（3 个自由变量）</div>
+            <p><b>(a)</b> RREF 为 <matrix data="1 2 0 0 -1 -5; 0 0 1 0 0 -3; 0 0 0 1 1 2; 0 0 0 0 0 0"></matrix>，主元在第 1、3、4 列，共 3 个 ➜ <i>r</i>(<i>A</i>) = <i>r</i>(<i>R</i>) = 3。</p>
+            <p><b>(b)</b> 未知数个数 <i>n</i> = 6（6 列），nullity = <i>n</i> − <i>r</i>(<i>A</i>) = 6 − 3 = <b>3</b>。</p>
+            <p><b>(c)</b> 是齐次方程组，必有零解；又有自由变量（非主元列 2、5、6 对应的 <i>x</i><sub>2</sub>, <i>x</i><sub>5</sub>, <i>x</i><sub>6</sub>），所以有 <b>无穷多解</b>，解空间维数为 3。</p>
+            <p><b>(d)</b> 两个非零解：</p>
+            <div class="mrow">
+              <i>x</i><sub>1</sub> = <matrix data="-2; 1; 0; 0; 0; 0"></matrix>
+              <i>x</i><sub>2</sub> = <matrix data="1; 0; 0; -1; 1; 0"></matrix>
+              <span class="mnote">（对应 <i>−2a</i><sub>1</sub> + <i>a</i><sub>2</sub> = 0 与 <i>a</i><sub>1</sub> − <i>a</i><sub>4</sub> + <i>a</i><sub>5</sub> = 0）</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m6q2">
+          <div class="qh"><span class="qno">Q6.2</span><span class="qtxt">由增广矩阵的 RREF 判断相容性。</span></div>
+          <div class="qbody">
+            <div class="mrow">
+              [<i>A</i>|<i>b</i>] 的 RREF 为 <matrix data="1 2 0 | 1; 0 0 1 | 2; 0 0 0 | 5"></matrix>
+            </div>
+            <div class="note-inline">要求：(a) <i>Ax</i> = <i>b</i> 是否有解？(b) <i>b</i> 是否在 <i>A</i> 的列空间中？(c) 求 <i>r</i>(<i>A</i>) 与 <i>r</i>([<i>A</i>|<i>b</i>])。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m6q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(a) 无解；(b) 不在；(c) <i>r</i>(<i>A</i>) = 2，<i>r</i>([<i>A</i>|<i>b</i>]) = 3</div>
+            <p><b>(a)</b> 第 3 行为 (0 0 0 | 5)，等价于方程 0·<i>x</i><sub>1</sub> + 0·<i>x</i><sub>2</sub> + 0·<i>x</i><sub>3</sub> = 5，即 0 = 5，矛盾 ➜ <b>无解</b>。这正是讲义中 <i>d</i> ≠ 0 的情形。</p>
+            <p><b>(b)</b> 无解意味着 <i>b</i> 不能写成 <i>A</i> 的列的组合 ➜ <i>b</i> ∉ Span{<i>a</i><sub>1</sub>, <i>a</i><sub>2</sub>, <i>a</i><sub>3</sub>}。</p>
+            <p><b>(c)</b> 去掉最后一列得 <i>A</i> 的 RREF = <matrix data="1 2 0; 0 0 1; 0 0 0"></matrix>，主元 2 个 ➜ <i>r</i>(<i>A</i>) = 2；增广矩阵有 3 个非零行 ➜ <i>r</i>([<i>A</i>|<i>b</i>]) = 3。由于 <i>r</i>(<i>A</i>) ≠ <i>r</i>([<i>A</i>|<i>b</i>])，也可以直接判定不相容。</p>
+            <p class="note-inline">⚠️ 注意：<i>A</i> 的 RREF 有零行并不直接说明这个 <i>b</i> 无解；必须看 <b>增广矩阵</b> 的那一行最后一列是否为非零。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="exam">
+    <div class="mod-head">
+      <span class="mod-num">07</span>
+      <h2>综合自测（5 题）</h2>
+      <span class="from">End-of-chapter Self Check</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+      <p class="mnote">这 5 题把整章串起来，建议做完 6 个模块后限时 20 分钟完成。</p>
+
+      <div class="quiz">
+        <div class="q" data-qid="e1">
+          <div class="qh"><span class="qno">E1</span><span class="qtxt">3×2 矩阵能否让 <i>Ax</i> = <i>b</i> 对每个 <i>b</i> ∈ ℝ<sup>3</sup> 都有解？</span></div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="e1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：不能</div>
+            <p>要让每个 <i>b</i> 都有解，需要 <i>r</i>(<i>A</i>) = <i>m</i> = 3（RREF 无零行）。但主元个数 ≤ 列数 = 2，所以 <i>r</i>(<i>A</i>) ≤ 2 &lt; 3，RREF 至少有一个零行 ➜ 存在某个 <i>b</i> 使系统无解。</p>
+            <p>等价说法：ℝ<sup>3</sup> 中 2 个向量不可能张满 ℝ<sup>3</sup>。这也印证了“对每个 <i>b</i> 相容 ⇒ <i>m</i> ≤ <i>n</i>”。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="e2">
+          <div class="qh"><span class="qno">E2</span><span class="qtxt"><i>m</i> &gt; <i>n</i> 且列全无关时，RREF 长什么样？</span></div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="e2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：上面 <i>n</i> 行是 <i>I<sub>n</sub></i>，下面 <i>m</i>−<i>n</i> 行全为 0</div>
+            <div class="mrow">
+              <matrix data="1 0 ... 0; 0 1 ... 0; ... ... ... ...; 0 0 ... 1; 0 0 ... 0; ... ... ... ..."></matrix>
+            </div>
+            <p>理由：列全无关 ⇒ 每列都有主元 ⇒ 共有 <i>n</i> 个主元，必须恰好占据前 <i>n</i> 行（每行一个，且呈阶梯形），其余 <i>m</i>−<i>n</i> 行只能是零行。此时 <i>r</i>(<i>A</i>) = <i>n</i> = min{<i>m</i>, <i>n</i>}，是满秩。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="e3">
+          <div class="qh"><span class="qno">E3</span><span class="qtxt">判断：「初等行变换保持 <i>A</i> 的列空间不变。」</span></div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="e3">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：错误</div>
+            <p>行变换保持的是 <b>列之间的线性关系</b>（列对应原理），而列空间（Span of columns）一般会 <b>改变</b>。保持不变的张成空间是 <b>行空间</b>。</p>
+            <p>例子：<i>A</i> = (1 2 5; 2 −1 0) 做 <i>R</i><sub>2</sub> ← <i>R</i><sub>2</sub> + 3<i>R</i><sub>1</sub> 得 (1 2 5; 5 5 15)，此时 <i>A</i> 的第 1 列 (1,2)<sup>T</sup> 已不在新矩阵的列空间中。</p>
+            <p class="note-inline">💡 记忆：<b>行空间不变、列关系不变</b>；<b>行关系改变、列空间改变</b>。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="e4">
+          <div class="qh"><span class="qno">E4</span><span class="qtxt">4×5 矩阵，<i>r</i>(<i>A</i>) = 4，<i>Ax</i> = <i>b</i> 是否对每个 <i>b</i> ∈ ℝ<sup>4</sup> 都有解？</span></div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="e4">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：是，对每个 <i>b</i> ∈ ℝ<sup>4</sup> 都有解；且解有无穷多个</div>
+            <p><i>r</i>(<i>A</i>) = 4 = <i>m</i>（行数）⇒ 由相容性等价链：<i>R</i> 没有零行 ⇒ <i>A</i> 每一行都有主元 ⇒ Span{<i>a</i><sub>1</sub>, …, <i>a</i><sub>5</sub>} = ℝ<sup>4</sup>，所以每个 <i>b</i> 都相容。</p>
+            <p>又因为 <i>r</i>(<i>A</i>) = 4 &lt; <i>n</i> = 5，存在 5 − 4 = 1 个自由变量 ➜ 一旦有解就有无穷多解（对应齐次方程 <i>Ax</i> = 0 有非零解，解空间维数为 1）。</p>
+            <p class="note-inline">💡 注意这里 <i>m</i> ≤ <i>n</i>（4 ≤ 5）是必要条件，和 E1 正好形成对照。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="e5">
+          <div class="qh"><span class="qno">E5</span><span class="qtxt"><i>A</i> 是 4×3 矩阵，<i>r</i>(<i>A</i>) = 3。可以断定什么？</span></div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="e5">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：<i>A</i> 的 3 列线性无关（满列秩），RREF 的前 3 行是 <i>I</i><sub>3</sub>、最后 1 行为 0</div>
+            <p>秩 = 列数 = 3 ⇒ 每一列都是主元列 ⇒ 3 列线性无关，没有自由变量。</p>
+            <p>RREF 形式：<matrix data="1 0 0; 0 1 0; 0 0 1; 0 0 0"></matrix>。此时零化度 = <i>n</i> − <i>r</i>(<i>A</i>) = 3 − 3 = 0，所以 <i>Ax</i> = 0 <b>只有零解</b>，而 <i>Ax</i> = <i>b</i> 若有解则解唯一。</p>
+            <p class="note-inline">⚠️ 但不能推出“对每个 <i>b</i> ∈ ℝ<sup>4</sup> 都有解”：这里 <i>m</i> = 4 &gt; <i>n</i> = 3，<i>r</i>(<i>A</i>) = 3 ≠ <i>m</i>，<i>R</i> 有零行 ➜ 存在无解的 <i>b</i>。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="cheat">
+    <div class="mod-head">
+      <span class="mod-num">08</span>
+      <h2>一页速查表（考前 5 分钟）</h2>
+      <span class="from">Cheat Sheet</span>
+    </div>
+    <div class="mod-body">
+      <h3 class="sec">核心定义</h3>
+      <table class="tb">
+        <thead><tr><th style="width:30%">概念</th><th>要点</th></tr></thead>
+        <tbody>
+          <tr><td>矩阵乘向量</td><td><i>Ax</i> = <i>x</i><sub>1</sub><i>a</i><sub>1</sub> + ⋯ + <i>x<sub>n</sub></i><i>a<sub>n</sub></i>；(<i>m</i>×<i>n</i>)(<i>n</i>×1) = (<i>m</i>×1)</td></tr>
+          <tr><td>三种初等行变换</td><td><i>R<sub>i</sub></i> ↔ <i>R<sub>j</sub></i>；<i>kR<sub>i</sub></i> → <i>R<sub>i</sub></i>（<i>k</i> ≠ 0）；<i>R<sub>i</sub></i> + <i>kR<sub>j</sub></i> → <i>R<sub>i</sub></i>（<i>i</i> ≠ <i>j</i>）</td></tr>
+          <tr><td>主元（pivot）</td><td>非零行 <b>最左边</b> 的非零元</td></tr>
+          <tr><td>REF</td><td>非零行在零行之上 + 主元逐行右移</td></tr>
+          <tr><td>RREF</td><td>在 REF 基础上，主元列都是标准向量（主元 = 1，该列其余为 0）；<b>唯一</b></td></tr>
+          <tr><td>秩 <i>r</i>(<i>A</i>)</td><td>= 最大无关列数 = 主元列个数 = <i>R</i> 中非零行数</td></tr>
+          <tr><td>零化度</td><td><i>n</i> − <i>r</i>(<i>A</i>)（<i>n</i> = 列数）</td></tr>
+          <tr><td>满秩</td><td><i>r</i>(<i>A</i>) = min{<i>m</i>, <i>n</i>}</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sec">解的结构（<i>Ax</i> = <i>b</i>，<i>A</i> 为 <i>m</i>×<i>n</i>）</h3>
+      <table class="tb">
+        <thead><tr><th style="width:22%">问题</th><th>判据</th></tr></thead>
+        <tbody>
+          <tr><td>无解</td><td><i>r</i>(<i>A</i>) &lt; <i>r</i>([<i>A</i>|<i>b</i>])，即 [<i>R</i>|<i>b</i>′] 出现 (0 … 0 | <i>d</i>)，<i>d</i> ≠ 0</td></tr>
+          <tr><td>有解</td><td><i>r</i>(<i>A</i>) = <i>r</i>([<i>A</i>|<i>b</i>])</td></tr>
+          <tr><td>唯一解</td><td><i>r</i>(<i>A</i>) = <i>r</i>([<i>A</i>|<i>b</i>]) = <i>n</i>（无自由变量）</td></tr>
+          <tr><td>无穷多解</td><td><i>r</i>(<i>A</i>) = <i>r</i>([<i>A</i>|<i>b</i>]) &lt; <i>n</i>（有 <i>n</i>−<i>r</i>(<i>A</i>) 个自由变量）</td></tr>
+          <tr><td>对每个 <i>b</i> 都有解</td><td><i>r</i>(<i>A</i>) = <i>m</i> ⇔ <i>R</i> 无零行 ⇔ A 每行有主元 ⇔ Span{<i>a</i><sub>1</sub>,…,<i>a<sub>n</sub></i>} = ℝ<sup><i>m</i></sup>（蕴含 <i>m</i> ≤ <i>n</i>）</td></tr>
+          <tr><td>列线性无关</td><td>每一列都是主元列（无非主元列）</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sec">最容易错的三句话</h3>
+      <div class="box trap">
+        <div class="bt">⚠️ 考前再念一遍</div>
+        <ul>
+          <li>行变换 <b>保持列的关系、不保持列空间</b>；<b>保持行空间、不保持行的关系</b>。</li>
+          <li>判断有没有解，一定要看 <b>增广矩阵 [<i>A</i>|<i>b</i>]</b>，不能只看 <i>A</i>。</li>
+          <li>零化度是 <b><i>n</i> − <i>r</i>(<i>A</i>)</b>（<i>n</i> 是列数），不是 <i>m</i> − <i>r</i>(<i>A</i>)。</li>
+        </ul>
+      </div>
+
+      <h3 class="sec">解题标准流程</h3>
+      <div class="flow">
+        <div class="step">① 写出增广矩阵 [<i>A</i>|<i>b</i>]</div>
+        <div class="arrow">↓</div>
+        <div class="step">② 用初等行变换（换行 / 非零倍行 / 行加行）化为 REF，再化为 RREF</div>
+        <div class="arrow">↓</div>
+        <div class="step">③ 看 [<i>R</i>|<i>b</i>′] 有没有 (0 … 0 | <i>d</i>)，<i>d</i> ≠ 0 ➜ 有则无解</div>
+        <div class="arrow">↓</div>
+        <div class="step">④ 有解时：主元列 ➜ 基本变量；非主元列 ➜ 自由变量（自由变量个数 = nullity）</div>
+        <div class="arrow">↓</div>
+        <div class="step">⑤ 直接读出解 / 写出通解；秩 = 主元个数；必要时用列对应原理回答列之间的关系</div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<button id="toTop" title="回到顶部">↑</button>
+
+<footer class="foot">
+  复习网页 · 依据讲义《Chapter 2 Solving Linear Equations》（Florence Ho, University of Macau, ISOM2005 Linear Algebra, 1st Sem 2026/2027）整理。
+  所有例题、定义与结论均来自该讲义，练习题为基于同样知识点的配套训练。
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- 1. 把 <matrix data="..."> 渲染成带方括号的矩阵 ---------- */
+  function buildMatrix(el) {
+    var raw = (el.getAttribute("data") || "").trim();
+    if (!raw) { el.remove(); return; }
+    var rowsRaw = raw.split(";").map(function (s) { return s.trim(); }).filter(function (s) { return s.length; });
+    var rows = [];
+    var augCols = {};
+    rowsRaw.forEach(function (line) {
+      var toks = line.split(/\s+/);
+      var cells = [];
+      toks.forEach(function (t) {
+        if (t === "|") {
+          if (cells.length) { augCols[cells.length - 1] = true; }
+        } else {
+          cells.push(t);
+        }
+      });
+      rows.push(cells);
+    });
+    if (!rows.length) { el.remove(); return; }
+    var ncol = rows.reduce(function (m, r) { return Math.max(m, r.length); }, 0);
+
+    var pivotEntry = {};
+    (el.getAttribute("entry") || "").split(";").forEach(function (pair) {
+      var p = pair.trim().split(",");
+      if (p.length === 2) { pivotEntry[(parseInt(p[0], 10) - 1) + ":" + (parseInt(p[1], 10) - 1)] = true; }
+    });
+    var pivotCols = {};
+    (el.getAttribute("pivot") || "").split(",").forEach(function (c) {
+      var n = parseInt(c.trim(), 10);
+      if (!isNaN(n)) { pivotCols[n - 1] = true; }
+    });
+
+    var box = document.createElement("span");
+    box.className = "mtx";
+    var bl = document.createElement("span");
+    bl.className = "brk l";
+    var grid = document.createElement("span");
+    grid.className = "grid";
+    grid.style.gridTemplateColumns = "repeat(" + ncol + ", minmax(1.15em, auto))";
+
+    rows.forEach(function (row, ri) {
+      for (var c = 0; c < ncol; c++) {
+        var cell = document.createElement("span");
+        cell.className = "cell";
+        cell.textContent = (c < row.length ? row[c] : "");
+        if (pivotCols[c]) { cell.className += " pivotcol"; }
+        if (pivotEntry[ri + ":" + c]) { cell.className += " pivotentry"; }
+        if (augCols[c]) { cell.className += " aug"; }
+        grid.appendChild(cell);
+      }
+    });
+    var br = document.createElement("span");
+    br.className = "brk r";
+    box.appendChild(bl);
+    box.appendChild(grid);
+    box.appendChild(br);
+    if (el.parentNode) { el.parentNode.replaceChild(box, el); }
+  }
+
+  var MatrixEls = Array.prototype.slice.call(document.querySelectorAll("matrix"));
+  MatrixEls.forEach(buildMatrix);
+
+  /* ---------- 2. 展开 / 收起答案 ---------- */
+  function answersOf(scope) {
+    return Array.prototype.slice.call(scope.querySelectorAll(".answer"));
+  }
+  function toggleReveal(btn) {
+    var q = btn.closest(".q");
+    var ans = q ? q.querySelector(".answer") : null;
+    if (!ans) { return; }
+    var open = ans.classList.toggle("open");
+    btn.textContent = open ? "收起答案" : "显示答案与解析";
+  }
+  document.addEventListener("click", function (ev) {
+    var t = ev.target;
+    if (!t || !t.classList) { return; }
+    if (t.classList.contains("reveal")) { toggleReveal(t); }
+  });
+
+  /* ---------- 3. 进度记录（localStorage，失败则退化为内存） ---------- */
+  var STORE_KEY = "rref-review-progress-v1";
+  var THEME_KEY = "rref-review-theme-v1";
+  var memory = {};
+  function load() {
+    try {
+      var s = window.localStorage.getItem(STORE_KEY);
+      return s ? JSON.parse(s) : {};
+    } catch (e) { return memory; }
+  }
+  function save(obj) {
+    memory = obj;
+    try { window.localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch (e) {}
+  }
+  var checked = load();
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("input[data-prog]"));
+
+  function refreshProgress() {
+    var done = boxes.filter(function (b) { return b.checked; }).length;
+    var total = boxes.length || 1;
+    var pct = Math.round(done / total * 100);
+    var fill = document.getElementById("pfill");
+    var text = document.getElementById("ptext");
+    var pctEl = document.getElementById("ppct");
+    if (fill) { fill.style.width = pct + "%"; }
+    if (text) { text.textContent = done + " / " + boxes.length + " 题已掌握"; }
+    if (pctEl) { pctEl.textContent = pct + "%"; }
+  }
+  boxes.forEach(function (b) {
+    var id = b.getAttribute("data-prog");
+    var label = b.closest("label");
+    if (checked[id]) { b.checked = true; if (label) { label.classList.add("checked"); } }
+    b.addEventListener("change", function () {
+      if (b.checked) { checked[id] = true; if (label) { label.classList.add("checked"); } }
+      else { delete checked[id]; if (label) { label.classList.remove("checked"); } }
+      save(checked);
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+
+  /* ---------- 4. 顶部按钮 ---------- */
+  var allAnswers = answersOf(document);
+  function setAll(open) {
+    allAnswers.forEach(function (a) { a.classList.toggle("open", open); });
+    Array.prototype.slice.call(document.querySelectorAll(".btn.reveal")).forEach(function (b) {
+      b.textContent = open ? "收起答案" : "显示答案与解析";
+    });
+  }
+  var bE = document.getElementById("btnExpandAll");
+  var bC = document.getElementById("btnCollapseAll");
+  if (bE) { bE.addEventListener("click", function () { setAll(true); }); }
+  if (bC) { bC.addEventListener("click", function () { setAll(false); }); }
+
+  var bR = document.getElementById("btnReset");
+  if (bR) {
+    bR.addEventListener("click", function () {
+      if (!window.confirm("确定要清空所有「已掌握」标记吗？")) { return; }
+      checked = {};
+      save(checked);
+      boxes.forEach(function (b) {
+        b.checked = false;
+        var l = b.closest("label");
+        if (l) { l.classList.remove("checked"); }
+      });
+      refreshProgress();
+    });
+  }
+
+  /* ---------- 5. 深色模式 ---------- */
+  function applyTheme(mode) {
+    if (mode === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+      if (bT) { bT.textContent = "浅色模式"; bT.classList.add("on"); }
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+      if (bT) { bT.textContent = "深色模式"; bT.classList.remove("on"); }
+    }
+  }
+  var bT = document.getElementById("btnTheme");
+  var savedTheme = null;
+  try { savedTheme = window.localStorage.getItem(THEME_KEY); } catch (e) {}
+  applyTheme(savedTheme === "dark" ? "dark" : "light");
+  if (bT) {
+    bT.addEventListener("click", function () {
+      var dark = document.documentElement.getAttribute("data-theme") === "dark";
+      applyTheme(dark ? "light" : "dark");
+      try { window.localStorage.setItem(THEME_KEY, dark ? "light" : "dark"); } catch (e) {}
+    });
+  }
+
+  /* ---------- 6. 侧栏高亮 + 回到顶部 ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll("nav.toc a"));
+  var sections = links.map(function (a) {
+    var id = a.getAttribute("href").slice(1);
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) { return; }
+        links.forEach(function (a) { a.classList.remove("active"); });
+        var link = links.filter(function (a) { return a.getAttribute("href") === "#" + en.target.id; })[0];
+        if (link) { link.classList.add("active"); }
+      });
+    }, { rootMargin: "-84px 0px -70% 0px", threshold: 0 });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  var toTop = document.getElementById("toTop");
+  if (toTop) {
+    toTop.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
+    window.addEventListener("scroll", function () {
+      if (window.scrollY > 400) { toTop.classList.add("show"); } else { toTop.classList.remove("show"); }
+    }, { passive: true });
+  }
+})();
+</script>
+</body>
+</html>

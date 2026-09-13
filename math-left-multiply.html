@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>线性代数 Chapter 3 复习 | 矩阵乘法 · 初等矩阵 · 逆矩阵</title>
+<style>
+  :root{
+    --bg:#eef2f8; --card:#ffffff; --ink:#15202b; --ink-soft:#3c4c5e; --muted:#65788c;
+    --line:#dbe3ee; --brand:#2749c8; --brand-soft:#e7ecfb;
+    --key:#1f5fd0; --key-soft:#e6efff; --hard:#7a3fd0; --hard-soft:#f0e8ff;
+    --trap:#d1502c; --trap-soft:#ffeee7; --ok:#128a5e; --ok-soft:#e2f7ee;
+    --pivot:#fff2b8; --pivot-strong:#ffd84d;
+    --shadow:0 1px 2px rgba(21,32,43,.06),0 6px 22px rgba(21,32,43,.07);
+    --math:"Cambria Math","Latin Modern Math","Times New Roman",Georgia,serif;
+    --sans:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --radius:14px;
+  }
+  html[data-theme="dark"]{
+    --bg:#0e131a; --card:#161e29; --ink:#e8eef7; --ink-soft:#c3cfdd; --muted:#93a5b9;
+    --line:#26313f; --brand:#7f9bff; --brand-soft:#1b2540;
+    --key:#79a4ff; --key-soft:#182642; --hard:#b28bff; --hard-soft:#241c3c;
+    --trap:#ff9066; --trap-soft:#3a211a; --ok:#4fd6a2; --ok-soft:#122b23;
+    --pivot:#4a3d10; --pivot-strong:#c9a227;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 26px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.75;-webkit-font-smoothing:antialiased}
+  i,.mi{font-family:var(--math);font-style:italic;font-size:1.06em}
+  b,strong{font-weight:650}
+  sub,sup{font-size:.68em;line-height:0}
+  code{font-family:ui-monospace,Consolas,monospace;background:var(--brand-soft);padding:.08em .38em;border-radius:5px;font-size:.9em}
+  header.top{position:sticky;top:0;z-index:40;background:linear-gradient(100deg,var(--brand),#4a2ecb 92%);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 4px 22px rgba(24,40,110,.28)}
+  header.top h1{margin:0;font-size:18.5px;font-weight:650;line-height:1.35}
+  header.top .sub{font-size:12.5px;opacity:.85;margin-top:2px}
+  header.top .spacer{flex:1 1 auto}
+  .top-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .tbtn{border:1px solid rgba(255,255,255,.42);background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:6px 13px;font-family:inherit;font-size:13px;cursor:pointer;transition:.16s}
+  .tbtn:hover{background:rgba(255,255,255,.26)}
+  .tbtn.on{background:#fff;color:var(--brand);border-color:#fff;font-weight:600}
+  .layout{display:flex;gap:22px;max-width:1400px;margin:0 auto;padding:22px 22px 90px;align-items:flex-start}
+  aside.side{position:sticky;top:78px;flex:0 0 262px;max-height:calc(100vh - 100px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 14px;box-shadow:var(--shadow)}
+  aside.side h2{font-size:12.5px;letter-spacing:.14em;color:var(--muted);margin:0 0 10px 6px;font-weight:650}
+  nav.toc{display:flex;flex-direction:column;gap:3px;margin-bottom:16px}
+  nav.toc a{display:flex;gap:9px;align-items:baseline;color:var(--ink-soft);text-decoration:none;font-size:14px;padding:7px 10px;border-radius:9px;transition:.14s;border-left:3px solid transparent}
+  nav.toc a .n{font-family:var(--math);font-style:italic;color:var(--muted);font-size:13px;min-width:16px}
+  nav.toc a:hover{background:var(--brand-soft);color:var(--brand)}
+  nav.toc a.active{background:var(--brand-soft);color:var(--brand);font-weight:600;border-left-color:var(--brand)}
+  .progress-box{border-top:1px dashed var(--line);padding-top:14px}
+  .pbar{height:9px;border-radius:999px;background:var(--brand-soft);overflow:hidden;margin:8px 0 6px}
+  .pbar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),#4a2ecb);transition:width .35s ease}
+  .pnum{font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between}
+  .side small{color:var(--muted);font-size:11.5px;display:block;line-height:1.6;margin-top:10px}
+  main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:22px}
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:80px}
+  .mod-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:15px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--brand-soft),transparent)}
+  .mod-num{font-family:var(--math);font-style:italic;font-size:15px;font-weight:700;color:#fff;background:var(--brand);border-radius:9px;padding:2px 11px;box-shadow:0 3px 10px rgba(39,73,200,.3)}
+  .mod-head h2{margin:0;font-size:18px;font-weight:650}
+  .mod-head .from{margin-left:auto;font-size:12px;color:var(--muted);font-family:var(--math);font-style:italic}
+  .mod-body{padding:6px 20px 20px}
+  h3.sec{font-size:14px;margin:20px 0 9px;font-weight:650;display:flex;align-items:center;gap:8px}
+  h3.sec::before{content:"";width:4px;height:15px;border-radius:2px;background:var(--brand)}
+  p{margin:.5em 0}
+  ul,ol{margin:.45em 0 .6em;padding-left:1.35em}
+  li{margin:.3em 0}
+  li::marker{color:var(--muted)}
+  .tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+  .tag{font-size:11.5px;padding:2.5px 10px;border-radius:999px;font-weight:650;border:1px solid transparent;white-space:nowrap}
+  .tag.key{background:var(--key-soft);color:var(--key);border-color:var(--key)}
+  .tag.hard{background:var(--hard-soft);color:var(--hard);border-color:var(--hard)}
+  .tag.trap{background:var(--trap-soft);color:var(--trap);border-color:var(--trap)}
+  .box{border-radius:11px;padding:12px 15px 13px;margin:12px 0;border:1px solid}
+  .box > .bt{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:7px;margin-bottom:4px}
+  .box.key{background:var(--key-soft);border-color:#a9c6f5}
+  .box.key > .bt{color:var(--key)}
+  .box.hard{background:var(--hard-soft);border-color:#c9aef0}
+  .box.hard > .bt{color:var(--hard)}
+  .box.trap{background:var(--trap-soft);border-color:#f2b9a4}
+  .box.trap > .bt{color:var(--trap)}
+  .box ul{margin:.25em 0 .1em}
+  .box li{margin:.26em 0}
+  .mtx{display:inline-flex;align-items:stretch;vertical-align:middle;margin:.15em .3em;line-height:1.35}
+  .mtx .grid{display:grid;gap:.18em .7em;padding:.3em .34em;align-items:center}
+  .mtx .cell{text-align:center;font-family:var(--math);font-style:normal;font-size:1.02em;padding:0 .12em;border-radius:4px;min-width:1.1em}
+  .mtx .cell.pivotcol{background:var(--pivot)}
+  .mtx .cell.pivotentry{background:var(--pivot-strong);font-weight:700;color:#3a2c00}
+  .mtx .cell.aug{border-right:2px solid var(--brand);margin-right:.34em}
+  .mtx .brk{width:.44em;border:2px solid var(--ink);flex:0 0 auto}
+  .mtx .brk.l{border-right:none;border-radius:4px 0 0 4px}
+  .mtx .brk.r{border-left:none;border-radius:0 4px 4px 0}
+  .mrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0}
+  .mnote{color:var(--muted);font-size:13px}
+  table.tb{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  table.tb th,table.tb td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+  table.tb thead th{background:var(--brand-soft);color:var(--brand);font-weight:650}
+  .quiz{margin-top:18px;border-top:1px dashed var(--line);padding-top:6px}
+  .quiz > .qhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 4px}
+  .quiz > .qhead h3{margin:0;font-size:15px;font-weight:650}
+  .q{border:1px solid var(--line);border-radius:11px;padding:13px 15px 14px;margin:11px 0;background:#f6f8fc}
+  html[data-theme="dark"] .q{background:#131a24}
+  .q .qh{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
+  .q .qno{font-size:12px;font-weight:700;color:var(--brand);background:var(--brand-soft);border-radius:6px;padding:1px 8px;font-family:var(--math);font-style:italic}
+  .q .qtxt{font-weight:600;flex:1 1 260px}
+  .q .qbody{margin:8px 0 0}
+  .q .acts{display:flex;gap:9px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .btn{border:1px solid var(--brand);background:transparent;color:var(--brand);border-radius:8px;padding:5px 13px;font-family:inherit;font-size:13px;cursor:pointer;transition:.15s;font-weight:600}
+  .btn:hover{background:var(--brand-soft)}
+  label.done{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none}
+  label.done input{width:15px;height:15px;accent-color:var(--ok);cursor:pointer}
+  label.done.checked{color:var(--ok);font-weight:650}
+  .answer{display:none;margin-top:11px;border-left:3px solid var(--ok);background:var(--ok-soft);border-radius:0 9px 9px 0;padding:10px 14px}
+  .answer.open{display:block;animation:fade .22s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+  .answer .alabel{font-weight:700;color:var(--ok);font-size:13px;margin-bottom:3px}
+  .answer ol,.answer ul{margin:.3em 0 .2em}
+  .note-inline{font-size:13px;color:var(--muted)}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 2px}
+  .chip{border:1px solid var(--line);border-radius:10px;padding:8px 13px;font-size:13.5px;background:#f6f8fc}
+  html[data-theme="dark"] .chip{background:#131a24}
+  .chip b{color:var(--brand)}
+  .callout{border-radius:11px;padding:13px 16px;margin:12px 0;background:var(--brand-soft);border:1px solid #b9c9f2}
+  .callout .ct{font-weight:700;color:var(--brand);font-size:13.5px;margin-bottom:3px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:6px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .dot.k{background:var(--key)}.dot.h{background:var(--hard)}.dot.t{background:var(--trap)}
+  .flow{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+  .flow .step{border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:9px;padding:8px 13px;background:#f6f8fc;font-size:14px}
+  html[data-theme="dark"] .flow .step{background:#131a24}
+  .flow .arrow{color:var(--muted);text-align:center;font-size:13px;line-height:1}
+  #toTop{position:fixed;right:22px;bottom:22px;z-index:50;display:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--brand);font-size:19px;cursor:pointer;box-shadow:var(--shadow)}
+  #toTop.show{display:block}
+  footer.foot{max-width:1400px;margin:0 auto;padding:0 22px 34px;color:var(--muted);font-size:12.5px;text-align:center}
+  @media (max-width:960px){
+    .layout{flex-direction:column;padding:16px 13px 80px}
+    aside.side{position:static;flex:1 1 auto;width:100%;max-height:none}
+    nav.toc{flex-direction:row;flex-wrap:wrap}
+    nav.toc a{border-left:none;border-bottom:3px solid transparent}
+    nav.toc a.active{border-left:none;border-bottom-color:var(--brand)}
+    .mtx .grid{gap:.15em .5em}
+  }
+  @media print{
+    header.top,aside.side,#toTop,.acts{display:none!important}
+    body{background:#fff}
+    .layout{display:block;padding:0}
+    section.card{box-shadow:none;border-color:#bbb;break-inside:avoid}
+    .answer{display:block!important}
+  }
+</style>
+</head><body>
+<header class="top">
+  <div>
+    <h1>线性代数 Chapter 3 复习：矩阵乘法 · 初等矩阵 · 逆矩阵</h1>
+    <div class="sub">来源讲义：ISOM2005 Linear Algebra, Chapter 3 Matrix Computation and Elimination — Florence Ho, University of Macau（1st Sem, 2026/2027）</div>
+  </div>
+  <div class="spacer"></div>
+  <div class="top-actions">
+    <button class="tbtn" id="btnExpandAll">展开全部答案</button>
+    <button class="tbtn" id="btnCollapseAll">收起全部答案</button>
+    <button class="tbtn" id="btnReset">重置进度</button>
+    <button class="tbtn" id="btnTheme">深色模式</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="side">
+    <h2>知识地图</h2>
+    <nav class="toc">
+      <a href="#overview"><span class="n">0</span><span>复习导航与使用方法</span></a>
+      <a href="#m1"><span class="n">1</span><span>矩阵的四种视角与矩阵乘法的四种方式</span></a>
+      <a href="#m2"><span class="n">2</span><span>矩阵乘法的性质与可逆的定义</span></a>
+      <a href="#m3"><span class="n">3</span><span>初等矩阵（左乘 = 行变换）</span></a>
+      <a href="#m4"><span class="n">4</span><span>用初等矩阵表示消元过程</span></a>
+      <a href="#m5"><span class="n">5</span><span>逆矩阵的性质与定理 3.1</span></a>
+      <a href="#m6"><span class="n">6</span><span>求逆算法与可逆矩阵定理</span></a>
+      <a href="#exam"><span class="n">7</span><span>综合自测（5 题）</span></a>
+      <a href="#cheat"><span class="n">8</span><span>一页速查表</span></a>
+    </nav>
+    <div class="progress-box">
+      <h2 style="margin:0 0 2px 0">掌握进度</h2>
+      <div class="pbar"><i id="pfill"></i></div>
+      <div class="pnum"><span id="ptext">0 / 17 题已掌握</span><span id="ppct">0%</span></div>
+      <small>每题解析下方勾选「已掌握」即可自动记录；进度保存在本机浏览器（localStorage），刷新不会丢失。</small>
+    </div>
+  </aside>
+
+  <main>
+
+  <section class="card" id="overview">
+    <div class="mod-head">
+      <span class="mod-num">0</span>
+      <h2>复习导航与使用方法</h2>
+      <span class="from">6 个知识模块 · 17 道练习</span>
+    </div>
+    <div class="mod-body">
+      <p>本网页把讲义 <i>Chapter 3: Matrix Computation and Elimination</i> 的全部内容整理成 <b>6 个知识模块</b>。每个模块都包含：知识点梳理 → <span class="tag key">重点</span> <span class="tag hard">难点</span> <span class="tag trap">易错点</span> → <b>2 道配套练习（附完整解析）</b>。最后附 <b>综合自测</b> 与 <b>一页速查表</b>。</p>
+      <div class="chips">
+        <div class="chip"><b>模块 1</b> · 矩阵的四种视角、<i>a</i><sup>T</sup><i>b</i> 与 <i>ab</i><sup>T</sup>、矩阵乘法四种方式</div>
+        <div class="chip"><b>模块 2</b> · 维数规则、非交换 / 结合 / 分配律、可逆的定义</div>
+        <div class="chip"><b>模块 3</b> · 初等矩阵 <i>E</i>(<i>i</i>,<i>j</i>)、<i>E</i>(<i>i</i>(<i>k</i>))、<i>E</i>(<i>ij</i>(<i>k</i>))</div>
+        <div class="chip"><b>模块 4</b> · 消元的左乘表示 <i>E<sub>k</sub></i>⋯<i>E</i><sub>1</sub><i>A</i> = <i>R</i></div>
+        <div class="chip"><b>模块 5</b> · 逆矩阵五条性质、唯一性、定理 3.1</div>
+        <div class="chip"><b>模块 6</b> · [<i>A</i>|<i>I</i>] ~ [<i>I</i>|<i>A</i><sup>−1</sup>]、可逆矩阵定理</div>
+      </div>
+
+      <h3 class="sec">标记说明</h3>
+      <div class="legend">
+        <span><i class="dot k"></i><span class="tag key">重点</span> 必考、必须熟练</span>
+        <span><i class="dot h"></i><span class="tag hard">难点</span> 容易卡住、需要理解</span>
+        <span><i class="dot t"></i><span class="tag trap">易错点</span> 阅卷高频扣分处</span>
+      </div>
+
+      <h3 class="sec">怎么用这个网页复习</h3>
+      <ol>
+        <li>先看每个模块的「知识点」与重点 / 难点 / 易错点，把讲义原文的 <i>E.g.1 / E.g.2 / E.g.3 / E.g.4</i> 跟着算一遍。</li>
+        <li>再做 2 道配套练习：<b>先自己写在纸上，再点「显示答案与解析」</b>对照。</li>
+        <li>做对后勾选「已掌握」，左侧进度条会自动记录（保存在本机浏览器，刷新不丢）。</li>
+        <li>全部模块过完，做「综合自测」，最后用「一页速查表」做考前 5 分钟回顾。</li>
+      </ol>
+
+      <div class="callout">
+        <div class="ct">📌 讲义三条主线（Outlines）</div>
+        <ol style="margin:.2em 0 0">
+          <li>Matrix Multiplication（矩阵乘法：四种视角与四种算法）</li>
+          <li>Elementary Matrix（初等矩阵：把行变换写成矩阵乘法）</li>
+          <li>Inverse of Matrix（逆矩阵：性质、求法与可逆矩阵定理）</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="m1">
+    <div class="mod-head">
+      <span class="mod-num">01</span>
+      <h2>矩阵的四种视角与矩阵乘法的四种方式</h2>
+      <span class="from">Viewing a Matrix / Matrix&times;Matrix - 4 Ways</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 一个矩阵的四种视角（Viewing a Matrix - Four Ways）</b>：同一个 <i>A</i> 可以看成 1 个矩阵、6 个数、2 个列向量、3 个行向量。</p>
+      <div class="mrow">
+        <i>A</i> = <matrix data="a11 a12; a21 a22; a31 a32"></matrix>
+        = <matrix data="| |; a1 a2; | |"></matrix>
+        <span class="mnote">（拆成 2 个列向量，每个 3 个数）</span>
+        = <matrix data="— a1* —; — a2* —; — a3* —"></matrix>
+        <span class="mnote">（拆成 3 个行向量，每个 2 个数）</span>
+      </div>
+
+      <p><b>2) 向量 × 向量（两种完全不同的结果）</b></p>
+      <ul>
+        <li><b><i>a</i><sup>T</sup><i>b</i>（点积）得到一个数</b>：<matrix data="1 2 3"></matrix><matrix data="x1; x2; x3"></matrix> = <matrix data="1; 2; 3"></matrix> · <matrix data="x1; x2; x3"></matrix> = <i>x</i><sub>1</sub> + 2<i>x</i><sub>2</sub> + 3<i>x</i><sub>3</sub></li>
+        <li><b><i>ab</i><sup>T</sup> 得到一个矩阵</b>（<i>ab</i><sup>T</sup> = <i>A</i>）。若 <i>a</i>、<i>b</i> 都不为零向量，则 <i>A</i> 是 <b>秩 1 矩阵（Rank-1 Matrix）</b>：
+          <div class="mrow"><matrix data="1; 2; 3"></matrix><matrix data="x y"></matrix> = <matrix data="x y; 2x 2y; 3x 3y"></matrix></div>
+        </li>
+      </ul>
+
+      <p><b>3) 矩阵 × 向量</b>：<i>A</i> 的行向量分别与 <i>x</i> 做点积，得到结果的每个分量；反过来看，结果向量是 <i>A</i> 的 <b>列向量</b> 的线性组合。</p>
+      <div class="mrow">
+        <i>Ax</i> = <matrix data="1 2; 3 4; 5 6"></matrix><matrix data="x1; x2"></matrix>
+        = <matrix data="x1 + 2x2; 3x1 + 4x2; 5x1 + 6x2"></matrix>
+        = <i>x</i><sub>1</sub><matrix data="1; 3; 5"></matrix> + <i>x</i><sub>2</sub><matrix data="2; 4; 6"></matrix>
+      </div>
+
+      <p><b>4) 矩阵 × 矩阵的四种方式（MM1 – MM4）</b>，以 <i>A</i> = <matrix data="1 2; 3 4; 5 6"></matrix>、<i>X</i> = <matrix data="x1 y1; x2 y2"></matrix> 为例：</p>
+      <table class="tb">
+        <thead><tr><th style="width:26%">方式</th><th>含义</th><th style="width:34%">形式</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>MM1</b> 逐元素<br>（点积）</td>
+            <td>每个元素 =「<i>A</i> 的一行」与「<i>X</i> 的一列」的点积</td>
+            <td><matrix data="1 2; 3 4; 5 6"></matrix><matrix data="x1 y1; x2 y2"></matrix> = <matrix data="x1+2x2 y1+2y2; 3x1+4x2 3y1+4y2; 5x1+6x2 5y1+6y2"></matrix></td>
+          </tr>
+          <tr>
+            <td><b>MM2</b> 按列看</td>
+            <td><i>AX</i> 的每一列是 <i>A</i> 的列的线性组合</td>
+            <td><i>AX</i> = <i>A</i>[<i>x</i> <i>y</i>] = [<i>Ax</i> &nbsp; <i>Ay</i>]</td>
+          </tr>
+          <tr>
+            <td><b>MM3</b> 按行看</td>
+            <td><i>AX</i> 的每一行是 <i>X</i> 的行的线性组合</td>
+            <td><matrix data="— a1* —; — a2* —; — a3* —"></matrix><i>X</i> = <matrix data="a1*X; a2*X; a3*X"></matrix></td>
+          </tr>
+          <tr>
+            <td><b>MM4</b> 秩 1 矩阵之和</td>
+            <td>把乘法拆成若干个秩 1 矩阵相加</td>
+            <td><i>AB</i> = [<i>a</i><sub>1</sub> <i>a</i><sub>2</sub>]<matrix data="b1*; b2*"></matrix> = <i>a</i><sub>1</sub><i>b</i><sub>1</sub>* + <i>a</i><sub>2</sub><i>b</i><sub>2</sub>*</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="mnote">MM4 的完整写法（讲义原文）：<matrix data="1 2; 3 4; 5 6"></matrix><matrix data="b11 b12; b21 b22"></matrix> = <matrix data="1; 3; 5"></matrix><matrix data="b11 b12"></matrix> + <matrix data="2; 4; 6"></matrix><matrix data="b21 b22"></matrix></p>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li>同一个矩阵的 <b>四种视角</b>（矩阵 / 数表 / 列向量组 / 行向量组）之间自由切换。</li>
+          <li><b><i>a</i><sup>T</sup><i>b</i> 是数，<i>ab</i><sup>T</sup> 是矩阵</b>（且是秩 1 矩阵）—— 形状完全不同。</li>
+          <li>矩阵乘法的四种算法 MM1–MM4，尤其是 <b>MM2（列的组合）</b> 与 <b>MM4（秩 1 之和）</b>。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li><b>MM4</b>：要把 <i>AB</i> 看成 Σ<sub><i>k</i></sub> <i>a<sub>k</sub>b<sub>k</sub></i>*（每一对「<i>A</i> 的第 <i>k</i> 列 × <i>B</i> 的第 <i>k</i> 行」），这是后面秩与秩 1 分解的基础。</li>
+          <li><b>MM3</b> 的方向容易反：<i>AB</i> 的<b>行</b>是 <i>B</i>（右矩阵）的行的组合；<i>AB</i> 的<b>列</b>是 <i>A</i>（左矩阵）的列的组合。</li>
+          <li>把四种视角和前面 Chapter 2 的 RREF、列对应原理连起来看。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>把 <i>a</i><sup>T</sup><i>b</i> 与 <i>ab</i><sup>T</sup> 混为一谈：前者是 1×1 的数，后者是 <i>m</i>×<i>n</i> 的矩阵。</li>
+          <li>忘记结果维数：<i>A</i><sub><i>m</i>×<i>n</i></sub><i>B</i><sub><i>n</i>×<i>p</i></sub> = <i>C</i><sub><i>m</i>×<i>p</i></sub>，中间那个 <i>n</i> 必须相同。</li>
+          <li>把「<i>AB</i> 的列 = <i>A</i> 的列的组合」误写成「<i>B</i> 的列的组合」。</li>
+          <li>在 MM4 里错误配对：必须是 <b>第 <i>k</i> 列</b> 配 <b>第 <i>k</i> 行</b>，脚标要一致。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m1q1">
+          <div class="qh"><span class="qno">Q1.1</span><span class="qtxt">用 MM1 与 MM4 两种方式计算 <i>AB</i>，并核对结果。</span></div>
+          <div class="qbody">
+            <div class="mrow">
+              <i>A</i> = <matrix data="1 2; 3 4; 5 6"></matrix><span class="mnote">(3×2)</span>
+              <i>B</i> = <matrix data="1 0; 2 -1"></matrix><span class="mnote">(2×2)</span>
+            </div>
+            <div class="note-inline">要求：(a) 先判断 <i>AB</i> 的形状；(b) 用 MM1 逐元素计算；(c) 用 MM4 把 <i>AB</i> 拆成两个秩 1 矩阵之和，验证与 (b) 相同。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m1q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：<i>AB</i> = (5, −2; 11, −4; 17, −6)，形状 3×2</div>
+            <p><b>(a)</b> (3×2)(2×2)：中间维数 2 = 2 可以相乘，结果取外面的两个数 ➜ <b>3×2</b>。</p>
+            <p><b>(b) MM1 逐元素</b>（第 <i>i</i> 行 · 第 <i>j</i> 列）：</p>
+            <div class="mrow">
+              <i>AB</i> = <matrix data="1*1+2*2 1*0+2*(-1); 3*1+4*2 3*0+4*(-1); 5*1+6*2 5*0+6*(-1)"></matrix>
+              = <matrix data="5 -2; 11 -4; 17 -6"></matrix>
+            </div>
+            <p><b>(c) MM4 秩 1 矩阵之和</b>：<i>A</i> 的第 1 列配 <i>B</i> 的第 1 行，第 2 列配第 2 行。</p>
+            <div class="mrow">
+              <matrix data="1; 3; 5"></matrix><matrix data="1 0"></matrix> + <matrix data="2; 4; 6"></matrix><matrix data="2 -1"></matrix>
+              = <matrix data="1 0; 3 0; 5 0"></matrix> + <matrix data="4 -2; 8 -4; 12 -6"></matrix>
+              = <matrix data="5 -2; 11 -4; 17 -6"></matrix> ✔
+            </div>
+            <p class="note-inline">💡 MM4 的意义：<i>AB</i> 的每一行都来自 <i>B</i> 的行，列数由 <i>B</i> 的行数决定 —— 这正是「秩 ≤ min{秩(<i>A</i>), 秩(<i>B</i>)}」的直观来源。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m1q2">
+          <div class="qh"><span class="qno">Q1.2</span><span class="qtxt">区分 <i>u</i><sup>T</sup><i>w</i> 与 <i>uw</i><sup>T</sup>，并说明为什么后者是秩 1 矩阵。</span></div>
+          <div class="qbody">
+            <div class="mrow">
+              <i>u</i> = <matrix data="1; 2; 3"></matrix>
+              <i>w</i> = <matrix data="4; -1; 2"></matrix>
+            </div>
+            <div class="note-inline">要求：(a) 求 <i>u</i><sup>T</sup><i>w</i> 并说明结果的形状；(b) 求 <i>uw</i><sup>T</sup> 并说明形状；(c) 解释为什么 <i>uw</i><sup>T</sup> 的行都是 <i>w</i><sup>T</sup> 的倍数。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m1q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(a) <i>u</i><sup>T</sup><i>w</i> = 8（一个数）；(b) <i>uw</i><sup>T</sup> = (4, −1, 2; 8, −2, 4; 12, −3, 6)（3×3 矩阵）</div>
+            <p><b>(a) 点积</b>：<i>u</i><sup>T</sup><i>w</i> = 1·4 + 2·(−1) + 3·2 = 4 − 2 + 6 = <b>8</b>。形状是 <b>1×1</b>（就是一个数）。</p>
+            <p><b>(b) 外积</b>：</p>
+            <div class="mrow">
+              <i>uw</i><sup>T</sup> = <matrix data="1; 2; 3"></matrix><matrix data="4 -1 2"></matrix>
+              = <matrix data="4 -1 2; 8 -2 4; 12 -3 6"></matrix>
+            </div>
+            <p>形状是 <b>3×3</b>。因为两个向量都非零，这是一个 <b>秩 1 矩阵</b>。</p>
+            <p><b>(c)</b> 由点积写法，第 <i>i</i> 行 = <i>u<sub>i</sub></i>·<i>w</i><sup>T</sup>：第 1 行 = 1·<i>w</i><sup>T</sup>，第 2 行 = 2·<i>w</i><sup>T</sup>，第 3 行 = 3·<i>w</i><sup>T</sup>。所有行都是 <i>w</i><sup>T</sup> 的倍数 ➜ 行向量组线性相关，秩为 1。同理所有列都是 <i>u</i> 的倍数。</p>
+            <p class="note-inline">⚠️ 常见错误：写成 <i>u</i><sup>T</sup><i>w</i> 是矩阵、<i>uw</i><sup>T</sup> 是数。记住「<b>先横后竖得数，先竖后横得矩阵</b>」。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="m2">
+    <div class="mod-head">
+      <span class="mod-num">02</span>
+      <h2>矩阵乘法的性质与可逆的定义</h2>
+      <span class="from">Properties of Matrix Multiplication</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 维数规则（能不能乘）</b>：要算 <i>AB</i>，<b><i>A</i> 的列长必须等于 <i>B</i> 的行长</b>，即 <i>A</i><sub><i>m</i>×<i>n</i></sub><i>B</i><sub><i>n</i>×<i>p</i></sub> = <i>C</i><sub><i>m</i>×<i>p</i></sub>（中间维数“消掉”，留下外面的两个）。</p>
+
+      <p><b>2) 四条运算规律</b></p>
+      <table class="tb">
+        <thead><tr><th style="width:22%">性质</th><th>公式</th><th style="width:34%">说明</th></tr></thead>
+        <tbody>
+          <tr><td>❌ 非交换</td><td><i>AB</i> ≠ <i>BA</i>（一般情形）</td><td>顺序不能随便换，甚至可能一边能乘、另一边不能乘</td></tr>
+          <tr><td>✔ 结合律</td><td>(<i>AB</i>)<i>C</i> = <i>A</i>(<i>BC</i>)</td><td>连续相乘时可以任意加括号</td></tr>
+          <tr><td>✔ 分配律</td><td><i>A</i>(<i>B</i> + <i>C</i>) = <i>AB</i> + <i>AC</i></td><td>左分配（右分配同理：(<i>A</i> + <i>B</i>)<i>C</i> = <i>AC</i> + <i>BC</i>）</td></tr>
+          <tr><td>✔ 方阵的幂</td><td><i>A<sup>k</sup></i> = <i>AA</i>⋯<i>A</i>，且约定 <i>A</i><sup>0</sup> = <i>I</i></td><td>只有方阵才有幂；<i>A</i><sup>0</sup> 是<b>单位阵</b>，不是数 1</td></tr>
+        </tbody>
+      </table>
+
+      <p><b>3) 可逆（invertible / nonsingular）的定义</b>：<i>n</i>×<i>n</i> 方阵 <i>A</i> 称为 <b>可逆</b> 或 <b>非奇异</b>，若存在 <i>n</i>×<i>n</i> 方阵 <i>B</i> 使得</p>
+      <div class="mrow"><i>AB</i> = <i>BA</i> = <i>I<sub>n</sub></i></div>
+      <p>此时 <i>B</i> 由 <i>A</i> <b>唯一确定</b>，称为 <i>A</i> 的逆矩阵，记作 <i>A</i><sup>−1</sup>。不可逆的方阵称为 <b>奇异矩阵（singular）</b>。</p>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li>维数规则 <i>A</i><sub><i>m</i>×<i>n</i></sub><i>B</i><sub><i>n</i>×<i>p</i></sub> = <i>C</i><sub><i>m</i>×<i>p</i></sub> —— 判断题第一步永远先看形状。</li>
+          <li>矩阵乘法 <b>有结合律、有分配律，但没有交换律</b>。</li>
+          <li>可逆的定义要求 <b>双侧</b>：<i>AB</i> = <i>I</i> 且 <i>BA</i> = <i>I</i>，缺一不可。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li>理解“为什么 <i>AB</i> ≠ <i>BA</i>”不算异常 —— 乘法代表变换的复合，先旋转后拉伸与先拉伸后旋转结果不同。</li>
+          <li>为什么逆矩阵必须双侧定义（<i>AB</i> = <i>I</i> 不足以对非方阵定义逆）。</li>
+          <li>结合律的用处：把好几步行变换“打包”成一个矩阵 <i>E</i>（模块 4 的核心）。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>想当然地写 <i>AB</i> = <i>BA</i>，或随意交换两个因子的顺序。</li>
+          <li>把 (<i>AB</i>)<sup>2</sup> 展开成 <i>A</i><sup>2</sup><i>B</i><sup>2</sup> —— 错！(<i>AB</i>)<sup>2</sup> = <i>ABAB</i>，中间不能随意合并。</li>
+          <li>把 <i>A</i><sup>0</sup> = <i>I</i> 写成 <i>A</i><sup>0</sup> = 1（标量）。</li>
+          <li>只算出 <i>AB</i> = <i>I</i> 就宣布 <i>B</i> = <i>A</i><sup>−1</sup>；定义要求两侧都等于 <i>I</i>。</li>
+          <li>维数判断失误：只看“能不能乘”，忘记结果形状由外面的两个数决定。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m2q1">
+          <div class="qh"><span class="qno">Q2.1</span><span class="qtxt">判断下列矩阵乘法是否可行，并写出结果的形状。</span></div>
+          <div class="qbody">
+            <ol type="a" style="margin:.2em 0">
+              <li>(2×3) · (3×5)</li>
+              <li>(3×2) · (3×2)</li>
+              <li>(1×4) · (4×1)</li>
+              <li>(4×1) · (1×4)</li>
+              <li>(3×3) · (3×1)</li>
+              <li>(2×2) · (2×5)</li>
+            </ol>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m2q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：除 (b) 以外都可以乘；结果分别为 2×5、1×1、4×4、3×1、2×5</div>
+            <table class="tb">
+              <thead><tr><th style="width:12%">小题</th><th style="width:22%">中间维数</th><th>结论</th></tr></thead>
+              <tbody>
+                <tr><td>(a)</td><td>3 = 3 ✔</td><td>可乘，结果 <b>2×5</b></td></tr>
+                <tr><td>(b)</td><td>2 ≠ 3 ✘</td><td><b>不可乘</b>（左边列长 2，右边行长 3，不相等）</td></tr>
+                <tr><td>(c)</td><td>4 = 4 ✔</td><td>可乘，结果 <b>1×1</b>（就是点积，得到一个数）</td></tr>
+                <tr><td>(d)</td><td>1 = 1 ✔</td><td>可乘，结果 <b>4×4</b>（这是秩 1 矩阵 <i>ab</i><sup>T</sup>）</td></tr>
+                <tr><td>(e)</td><td>3 = 3 ✔</td><td>可乘，结果 <b>3×1</b>（矩阵乘向量）</td></tr>
+                <tr><td>(f)</td><td>2 = 2 ✔</td><td>可乘，结果 <b>2×5</b></td></tr>
+              </tbody>
+            </table>
+            <p class="note-inline">💡 对比 (c) 与 (d)：(1×4)(4×1) 得到 1×1 的<b>数</b>，(4×1)(1×4) 得到 4×4 的<b>秩 1 矩阵</b>。乘法的可交换性在这里彻底失效。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m2q2">
+          <div class="qh"><span class="qno">Q2.2</span><span class="qtxt">验证矩阵乘法不满足交换律，但满足分配律。</span></div>
+          <div class="qbody">
+            <div class="mrow">
+              <i>A</i> = <matrix data="1 2; 3 4"></matrix>
+              <i>B</i> = <matrix data="0 1; 1 0"></matrix>
+              <i>C</i> = <matrix data="1 -1; 0 2"></matrix>
+            </div>
+            <div class="note-inline">要求：(a) 分别求 <i>AB</i> 与 <i>BA</i>，说明为什么不满足交换律；(b) 验证 <i>A</i>(<i>B</i> + <i>C</i>) = <i>AB</i> + <i>AC</i>。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m2q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(a) <i>AB</i> = (2, 1; 4, 3)，<i>BA</i> = (3, 4; 1, 2)，两者不同；(b) 两边都等于 (3, 4; 7, 8)</div>
+            <p><b>(a)</b></p>
+            <div class="mrow">
+              <i>AB</i> = <matrix data="1 2; 3 4"></matrix><matrix data="0 1; 1 0"></matrix> = <matrix data="0+2 1+0; 0+4 3+0"></matrix> = <matrix data="2 1; 4 3"></matrix>
+            </div>
+            <div class="mrow">
+              <i>BA</i> = <matrix data="0 1; 1 0"></matrix><matrix data="1 2; 3 4"></matrix> = <matrix data="3 4; 1 2"></matrix>
+            </div>
+            <p><i>AB</i> ≠ <i>BA</i> ➜ 矩阵乘法<b>不满足交换律</b>。（这里 <i>B</i> 是交换两行的初等矩阵，它左乘与右乘的作用完全不同。）</p>
+            <p><b>(b)</b> <i>B</i> + <i>C</i> = <matrix data="1 0; 1 2"></matrix>，于是</p>
+            <div class="mrow">
+              <i>A</i>(<i>B</i> + <i>C</i>) = <matrix data="1 2; 3 4"></matrix><matrix data="1 0; 1 2"></matrix> = <matrix data="3 4; 7 8"></matrix>
+            </div>
+            <div class="mrow">
+              <i>AB</i> + <i>AC</i> = <matrix data="2 1; 4 3"></matrix> + <matrix data="1 3; 3 5"></matrix> = <matrix data="3 4; 7 8"></matrix> ✔
+            </div>
+            <p class="note-inline">💡 其中 <i>AC</i> = <matrix data="1*1+2*0 1*(-1)+2*2; 3*1+4*0 3*(-1)+4*2"></matrix> = <matrix data="1 3; 3 5"></matrix>。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="m3">
+    <div class="mod-head">
+      <span class="mod-num">03</span>
+      <h2>初等矩阵（左乘 = 行变换）</h2>
+      <span class="from">Elementary Matrix</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 核心结论：每一种初等行变换都可以写成矩阵乘法（左乘）。</b>以 <i>A</i> = <matrix data="x y; c d"></matrix> 为例（讲义 E.g.1）：</p>
+      <table class="tb">
+        <thead><tr><th style="width:24%">行变换</th><th style="width:38%">矩阵乘法写法</th><th>结果</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>缩放：第 1 行 ×2</td>
+            <td><matrix data="2 0; 0 1"></matrix><matrix data="x y; c d"></matrix></td>
+            <td><matrix data="2x 2y; c d"></matrix></td>
+          </tr>
+          <tr>
+            <td>行加：<i>r</i><sub>2</sub> + 2<i>r</i><sub>1</sub></td>
+            <td><matrix data="1 0; 2 1"></matrix><matrix data="x y; c d"></matrix></td>
+            <td><matrix data="x y; 2x+c 2y+d"></matrix></td>
+          </tr>
+          <tr>
+            <td>互换：<i>r</i><sub>1</sub> ↔ <i>r</i><sub>2</sub></td>
+            <td><matrix data="0 1; 1 0"></matrix><matrix data="x y; c d"></matrix></td>
+            <td><matrix data="c d; x y"></matrix></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><b>2) 初等矩阵的定义</b>：<b>初等矩阵 <i>E</i></b> 是一个 <i>n</i>×<i>n</i> 方阵，它与单位阵 <i>I<sub>n</sub></i> 只相差 <b>一次</b> 初等行变换。</p>
+      <ul>
+        <li><b>左乘（pre-multiplication）</b> 一个初等矩阵 ➜ 对矩阵做 <b>初等行变换</b>；</li>
+        <li><b>右乘（post-multiplication）</b> 一个初等矩阵 ➜ 对矩阵做 <b>初等列变换</b>。</li>
+      </ul>
+
+      <p><b>3) 三种初等矩阵</b></p>
+      <table class="tb">
+        <thead><tr><th style="width:30%">记号</th><th style="width:32%">作用</th><th>构造方式（在 <i>I<sub>n</sub></i> 上做同一操作）</th></tr></thead>
+        <tbody>
+          <tr><td><b><i>E</i>(<i>i</i>, <i>j</i>)</b></td><td>交换第 <i>i</i> 行与第 <i>j</i> 行</td><td>把 <i>I<sub>n</sub></i> 的第 <i>i</i> 行和第 <i>j</i> 行互换</td></tr>
+          <tr><td><b><i>E</i>(<i>i</i>(<i>k</i>))</b></td><td>第 <i>i</i> 行乘以 <i>k</i> ≠ 0</td><td>对角阵，除第 <i>i</i> 个对角元是 <i>k</i> 外全是 1</td></tr>
+          <tr><td><b><i>E</i>(<i>ij</i>(<i>k</i>))</b></td><td>把第 <i>j</i> 行的 <i>k</i> 倍加到第 <i>i</i> 行</td><td>把 <i>I<sub>n</sub></i> 的 (<i>i</i>, <i>j</i>) 位置改成 <i>k</i></td></tr>
+        </tbody>
+      </table>
+      <div class="mrow">
+        <i>E</i>(<i>i</i>,<i>j</i>) = <matrix data="1; ...; 0 1; ...; 1 0; ...; 1"></matrix>
+        &nbsp;&nbsp;
+        <i>E</i>(<i>i</i>(<i>k</i>)) = <matrix data="1; ...; 1; k; 1; ...; 1"></matrix>
+        &nbsp;&nbsp;
+        <i>E</i>(<i>ij</i>(<i>k</i>)) = <matrix data="1; ...; 1; ...; k 1; ...; 1"></matrix>
+      </div>
+
+      <p><b>4) 怎么求初等矩阵（How to Find an Elementary Matrix?）</b>：<b>对 <i>I<sub>n</sub></i> 做你想要的那次行变换</b> 即可。因为 <i>EI</i> = <i>E</i>，所以把 <i>E</i> 作用在 <i>I</i> 上得到的就是 <i>E</i> 本身（讲义 E.g.2）。</p>
+
+      <p><b>5) 初等矩阵的逆（Inverse of Elementary Matrix）</b>：初等矩阵都可逆，而且逆矩阵是 <b>同一类型</b> 的初等矩阵。</p>
+      <table class="tb">
+        <thead><tr><th style="width:34%">原矩阵</th><th>逆矩阵</th></tr></thead>
+        <tbody>
+          <tr><td><i>E</i>(<i>i</i>, <i>j</i>)　（交换 <i>i</i>、<i>j</i> 行）</td><td><i>E</i>(<i>i</i>, <i>j</i>)<sup>−1</sup> = <i>E</i>(<i>i</i>, <i>j</i>)　（<b>自己就是自己的逆</b>，做两次就还原）</td></tr>
+          <tr><td><i>E</i>(<i>i</i>(<i>k</i>))　（第 <i>i</i> 行乘 <i>k</i> ≠ 0）</td><td><i>E</i>(<i>i</i>(<i>k</i>))<sup>−1</sup> = <i>E</i>(<i>i</i>(1/<i>k</i>))</td></tr>
+          <tr><td><i>E</i>(<i>ij</i>(<i>k</i>))　（第 <i>j</i> 行的 <i>k</i> 倍加到第 <i>i</i> 行）</td><td><i>E</i>(<i>ij</i>(<i>k</i>))<sup>−1</sup> = <i>E</i>(<i>ij</i>(−<i>k</i>))</td></tr>
+        </tbody>
+      </table>
+      <p class="mnote">讲义例子：<i>E</i><sub>1</sub> = 交换第 2、3 行 ➜ <i>E</i><sub>1</sub><sup>−1</sup> 还是它自己；<i>E</i><sub>2</sub> = 第 2 行乘 −2 ➜ <i>E</i><sub>2</sub><sup>−1</sup> 是第 2 行乘 −1/2；<i>E</i><sub>3</sub> = 第 1 行的 2 倍加到第 3 行 ➜ <i>E</i><sub>3</sub><sup>−1</sup> 是加 −2 倍。</p>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li><b>左乘 <i>E</i> = 行变换，右乘 <i>E</i> = 列变换</b> —— 这是本章最核心的一句话。</li>
+          <li>三种初等矩阵的记号与形状：<i>E</i>(<i>i</i>,<i>j</i>)、<i>E</i>(<i>i</i>(<i>k</i>))、<i>E</i>(<i>ij</i>(<i>k</i>))，且都是在 <i>I<sub>n</sub></i> 上做一次同样的操作得到。</li>
+          <li>初等矩阵都可逆，逆仍是同类型初等矩阵（三条公式）。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li>分清 <i>E</i>(<i>i</i>(<i>k</i>)) 与 <i>E</i>(<i>ij</i>(<i>k</i>))：前者只有 <b>一个对角元</b> 变成 <i>k</i>，后者是在 <b>非对角位置</b> 放 <i>k</i>。</li>
+          <li>下标方向：<i>E</i>(<i>ij</i>(<i>k</i>)) 是「第 <i>j</i> 行的 <i>k</i> 倍加到第 <i>i</i> 行」，即 <i>k</i> 落在第 <i>i</i> 行、第 <i>j</i> 列。</li>
+          <li>“为什么左乘是行变换”：把 <i>E</i> 按行分块，<i>EA</i> 的每一行都是 <i>A</i> 的行的线性组合。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>把左乘 / 右乘的效果记反：<b>左乘改行、右乘改列</b>。</li>
+          <li>忘记 <i>k</i> ≠ 0 的要求（缩放倍数为 0 的矩阵不是初等矩阵）。</li>
+          <li><i>E</i>(<i>i</i>(<i>k</i>))<sup>−1</sup> 写成 <i>E</i>(<i>i</i>(−<i>k</i>))（那是行加型逆的形式）—— 应该取 <b>倒数</b> 1/<i>k</i>。</li>
+          <li>用「对 <i>A</i> 做行变换」的方式求 <i>E</i>，而不是「对 <i>I</i> 做行变换」。</li>
+          <li>忘记 <i>E</i> 是 <b>方阵</b>（<i>n</i>×<i>n</i>），它的阶数要和被乘矩阵的行数匹配。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m3q1">
+          <div class="qh"><span class="qno">Q3.1</span><span class="qtxt">写出 3×3 的初等矩阵，并用其中一个做一次左乘验证。</span></div>
+          <div class="qbody">
+            <div class="note-inline">要求：(a) 交换第 1、3 行；(b) 第 2 行乘以 −2；(c) 把第 1 行的 3 倍加到第 3 行。最后用 (c) 得到的矩阵左乘 <i>A</i> = <matrix data="1 2; 3 4; 5 6"></matrix>，写出结果。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m3q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(a) <i>E</i>(1,3)、(b) <i>E</i>(2(−2))、(c) <i>E</i>(31(3))；左乘结果为 (1, 2; 3, 4; 8, 12)</div>
+            <p>先把 <i>I</i><sub>3</sub> 写出来，再对它做一次目标行变换即可得到 <i>E</i>：</p>
+            <div class="mrow">
+              <i>I</i><sub>3</sub> = <matrix data="1 0 0; 0 1 0; 0 0 1"></matrix>
+            </div>
+            <p><b>(a)</b> 交换第 1、3 行：</p>
+            <div class="mrow"><i>E</i>(1,3) = <matrix data="0 0 1; 0 1 0; 1 0 0"></matrix></div>
+            <p><b>(b)</b> 第 2 行乘 −2：</p>
+            <div class="mrow"><i>E</i>(2(−2)) = <matrix data="1 0 0; 0 -2 0; 0 0 1"></matrix></div>
+            <p><b>(c)</b> 第 1 行的 3 倍加到第 3 行（<i>k</i> = 3 放在第 3 行第 1 列）：</p>
+            <div class="mrow"><i>E</i>(31(3)) = <matrix data="1 0 0; 0 1 0; 3 0 1"></matrix></div>
+            <p><b>左乘验证</b>：</p>
+            <div class="mrow">
+              <matrix data="1 0 0; 0 1 0; 3 0 1"></matrix><matrix data="1 2; 3 4; 5 6"></matrix>
+              = <matrix data="1 2; 3 4; 3·1+5 3·2+6"></matrix>
+              = <matrix data="1 2; 3 4; 8 12"></matrix> ✔
+            </div>
+            <p>第 3 行确实变成了「3×(第 1 行) + 第 3 行」，前两行不变 —— 这正是左乘初等矩阵的效果。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m3q2">
+          <div class="qh"><span class="qno">Q3.2</span><span class="qtxt">求初等矩阵的逆，并说明理由。</span></div>
+          <div class="qbody">
+            <div class="note-inline">对 Q3.1 中的三个初等矩阵，分别写出 <i>E</i><sup>−1</sup>，并说明为什么它们仍然是同一类型的初等矩阵。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m3q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：<i>E</i>(1,3)<sup>−1</sup> = <i>E</i>(1,3)；<i>E</i>(2(−2))<sup>−1</sup> = <i>E</i>(2(−1/2))；<i>E</i>(31(3))<sup>−1</sup> = <i>E</i>(31(−3))</div>
+            <div class="mrow">
+              <i>E</i>(1,3)<sup>−1</sup> = <matrix data="0 0 1; 0 1 0; 1 0 0"></matrix>
+              &nbsp;&nbsp;
+              <i>E</i>(2(−2))<sup>−1</sup> = <matrix data="1 0 0; 0 -1/2 0; 0 0 1"></matrix>
+              &nbsp;&nbsp;
+              <i>E</i>(31(3))<sup>−1</sup> = <matrix data="1 0 0; 0 1 0; -3 0 1"></matrix>
+            </div>
+            <p><b>理由</b>：逆操作就是把原操作“撤销”，而撤销一步初等行变换仍然是一步初等行变换，所以逆矩阵仍是初等矩阵，且类型相同：</p>
+            <ul>
+              <li>互换两次回到原位 ➜ <i>E</i>(<i>i</i>,<i>j</i>)<sup>−1</sup> = <i>E</i>(<i>i</i>,<i>j</i>)（自逆）。</li>
+              <li>乘 <i>k</i> 的逆是乘 1/<i>k</i> ➜ <i>E</i>(<i>i</i>(<i>k</i>))<sup>−1</sup> = <i>E</i>(<i>i</i>(1/<i>k</i>))。</li>
+              <li>加 <i>k</i> 倍的逆是加 −<i>k</i> 倍 ➜ <i>E</i>(<i>ij</i>(<i>k</i>))<sup>−1</sup> = <i>E</i>(<i>ij</i>(−<i>k</i>))。</li>
+            </ul>
+            <p class="note-inline">💡 顺带结论：初等矩阵<b>永远可逆</b>（因为 <i>k</i> ≠ 0，1/<i>k</i> 一定存在），这是后面「<i>A</i> ~ <i>I</i> ⇔ <i>A</i> 可逆」的基石。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="m4">
+    <div class="mod-head">
+      <span class="mod-num">04</span>
+      <h2>用初等矩阵表示消元过程</h2>
+      <span class="from">RREF v.s. Elementary Matrix</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 把整串消元“打包”成一个矩阵</b>：设 <i>A</i> 是 <i>m</i>×<i>n</i> 矩阵，其 RREF 为 <i>R</i>，则存在 <i>k</i> 个初等矩阵使得</p>
+      <div class="mrow">
+        <i>E<sub>k</sub></i> ⋯ <i>E</i><sub>2</sub><i>E</i><sub>1</sub><i>A</i> = <i>R</i>
+        <span class="mnote">（每一步行变换 = 左乘一个初等矩阵）</span>
+      </div>
+      <p>于是存在一个 <b>可逆的 <i>m</i>×<i>m</i> 矩阵 <i>E</i></b> 使得</p>
+      <div class="mrow">
+        <i>EA</i> = <i>R</i>，其中 <i>E</i> = <i>E<sub>k</sub></i> ⋯ <i>E</i><sub>1</sub>，&nbsp; <i>E</i><sup>−1</sup> = <i>E</i><sub>1</sub><sup>−1</sup> ⋯ <i>E<sub>k</sub></i><sup>−1</sup>
+        <span class="mnote">（逆序 + 逐个取逆）</span>
+      </div>
+      <p class="mnote">为什么 <i>E</i> 可逆：初等矩阵都可逆，<b>可逆矩阵的乘积仍可逆</b>（见模块 5 的性质 ④）。</p>
+
+      <p><b>2) 讲义 E.g.3：用 RREF 解方程组</b></p>
+      <div class="mrow">
+        <span><i>x</i> + 2<i>y</i> + <i>z</i> = 2</span>，<span>&nbsp;3<i>x</i> + 8<i>y</i> + <i>z</i> = 12</span>，<span>&nbsp;4<i>y</i> + <i>z</i> = 2</span>
+      </div>
+      <div class="flow">
+        <div class="step">[<i>A</i>|<i>b</i>] = <matrix data="1 2 1 | 2; 3 8 1 | 12; 0 4 1 | 2"></matrix>
+          <span class="mnote">　<i>r</i><sub>2</sub> + <i>r</i><sub>1</sub>×(−3)</span></div>
+        <div class="arrow">↓</div>
+        <div class="step"><matrix data="1 2 1 | 2; 0 2 -2 | 6; 0 4 1 | 2"></matrix>
+          <span class="mnote">　<i>r</i><sub>3</sub> − <i>r</i><sub>2</sub>×2</span></div>
+        <div class="arrow">↓</div>
+        <div class="step"><matrix data="1 2 1 | 2; 0 2 -2 | 6; 0 0 5 | -10"></matrix> = [<i>U</i>|<i>b</i>*]
+          <span class="mnote">　已化成阶梯形</span></div>
+        <div class="arrow">↓ <span class="mnote">缩放：<i>r</i><sub>2</sub>×(1/2)，<i>r</i><sub>3</sub>×(1/5)</span></div>
+        <div class="step"><matrix data="1 2 1 | 2; 0 1 -1 | 3; 0 0 1 | -2"></matrix>
+          <span class="mnote">　<i>r</i><sub>2</sub> + <i>r</i><sub>3</sub>，<i>r</i><sub>1</sub> − <i>r</i><sub>3</sub></span></div>
+        <div class="arrow">↓</div>
+        <div class="step"><matrix data="1 2 0 | 4; 0 1 0 | 1; 0 0 1 | -2"></matrix>
+          <span class="mnote">　<i>r</i><sub>1</sub> − 2<i>r</i><sub>2</sub></span></div>
+        <div class="arrow">↓</div>
+        <div class="step"><matrix data="1 0 0 | 2; 0 1 0 | 1; 0 0 1 | -2" pivot="1,2,3"></matrix> = [<i>R</i>|<i>b</i>′]
+          <span class="mnote">　直接读出解：<matrix data="x; y; z"></matrix> = <i>b</i>′ = <matrix data="2; 1; -2"></matrix></span></div>
+      </div>
+
+      <p><b>3) 同一过程用初等矩阵写出来</b></p>
+      <div class="mrow">
+        <i>E</i><sub>1</sub> = <matrix data="1 0 0; -3 1 0; 0 0 1"></matrix>
+        <i>E</i><sub>2</sub> = <matrix data="1 0 0; 0 1 0; 0 -2 1"></matrix>
+        <span class="mnote">⇒ <i>E</i><sub>2</sub><i>E</i><sub>1</sub>[<i>A</i>|<i>b</i>] = [<i>U</i>|<i>b</i>*]</span>
+      </div>
+      <div class="mrow">
+        <i>E</i><sub>3</sub> = <matrix data="1 0 0; 0 1/2 0; 0 0 1"></matrix>
+        <i>E</i><sub>4</sub> = <matrix data="1 0 0; 0 1 0; 0 0 1/5"></matrix>
+        <i>E</i><sub>5</sub> = <matrix data="1 0 0; 0 1 1; 0 0 1"></matrix>
+        <i>E</i><sub>6</sub> = <matrix data="1 0 -1; 0 1 0; 0 0 1"></matrix>
+        <i>E</i><sub>7</sub> = <matrix data="1 -2 0; 0 1 0; 0 0 1"></matrix>
+      </div>
+      <div class="mrow">
+        <i>E</i><sub>7</sub><i>E</i><sub>6</sub><i>E</i><sub>5</sub><i>E</i><sub>4</sub><i>E</i><sub>3</sub>[<i>U</i>|<i>b</i>*] = [<i>R</i>|<i>b</i>′]
+        <span class="mnote">，令 <i>E</i> = <i>E</i><sub>7</sub> ⋯ <i>E</i><sub>1</sub>，则 <i>E</i>[<i>A</i>|<i>b</i>] = [<i>R</i>|<i>b</i>′]，且 [<i>A</i>|<i>b</i>] = <i>E</i><sup>−1</sup>[<i>R</i>|<i>b</i>′]</span>
+      </div>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li>把「一串行变换」翻译成「一串初等矩阵的左乘」：<i>E<sub>k</sub></i>⋯<i>E</i><sub>1</sub><i>A</i> = <i>R</i>。</li>
+          <li>合并成一个可逆矩阵 <i>E</i>：<i>EA</i> = <i>R</i>，且 <i>E</i><sup>−1</sup> = <i>E</i><sub>1</sub><sup>−1</sup>⋯<i>E<sub>k</sub></i><sup>−1</sup>（<b>逆序取逆</b>）。</li>
+          <li>能对照讲义把 E.g.3 的每一步写成 <i>E<sub>i</sub></i>，并检查乘法顺序。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li><b>顺序不能反</b>：先做 <i>E</i><sub>1</sub> 再做 <i>E</i><sub>2</sub>，合起来是 <i>E</i><sub>2</sub><i>E</i><sub>1</sub>（后做的写在<b>左边</b>）。</li>
+          <li>取逆时既要<b>逆序</b>又要<b>逐个取逆</b>：(<i>E</i><sub>2</sub><i>E</i><sub>1</sub>)<sup>−1</sup> = <i>E</i><sub>1</sub><sup>−1</sup><i>E</i><sub>2</sub><sup>−1</sup>。</li>
+          <li>理解 <i>E</i> 是「把 <i>A</i> 变成 RREF 的机器」，<i>E</i><sup>−1</sup> 是「把 RREF 还原回 <i>A</i> 的机器」。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>把 <i>E</i><sub>1</sub><i>E</i><sub>2</sub> 与 <i>E</i><sub>2</sub><i>E</i><sub>1</sub> 弄反（矩阵乘法不可交换！）。</li>
+          <li>把 (<i>E</i><sub>2</sub><i>E</i><sub>1</sub>)<sup>−1</sup> 写成 <i>E</i><sub>2</sub><sup>−1</sup><i>E</i><sub>1</sub><sup>−1</sup>（顺序没有反转）。</li>
+          <li>以为 <i>E</i> 也可以「右乘」得到 RREF —— 右乘对应列变换，会把 RREF 破坏掉。</li>
+          <li>缩放型初等矩阵取逆时忘记取<b>倒数</b>：<i>E</i><sub>3</sub> = diag(1, 1/2, 1) 的逆是 diag(1, 2, 1)。</li>
+          <li>合并矩阵时忘记「后面的 <i>E</i> 作用在<b>已经变过的行</b>上」，从而算错合并后的系数。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m4q1">
+          <div class="qh"><span class="qno">Q4.1</span><span class="qtxt">用初等矩阵验证消元的第一步与第二步。</span></div>
+          <div class="qbody">
+            <p>对讲义 E.g.3 的 [<i>A</i>|<i>b</i>] = <matrix data="1 2 1 | 2; 3 8 1 | 12; 0 4 1 | 2"></matrix>，给定</p>
+            <div class="mrow">
+              <i>E</i><sub>1</sub> = <matrix data="1 0 0; -3 1 0; 0 0 1"></matrix>
+              <i>E</i><sub>2</sub> = <matrix data="1 0 0; 0 1 0; 0 -2 1"></matrix>
+            </div>
+            <div class="note-inline">要求：(a) 说明 <i>E</i><sub>1</sub>、<i>E</i><sub>2</sub> 各代表哪一步行变换；(b) 计算合并矩阵 <i>E</i><sub>2</sub><i>E</i><sub>1</sub>；(c) 验证 <i>E</i><sub>2</sub><i>E</i><sub>1</sub>[<i>A</i>|<i>b</i>] = [<i>U</i>|<i>b</i>*]。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m4q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(b) <i>E</i><sub>2</sub><i>E</i><sub>1</sub> = (1, 0, 0; −3, 1, 0; <b>6, −2, 1</b>)；(c) 结果 = (1, 2, 1 | 2; 0, 2, −2 | 6; 0, 0, 5 | −10) ✔</div>
+            <p><b>(a)</b> <i>E</i><sub>1</sub> 表示 <b><i>r</i><sub>2</sub> + <i>r</i><sub>1</sub>×(−3)</b>（把第 1 行的 −3 倍加到第 2 行）；<i>E</i><sub>2</sub> 表示 <b><i>r</i><sub>3</sub> − <i>r</i><sub>2</sub>×2</b>（把第 2 行的 −2 倍加到第 3 行）。</p>
+            <p><b>(b)</b> 先做 <i>E</i><sub>1</sub> 再做 <i>E</i><sub>2</sub>，所以合起来是 <i>E</i><sub>2</sub><i>E</i><sub>1</sub>。逐行计算：</p>
+            <div class="mrow">
+              <i>E</i><sub>2</sub><i>E</i><sub>1</sub> = <matrix data="1 0 0; 0 1 0; 0 -2 1"></matrix><matrix data="1 0 0; -3 1 0; 0 0 1"></matrix>
+              = <matrix data="1 0 0; -3 1 0; 6 -2 1"></matrix>
+            </div>
+            <p class="mnote">第 3 行 = 0×(第 1 行) + (−2)×(第 2 行) + 1×(第 3 行) = (−2)·(−3, 1, 0) + (0, 0, 1) = <b>(6, −2, 1)</b>。</p>
+            <p class="mnote">⚠️ 这里的 6 和 −2 不是「抄错」：<i>E</i><sub>2</sub> 要作用在 <b><i>E</i><sub>1</sub> 作用之后</b>的第 2 行上，所以它会同时带上 <i>E</i><sub>1</sub> 里 −3 的影响。</p>
+            <p><b>(c)</b> 用合并矩阵左乘 [<i>A</i>|<i>b</i>]：</p>
+            <div class="mrow">
+              <matrix data="1 0 0; -3 1 0; 6 -2 1"></matrix><matrix data="1 2 1 | 2; 3 8 1 | 12; 0 4 1 | 2"></matrix>
+              = <matrix data="1 2 1 | 2; 0 2 -2 | 6; 0 0 5 | -10"></matrix> ✔
+            </div>
+            <ul>
+              <li>第 1 行：(1, 2, 1 | 2)</li>
+              <li>第 2 行：−3·(1, 2, 1 | 2) + (3, 8, 1 | 12) = (0, 2, −2 | 6)</li>
+              <li>第 3 行：6·(1, 2, 1 | 2) − 2·(3, 8, 1 | 12) + (0, 4, 1 | 2) = (6−6+0, 12−16+4, 6−2+1 | 12−24+2) = (0, 0, 5 | −10)</li>
+            </ul>
+            <p>结果正是 [<i>U</i>|<i>b</i>*]，说明「两步消元 = 左乘 <i>E</i><sub>2</sub><i>E</i><sub>1</sub>」完全成立。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m4q2">
+          <div class="qh"><span class="qno">Q4.2</span><span class="qtxt">用 RREF 解出方程组，并说明 <i>E</i> 与 <i>E</i><sup>−1</sup> 的含义。</span></div>
+          <div class="qbody">
+            <p><i>x</i> + 2<i>y</i> + <i>z</i> = 2；&nbsp; 3<i>x</i> + 8<i>y</i> + <i>z</i> = 12；&nbsp; 4<i>y</i> + <i>z</i> = 2</p>
+            <div class="note-inline">要求：(a) 写出 [<i>A</i>|<i>b</i>] 的 RREF 并给出解；(b) 若 <i>E</i> = <i>E</i><sub>7</sub>⋯<i>E</i><sub>1</sub>，说明 <i>E</i> 与 <i>E</i><sup>−1</sup> 分别代表什么。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m4q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(<i>x</i>, <i>y</i>, <i>z</i>) = (2, 1, −2)</div>
+            <p><b>(a)</b> 消元过程（同讲义 E.g.3）：</p>
+            <div class="mrow">
+              <matrix data="1 2 1 | 2; 3 8 1 | 12; 0 4 1 | 2"></matrix>
+              ⟶ <matrix data="1 2 1 | 2; 0 2 -2 | 6; 0 4 1 | 2"></matrix>
+              ⟶ <matrix data="1 2 1 | 2; 0 2 -2 | 6; 0 0 5 | -10"></matrix>
+            </div>
+            <div class="mrow">
+              ⟶ <matrix data="1 2 1 | 2; 0 1 -1 | 3; 0 0 1 | -2"></matrix>
+              ⟶ <matrix data="1 2 0 | 4; 0 1 0 | 1; 0 0 1 | -2"></matrix>
+              ⟶ <matrix data="1 0 0 | 2; 0 1 0 | 1; 0 0 1 | -2"></matrix>
+            </div>
+            <p>所以 <matrix data="x; y; z"></matrix> = <i>b</i>′ = <matrix data="2; 1; -2"></matrix>。</p>
+            <p><b>检验</b>：2 + 2(1) + (−2) = 2 ✔；3(2) + 8(1) + (−2) = 6 + 8 − 2 = 12 ✔；4(1) + (−2) = 2 ✔</p>
+            <p><b>(b)</b> <i>E</i> = <i>E</i><sub>7</sub>⋯<i>E</i><sub>1</sub> 是「把 [<i>A</i>|<i>b</i>] 一路化成 [<i>R</i>|<i>b</i>′] 的那台机器」，即 <i>E</i>[<i>A</i>|<i>b</i>] = [<i>R</i>|<i>b</i>′]；</p>
+            <p><i>E</i><sup>−1</sup> = <i>E</i><sub>1</sub><sup>−1</sup>⋯<i>E</i><sub>7</sub><sup>−1</sup> 是「把 [<i>R</i>|<i>b</i>′] 还原回 [<i>A</i>|<i>b</i>] 的那台机器」，即 [<i>A</i>|<i>b</i>] = <i>E</i><sup>−1</sup>[<i>R</i>|<i>b</i>′]。<b>两者都可逆、互为逆，且顺序相反。</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+<section class="card" id="m5">
+    <div class="mod-head">
+      <span class="mod-num">05</span>
+      <h2>逆矩阵的性质与定理 3.1</h2>
+      <span class="from">Inverse of Matrix / Theorem 3.1</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 逆矩阵的五条性质</b></p>
+      <table class="tb">
+        <thead><tr><th style="width:24%">性质</th><th>内容与理由</th></tr></thead>
+        <tbody>
+          <tr><td>① 非方阵不可逆</td><td>定义里两个单位阵必须同阶：若 <i>A</i><sub><i>n</i>×<i>m</i></sub><i>B</i><sub><i>m</i>×<i>n</i></sub> = <i>I</i><sub><i>n</i>×<i>n</i></sub> 且 <i>B</i><sub><i>m</i>×<i>n</i></sub><i>A</i><sub><i>n</i>×<i>m</i></sub> = <i>I</i><sub><i>m</i>×<i>m</i></sub>，两个单位阵阶数不同，矛盾。</td></tr>
+          <tr><td>② 互为逆</td><td>若 <i>B</i> 是 <i>A</i> 的逆，则 <i>A</i> 也是 <i>B</i> 的逆（由 <i>AB</i> = <i>BA</i> = <i>I</i> 的定义对称可得）。</td></tr>
+          <tr><td>③ 不是所有方阵都可逆</td><td>不可逆的方阵称为 <b>奇异矩阵（singular）</b>。反例 <i>A</i> = <matrix data="1 3; 0 0"></matrix>：<matrix data="1 3; 0 0"></matrix><matrix data="a b; c d"></matrix> = <matrix data="a+3c b+3d; 0 0"></matrix> ≠ <i>I</i>。</td></tr>
+          <tr><td>④ 乘积的逆</td><td><i>A</i>、<i>B</i> 都是 <i>n</i>×<i>n</i> 可逆 ⇒ <i>AB</i> 可逆，且 <b>(<i>AB</i>)<sup>−1</sup> = <i>B</i><sup>−1</sup><i>A</i><sup>−1</sup></b>（<b>顺序反转</b>）。<br>
+              推广（引理）：(<i>A</i><sub>1</sub><i>A</i><sub>2</sub>⋯<i>A<sub>k</sub></i>)<sup>−1</sup> = <i>A<sub>k</sub></i><sup>−1</sup>⋯<i>A</i><sub>2</sub><sup>−1</sup><i>A</i><sub>1</sub><sup>−1</sup>。</td></tr>
+          <tr><td>⑤ 转置的逆</td><td><i>A</i> 可逆 ⇒ <i>A</i><sup>T</sup> 也可逆，且 <b>(<i>A</i><sup>T</sup>)<sup>−1</sup> = (<i>A</i><sup>−1</sup>)<sup>T</sup></b>。</td></tr>
+        </tbody>
+      </table>
+      <p><b>④ 的验证</b>：<i>B</i><sup>−1</sup><i>A</i><sup>−1</sup> · <i>AB</i> = <i>B</i><sup>−1</sup>(<i>A</i><sup>−1</sup><i>A</i>)<i>B</i> = <i>B</i><sup>−1</sup><i>B</i> = <i>I</i>；另一侧同理。</p>
+      <p><b>⑤ 的证明</b>：用 (<i>AB</i>)<sup>T</sup> = <i>B</i><sup>T</sup><i>A</i><sup>T</sup>。由 <i>A</i><sup>−1</sup><i>A</i> = <i>I</i> 取转置得 <i>A</i><sup>T</sup>(<i>A</i><sup>−1</sup>)<sup>T</sup> = <i>I</i>；由 <i>AA</i><sup>−1</sup> = <i>I</i> 取转置得 (<i>A</i><sup>−1</sup>)<sup>T</sup><i>A</i><sup>T</sup> = <i>I</i>。两侧都是 <i>I</i> ⇒ (<i>A</i><sup>T</sup>)<sup>−1</sup> = (<i>A</i><sup>−1</sup>)<sup>T</sup>。</p>
+
+      <p><b>2) 逆的唯一性（Uniqueness）</b>：若 <i>B</i>、<i>C</i> 都是 <i>A</i> 的逆，则</p>
+      <div class="mrow">
+        <i>B</i> = <i>BI</i> = <i>B</i>(<i>AC</i>) = (<i>BA</i>)<i>C</i> = <i>IC</i> = <i>C</i>
+        <span class="mnote">（只用到结合律与 <i>AB</i> = <i>BA</i> = <i>I</i>）</span>
+      </div>
+      <p class="mnote">所以逆矩阵是唯一的，记号 <i>A</i><sup>−1</sup> 才不会歧义。</p>
+
+      <p><b>3) 定理 3.1</b>：若 <i>A</i> 是 <b>可逆的 <i>n</i>×<i>n</i> 矩阵</b>，则对每个 <i>b</i> ∈ ℝ<sup><i>n</i></sup>，方程 <i>Ax</i> = <i>b</i> 有<b>唯一解</b></p>
+      <div class="mrow"><i>x</i> = <i>A</i><sup>−1</sup><i>b</i></div>
+      <div class="flow">
+        <div class="step"><b>存在性</b>：把 <i>x</i> = <i>A</i><sup>−1</sup><i>b</i> 代进去，<i>Ax</i> = <i>A</i>(<i>A</i><sup>−1</sup><i>b</i>) = (<i>AA</i><sup>−1</sup>)<i>b</i> = <i>Ib</i> = <i>b</i> ✔ 所以它是一个解。</div>
+        <div class="arrow">↓</div>
+        <div class="step"><b>唯一性</b>：设 <i>y</i> 是任意解，即 <i>Ay</i> = <i>b</i>。两边左乘 <i>A</i><sup>−1</sup>：<i>A</i><sup>−1</sup><i>Ay</i> = <i>A</i><sup>−1</sup><i>b</i> ⇒ <i>y</i> = <i>A</i><sup>−1</sup><i>b</i> = <i>x</i>。任何解都等于它 ✔</div>
+      </div>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li>五条性质，尤其是 <b>(<i>AB</i>)<sup>−1</sup> = <i>B</i><sup>−1</sup><i>A</i><sup>−1</sup></b> 与 <b>(<i>A</i><sup>T</sup>)<sup>−1</sup> = (<i>A</i><sup>−1</sup>)<sup>T</sup></b>。</li>
+          <li>唯一性证明的标准三步：<i>B</i> → <i>BI</i> → <i>B</i>(<i>AC</i>) → (<i>BA</i>)<i>C</i> → <i>IC</i> → <i>C</i>。</li>
+          <li>定理 3.1：<b>可逆 ⇒ 对每个 <i>b</i> 都有唯一解 <i>x</i> = <i>A</i><sup>−1</sup><i>b</i></b>（存在性 + 唯一性两段）。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li>为什么乘积取逆要 <b>反转顺序</b>：“先穿袜子再穿鞋”的逆是“先脱鞋再脱袜子”。</li>
+          <li>定理 3.1 的证明要写成两段（存在 + 唯一），只写一段会丢分。</li>
+          <li>为什么非方阵不能有逆：两个单位阵的阶数必须同时成立，而这会推出矛盾。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>(<i>AB</i>)<sup>−1</sup> 写成 <i>A</i><sup>−1</sup><i>B</i><sup>−1</sup> —— 顺序错了，必须反转。</li>
+          <li>以为“有 <i>AB</i> = <i>I</i> 就一定有 <i>BA</i> = <i>I</i>”（对非方阵不成立；方阵情形属于可逆矩阵定理的内容）。</li>
+          <li>把 <i>A</i><sup>−1</sup> 与 <i>A</i><sup>T</sup> 混用，写成 (<i>AB</i>)<sup>−1</sup> = <i>A</i><sup>−1</sup><i>B</i><sup>−1</sup> 或把 (<i>A</i><sup>T</sup>)<sup>−1</sup> 写成 <i>A</i><sup>−T</sup> 就不写了。</li>
+          <li>默认“方阵一定可逆”（<matrix data="1 3; 0 0"></matrix> 就是反例）。</li>
+          <li>定理 3.1 里忘记前提是 <b><i>A</i> 可逆</b>。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m5q1">
+          <div class="qh"><span class="qno">Q5.1</span><span class="qtxt">判断下列说法的正误，并给出依据。</span></div>
+          <div class="qbody">
+            <ol type="a" style="margin:.2em 0">
+              <li>非方阵不可能可逆。</li>
+              <li>若 <i>A</i> 可逆，则 <i>A</i><sup>2</sup> 也可逆，且 (<i>A</i><sup>2</sup>)<sup>−1</sup> = (<i>A</i><sup>−1</sup>)<sup>2</sup>。</li>
+              <li>若 <i>A</i>、<i>B</i> 都是 <i>n</i>×<i>n</i> 可逆矩阵，则 (<i>AB</i>)<sup>−1</sup> = <i>A</i><sup>−1</sup><i>B</i><sup>−1</sup>。</li>
+              <li>若 <i>A</i> 可逆，则 (<i>A</i><sup>T</sup>)<sup>−1</sup> = (<i>A</i><sup>−1</sup>)<sup>T</sup>。</li>
+              <li>所有方阵都可逆。</li>
+            </ol>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m5q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(a) 对　(b) 对　(c) 错　(d) 对　(e) 错</div>
+            <ul>
+              <li><b>(a) 对</b>。逆的定义要求 <i>AB</i> = <i>BA</i> = <i>I</i>，两个 <i>I</i> 的阶数必须相同，这迫使 <i>A</i>、<i>B</i> 同阶，即 <i>A</i> 必须是方阵。</li>
+              <li><b>(b) 对</b>。(<i>A</i><sup>2</sup>)<sup>−1</sup> = (<i>AA</i>)<sup>−1</sup> = <i>A</i><sup>−1</sup><i>A</i><sup>−1</sup> = (<i>A</i><sup>−1</sup>)<sup>2</sup>。<br>
+                <span class="mnote">例：<i>A</i> = <matrix data="1 2; 3 4"></matrix>，<i>A</i><sup>2</sup> = <matrix data="7 10; 15 22"></matrix>，(<i>A</i><sup>2</sup>)<sup>−1</sup> = <matrix data="11/2 -5/2; -15/4 7/4"></matrix>；而 <i>A</i><sup>−1</sup> = <matrix data="-2 1; 3/2 -1/2"></matrix>，(<i>A</i><sup>−1</sup>)<sup>2</sup> = <matrix data="11/2 -5/2; -15/4 7/4"></matrix> ✔ 两者相等。</span></li>
+              <li><b>(c) 错</b>。正确公式是 (<i>AB</i>)<sup>−1</sup> = <i>B</i><sup>−1</sup><i>A</i><sup>−1</sup>（顺序反转）。验证：<i>B</i><sup>−1</sup><i>A</i><sup>−1</sup>·<i>AB</i> = <i>B</i><sup>−1</sup>(<i>A</i><sup>−1</sup><i>A</i>)<i>B</i> = <i>I</i>。</li>
+              <li><b>(d) 对</b>。这是性质 ⑤，用 (<i>AB</i>)<sup>T</sup> = <i>B</i><sup>T</sup><i>A</i><sup>T</sup> 对 <i>A</i><sup>−1</sup><i>A</i> = <i>I</i> 与 <i>AA</i><sup>−1</sup> = <i>I</i> 分别取转置即可证明。</li>
+              <li><b>(e) 错</b>。反例：<i>A</i> = <matrix data="1 3; 0 0"></matrix> 是方阵但不可逆（<b>奇异</b>），因为无论 <i>B</i> 怎么取，<i>AB</i> 的第 2 行永远是 (0, 0)，不可能等于 <i>I</i>。</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m5q2">
+          <div class="qh"><span class="qno">Q5.2</span><span class="qtxt">证明逆矩阵唯一，并举出一个奇异矩阵的反例。</span></div>
+          <div class="qbody">
+            <div class="note-inline">(a) 设 <i>B</i>、<i>C</i> 都是 <i>A</i> 的逆，证明 <i>B</i> = <i>C</i>；(b) 举一个 2×2 的非零奇异矩阵，并说明它为什么不可逆。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m5q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(a) 见下方证明；(b) 例如 A = (1, 3; 0, 0)，因为 AB 的第二行恒为零</div>
+            <p><b>(a) 唯一性证明</b>（讲义原文）：已知 <i>AB</i> = <i>BA</i> = <i>I</i> 且 <i>AC</i> = <i>CA</i> = <i>I</i>，则</p>
+            <div class="mrow">
+              <i>B</i> = <i>BI</i> = <i>B</i>(<i>AC</i>) = (<i>BA</i>)<i>C</i> = <i>IC</i> = <i>C</i>
+            </div>
+            <p>每一步的依据：第 1 步用单位阵性质；第 2 步用 <i>AC</i> = <i>I</i>；第 3 步用<b>结合律</b>；第 4 步用 <i>BA</i> = <i>I</i>；第 5 步再用单位阵性质。所以 <i>B</i> = <i>C</i>，逆唯一。</p>
+            <p><b>(b) 反例</b>：取 <i>A</i> = <matrix data="1 3; 0 0"></matrix>（非零方阵）。设任意 2×2 矩阵 <i>B</i> = <matrix data="a b; c d"></matrix>，则</p>
+            <div class="mrow">
+              <i>AB</i> = <matrix data="1 3; 0 0"></matrix><matrix data="a b; c d"></matrix> = <matrix data="a+3c b+3d; 0 0"></matrix> ≠ <matrix data="1 0; 0 1"></matrix>
+            </div>
+            <p>无论 <i>B</i> 是什么，<i>AB</i> 的第 2 行都是 (0, 0)，永远不可能等于 <i>I</i><sub>2</sub> ➜ <i>A</i> 不可逆，即 <b>奇异矩阵</b>。</p>
+            <p class="note-inline">💡 顺带用 2×2 公式验证：det <i>A</i> = 1·0 − 3·0 = 0，凡是 det = 0 的 2×2 矩阵都不可逆（模块 6）。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="m6">
+    <div class="mod-head">
+      <span class="mod-num">06</span>
+      <h2>求逆算法与可逆矩阵定理</h2>
+      <span class="from">Algorithm for Finding A<sup>−1</sup> / Invertible Matrix Theorem</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+
+      <h3 class="sec">知识点</h3>
+      <p><b>1) 2×2 的逆矩阵公式与行列式（讲义 E.g.4）</b></p>
+      <div class="mrow">
+        设 <i>A</i> = <matrix data="a b; c d"></matrix>，若 <i>ad</i> − <i>bc</i> ≠ 0，则
+        <i>A</i><sup>−1</sup> = <sup>1</sup>⁄<sub><i>ad</i>−<i>bc</i></sub> <matrix data="d -b; -c a"></matrix>
+      </div>
+      <p>其中的 <i>ad</i> − <i>bc</i> 称为 <b>行列式（determinant）det <i>A</i></b>。<b>2×2 矩阵 <i>A</i> 可逆 ⇔ det <i>A</i> ≠ 0。</b></p>
+      <p class="mnote">口诀：主对角线互换（<i>a</i> ↔ <i>d</i>），副对角线变号（<i>b</i> → −<i>b</i>，<i>c</i> → −<i>c</i>），整体除以行列式。</p>
+
+      <p><b>2) 求 <i>A</i><sup>−1</sup> 的算法（Algorithm）</b></p>
+      <div class="callout">
+        <div class="ct">核心公式</div>
+        <div class="mrow">
+          [<i>A</i> | <i>I</i>] &nbsp;~&nbsp; [<i>I</i> | <i>A</i><sup>−1</sup>]
+        </div>
+        也就是说：把 [<i>A</i>|<i>I</i>] 用行变换化到左边变成单位阵，右边自然就是 <i>A</i><sup>−1</sup>。
+      </div>
+      <p><b>为什么成立</b>：若 <i>A</i><sub><i>n</i>×<i>n</i></sub> 可逆，则由定理 3.1，<i>A</i> 每一行都有主元，且 <i>A</i> 是方阵 ⇒ 主元都在对角线上 ⇒ <i>A</i> 的 RREF 就是 <i>I<sub>n</sub></i>，即 <i>A</i> ~ <i>I<sub>n</sub></i>。于是存在初等矩阵 <i>E<sub>i</sub></i> 使</p>
+      <div class="mrow"><i>E<sub>k</sub></i>⋯<i>E</i><sub>1</sub><i>A</i> = <i>I</i> &nbsp;⇒&nbsp; <i>A</i> = (<i>E<sub>k</sub></i>⋯<i>E</i><sub>1</sub>)<sup>−1</sup> &nbsp;⇒&nbsp; <b><i>A</i><sup>−1</sup> = <i>E<sub>k</sub></i>⋯<i>E</i><sub>1</sub></b></div>
+      <p>而 <i>E<sub>k</sub></i>⋯<i>E</i><sub>1</sub><i>I</i> = <i>E<sub>k</sub></i>⋯<i>E</i><sub>1</sub>，<b>正是把同一串行变换依次作用在 <i>I<sub>n</sub></i> 上得到的结果</b> —— 这就是 [<i>A</i>|<i>I</i>] ~ [<i>I</i>|<i>A</i><sup>−1</sup>] 的道理。</p>
+
+      <p><b>3) 可逆矩阵定理（The Invertible Matrix Theorem）</b>：设 <i>A</i> 是 <i>n</i>×<i>n</i> 方阵，则下列 9 条<b>彼此等价</b>：</p>
+      <div class="flow">
+        <div class="step">① <i>A</i> 是可逆矩阵</div>
+        <div class="arrow">⇕</div>
+        <div class="step">② <i>A</i> 行等价于 <i>n</i>×<i>n</i> 单位阵 <i>I</i>（<i>A</i> ~ <i>I<sub>n</sub></i>）</div>
+        <div class="arrow">⇕</div>
+        <div class="step">③ <i>A</i> 有 <i>n</i> 个非零主元</div>
+        <div class="arrow">⇕</div>
+        <div class="step">④ <i>Ax</i> = 0 只有平凡解（只有零解）</div>
+        <div class="arrow">⇕</div>
+        <div class="step">⑤ <i>A</i> 的列向量组线性无关</div>
+        <div class="arrow">⇕</div>
+        <div class="step">⑥ <i>Ax</i> = <i>b</i> 有唯一解 <i>x</i> = <i>A</i><sup>−1</sup><i>b</i></div>
+        <div class="arrow">⇕</div>
+        <div class="step">⑦ <i>A</i> 的列向量张成 ℝ<sup><i>n</i></sup></div>
+        <div class="arrow">⇕</div>
+        <div class="step">⑧ <i>A</i> 满秩，<i>r</i>(<i>A</i>) = <i>n</i></div>
+        <div class="arrow">⇕</div>
+        <div class="step">⑨ <i>A</i><sup>T</sup> 是可逆矩阵</div>
+      </div>
+      <p class="mnote">讲义留的思考题：<b><i>A</i> 的行向量也线性无关吗？<i>A</i> 的行张成的空间是什么？</b>（答案：是，且张成 ℝ<sup><i>n</i></sup> —— 因为 <i>r</i>(<i>A</i>) = <i>n</i>，转置后可逆，行与列的地位对称。）</p>
+
+      <div class="box key">
+        <div class="bt">🎯 重点</div>
+        <ul>
+          <li>2×2 求逆公式与 <b>det <i>A</i> = <i>ad</i> − <i>bc</i> ≠ 0 ⇔ 可逆</b>。</li>
+          <li>求逆算法：[<i>A</i>|<i>I</i>] ~ [<i>I</i>|<i>A</i><sup>−1</sup>]，左边化成 <i>I</i>，右边自动出现逆。</li>
+          <li>可逆矩阵定理的 9 条等价 —— 只要能证明其中一条，就可以宣称全部成立。</li>
+        </ul>
+      </div>
+
+      <div class="box hard">
+        <div class="bt">🧩 难点</div>
+        <ul>
+          <li>为什么 [<i>A</i>|<i>I</i>] 化简后会得到 [<i>I</i>|<i>A</i><sup>−1</sup>]（本质是「同一串初等矩阵同时作用于 <i>A</i> 和 <i>I</i>」）。</li>
+          <li>可逆矩阵定理 9 条的层次：①–③ 是“矩阵本身”，④–⑦ 是“方程 / 向量组”，⑧–⑨ 是“秩与转置”，要能互相翻译。</li>
+          <li>方阵的情形下 ⑥ 的“唯一解”对每个 <i>b</i> 都成立，与非方阵时的结论形成对比。</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="bt">⚠️ 易错点</div>
+        <ul>
+          <li>2×2 公式里忘记「整体除以 det」或忘了副对角线变号。</li>
+          <li>用 [<i>A</i>|<i>I</i>] 时对左半部分和右半部分做了<b>不同</b>的行变换（必须完全同步）。</li>
+          <li>算到一半发现左边出现全零行，还继续往下算 —— 出现全零行说明 <b>det = 0，<i>A</i> 不可逆</b>。</li>
+          <li>把可逆矩阵定理中的「<i>A</i> ~ <i>I</i>」写成「<i>A</i> = <i>I</i>」；把「<i>r</i>(<i>A</i>) = <i>n</i>」与「<i>r</i>(<i>A</i>) = <i>m</i>」混淆。</li>
+          <li>对非方阵使用可逆矩阵定理。</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="qhead"><h3>配套练习（2 题）</h3><span class="note-inline">先自己做，再展开解析</span></div>
+
+        <div class="q" data-qid="m6q1">
+          <div class="qh"><span class="qno">Q6.1</span><span class="qtxt">用 [A|I] ~ [I|A⁻¹] 求逆，并用 2×2 公式核对。</span></div>
+          <div class="qbody">
+            <div class="mrow"><i>A</i> = <matrix data="2 1; 5 3"></matrix></div>
+            <div class="note-inline">要求：(a) 写出 [<i>A</i>|<i>I</i>] 并逐步化简到 [<i>I</i>|<i>A</i><sup>−1</sup>]；(b) 用 2×2 公式核对结果。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m6q1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：<i>A</i><sup>−1</sup> = (3, −1; −5, 2)</div>
+            <p><b>(a) 算法</b></p>
+            <div class="mrow">
+              [<i>A</i>|<i>I</i>] = <matrix data="2 1 | 1 0; 5 3 | 0 1"></matrix>
+              <span class="mnote">　<i>r</i><sub>1</sub>×(1/2)</span>
+            </div>
+            <div class="mrow">
+              ⟶ <matrix data="1 1/2 | 1/2 0; 5 3 | 0 1"></matrix>
+              <span class="mnote">　<i>r</i><sub>2</sub> − 5<i>r</i><sub>1</sub></span>
+            </div>
+            <div class="mrow">
+              ⟶ <matrix data="1 1/2 | 1/2 0; 0 1/2 | -5/2 1"></matrix>
+              <span class="mnote">　<i>r</i><sub>2</sub>×2</span>
+            </div>
+            <div class="mrow">
+              ⟶ <matrix data="1 1/2 | 1/2 0; 0 1 | -5 2"></matrix>
+              <span class="mnote">　<i>r</i><sub>1</sub> − (1/2)<i>r</i><sub>2</sub></span>
+            </div>
+            <div class="mrow">
+              ⟶ <matrix data="1 0 | 3 -1; 0 1 | -5 2"></matrix>
+              <span class="mnote">= [<i>I</i>|<i>A</i><sup>−1</sup>]</span>
+            </div>
+            <p><b>(b) 公式核对</b>：det <i>A</i> = 2·3 − 1·5 = 6 − 5 = 1 ≠ 0，所以</p>
+            <div class="mrow">
+              <i>A</i><sup>−1</sup> = <sup>1</sup>⁄<sub>1</sub><matrix data="3 -1; -5 2"></matrix> = <matrix data="3 -1; -5 2"></matrix> ✔
+            </div>
+            <p><b>验证</b>：<matrix data="2 1; 5 3"></matrix><matrix data="3 -1; -5 2"></matrix> = <matrix data="6-5 -2+2; 15-15 -5+6"></matrix> = <matrix data="1 0; 0 1"></matrix> ✔</p>
+            <p class="note-inline">💡 如果化简过程中左边出现<b>全零行</b>（例如 <i>A</i> = <matrix data="1 2; 2 4"></matrix>），说明 det = 0，<i>A</i> <b>不可逆</b>，此时 [<i>A</i>|<i>I</i>] 永远化不到 [<i>I</i>|*]。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="m6q2">
+          <div class="qh"><span class="qno">Q6.2</span><span class="qtxt">用可逆矩阵定理判断一串结论。</span></div>
+          <div class="qbody">
+            <p>设 <i>A</i> 是 3×3 方阵，且已知 <i>Ax</i> = 0 <b>只有零解</b>。判断下列结论是否正确，并说明是哪一条与哪一条等价：</p>
+            <ol type="a" style="margin:.2em 0">
+              <li><i>A</i> 是可逆矩阵；</li>
+              <li><i>A</i> 的列向量组线性无关；</li>
+              <li>对每个 <i>b</i> ∈ ℝ<sup>3</sup>，<i>Ax</i> = <i>b</i> 有唯一解；</li>
+              <li><i>r</i>(<i>A</i>) = 3；</li>
+              <li><i>A</i> 的 RREF 是 <i>I</i><sub>3</sub>；</li>
+              <li><i>A</i><sup>T</sup> 可逆。</li>
+            </ol>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="m6q2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：六条全部成立</div>
+            <p>已知条件「<i>Ax</i> = 0 只有零解」即可逆矩阵定理的第 ④ 条，于是 9 条等价命题全部成立：</p>
+            <table class="tb">
+              <thead><tr><th style="width:12%">小题</th><th style="width:16%">结论</th><th>对应定理编号与理由</th></tr></thead>
+              <tbody>
+                <tr><td>(a)</td><td>✔ 正确</td><td>①：④ ⇒ ①（可由逆命题成立得出）</td></tr>
+                <tr><td>(b)</td><td>✔ 正确</td><td>⑤：<i>Ax</i> = 0 只有零解 ⇔ 列向量线性无关</td></tr>
+                <tr><td>(c)</td><td>✔ 正确</td><td>⑥：可逆 ⇒ <i>Ax</i> = <i>b</i> 有唯一解 <i>x</i> = <i>A</i><sup>−1</sup><i>b</i>（定理 3.1）</td></tr>
+                <tr><td>(d)</td><td>✔ 正确</td><td>⑧：<i>A</i> 满秩，<i>r</i>(<i>A</i>) = <i>n</i> = 3</td></tr>
+                <tr><td>(e)</td><td>✔ 正确</td><td>②：<i>A</i> ~ <i>I</i><sub>3</sub>，方阵 <i>A</i> 的 RREF 只能是 <i>I</i><sub>3</sub></td></tr>
+                <tr><td>(f)</td><td>✔ 正确</td><td>⑨：<i>A</i><sup>T</sup> 可逆</td></tr>
+              </tbody>
+            </table>
+            <p><b>反向对照</b>：如果换成「<i>Ax</i> = 0 有<b>非零解</b>」，那么 9 条全部取反：<i>A</i> 不可逆、列相关、<i>r</i>(<i>A</i>) &lt; 3、RREF 有零行、存在 <i>b</i> 使 <i>Ax</i> = <i>b</i> 无解。</p>
+            <p class="note-inline">💡 讲义末尾的思考题在这里也能回答：由于 <i>A</i> 可逆，<i>A</i><sup>T</sup> 也可逆 ⇒ <i>r</i>(<i>A</i>) = <i>n</i> ⇒ <b><i>A</i> 的行向量也线性无关，且张成 ℝ<sup>3</sup></b>。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="exam">
+    <div class="mod-head">
+      <span class="mod-num">07</span>
+      <h2>综合自测（5 题）</h2>
+      <span class="from">End-of-chapter Self Check</span>
+    </div>
+    <div class="mod-body">
+      <div class="tags"><span class="tag key">重点</span><span class="tag hard">难点</span><span class="tag trap">易错点</span></div>
+      <p class="mnote">这 5 题把整章串起来，建议做完 6 个模块后限时 20 分钟完成。</p>
+
+      <div class="quiz">
+        <div class="q" data-qid="e1">
+          <div class="qh"><span class="qno">E1</span><span class="qtxt">判断正误（乘法性质 + 初等矩阵 + 逆矩阵）。</span></div>
+          <div class="qbody">
+            <ol type="a" style="margin:.2em 0">
+              <li>对任意同阶方阵 <i>A</i>、<i>B</i>，都有 <i>AB</i> = <i>BA</i>。</li>
+              <li>对任意可乘的 <i>A</i>、<i>B</i>、<i>C</i>，(<i>AB</i>)<i>C</i> = <i>A</i>(<i>BC</i>)。</li>
+              <li>(<i>A</i> + <i>B</i>)<sup>2</sup> = <i>A</i><sup>2</sup> + 2<i>AB</i> + <i>B</i><sup>2</sup>。</li>
+              <li>初等矩阵<b>左乘</b>表示初等列变换。</li>
+              <li>若 <i>A</i> 可逆，则 (<i>A</i><sup>2</sup>)<sup>−1</sup> = (<i>A</i><sup>−1</sup>)<sup>2</sup>。</li>
+            </ol>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="e1">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(a) 错　(b) 对　(c) 错　(d) 错　(e) 对</div>
+            <ul>
+              <li><b>(a) 错</b>。矩阵乘法<b>不满足交换律</b>，例如 <matrix data="1 2; 3 4"></matrix><matrix data="0 1; 1 0"></matrix> = <matrix data="2 1; 4 3"></matrix>，而 <matrix data="0 1; 1 0"></matrix><matrix data="1 2; 3 4"></matrix> = <matrix data="3 4; 1 2"></matrix>。</li>
+              <li><b>(b) 对</b>。这是结合律（只要维数相容，加括号不影响结果）。</li>
+              <li><b>(c) 错</b>。正确的展开是 <b><i>A</i><sup>2</sup> + <i>AB</i> + <i>BA</i> + <i>B</i><sup>2</sup></b>。只有当 <i>AB</i> = <i>BA</i> 时中间的 <i>AB</i> + <i>BA</i> 才能合并成 2<i>AB</i> —— 而矩阵乘法一般不交换。</li>
+              <li><b>(d) 错</b>。左乘表示 <b>行</b>变换，右乘才表示列变换。</li>
+              <li><b>(e) 对</b>。(<i>A</i><sup>2</sup>)<sup>−1</sup> = (<i>AA</i>)<sup>−1</sup> = <i>A</i><sup>−1</sup><i>A</i><sup>−1</sup> = (<i>A</i><sup>−1</sup>)<sup>2</sup>。</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="q" data-qid="e2">
+          <div class="qh"><span class="qno">E2</span><span class="qtxt">计算 <i>AB</i> 与 <i>BA</i>，比较两者。</span></div>
+          <div class="qbody">
+            <div class="mrow">
+              <i>A</i> = <matrix data="2 0; 1 3"></matrix>
+              <i>B</i> = <matrix data="1 4; 0 2"></matrix>
+            </div>
+            <div class="note-inline">要求：分别用 MM1 的“行 · 列”方式算出 <i>AB</i> 与 <i>BA</i>，并说明能否交换。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="e2">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：<i>AB</i> = (2, 8; 1, 10)，<i>BA</i> = (6, 12; 2, 6)，不能交换</div>
+            <div class="mrow">
+              <i>AB</i> = <matrix data="2*1+0*0 2*4+0*2; 1*1+3*0 1*4+3*2"></matrix> = <matrix data="2 8; 1 10"></matrix>
+            </div>
+            <div class="mrow">
+              <i>BA</i> = <matrix data="1*2+4*1 1*0+4*3; 0*2+2*1 0*0+2*3"></matrix> = <matrix data="6 12; 2 6"></matrix>
+            </div>
+            <p><i>AB</i> ≠ <i>BA</i> ➜ 这两个矩阵<b>不能交换</b>。这也提醒我们：涉及矩阵的代数变形（如因式分解、展开平方）都不能随意调换顺序。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="e3">
+          <div class="qh"><span class="qno">E3</span><span class="qtxt">幂零矩阵：非零矩阵的幂可以是零矩阵吗？</span></div>
+          <div class="qbody">
+            <div class="mrow"><i>A</i> = <matrix data="0 1; 0 0"></matrix></div>
+            <div class="note-inline">要求：(a) 求 <i>A</i><sup>2</sup>、<i>A</i><sup>3</sup>（并用 <i>A</i><sup>0</sup> = <i>I</i> 的约定说明 <i>A</i><sup>3</sup>）；(b) 判断 <i>A</i> 是否可逆，说明理由。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="e3">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(a) <i>A</i><sup>2</sup> = 0，<i>A</i><sup>3</sup> = 0；(b) <i>A</i> 不可逆（奇异）</div>
+            <p><b>(a)</b></p>
+            <div class="mrow">
+              <i>A</i><sup>2</sup> = <matrix data="0 1; 0 0"></matrix><matrix data="0 1; 0 0"></matrix>
+              = <matrix data="0*0+1*0 0*1+1*0; 0*0+0*0 0*1+0*0"></matrix>
+              = <matrix data="0 0; 0 0"></matrix>
+            </div>
+            <p><i>A</i><sup>3</sup> = <i>A</i><sup>2</sup>·<i>A</i> = 0·<i>A</i> = 0。所以非零矩阵的幂<b>可以是零矩阵</b>（这类矩阵称为幂零矩阵）。</p>
+            <p class="mnote">顺便注意 <i>A</i><sup>0</sup> = <i>I</i> = <matrix data="1 0; 0 1"></matrix> ≠ 0，即“幂”的起点是单位阵，这正是约定 <i>A</i><sup>0</sup> = <i>I</i> 的意义。</p>
+            <p><b>(b) 不可逆</b>。理由一：若 <i>A</i> 可逆，在 <i>A</i><sup>2</sup> = 0 两边左乘 <i>A</i><sup>−1</sup> 得 <i>A</i> = <i>A</i><sup>−1</sup>·0 = 0，与非零矛盾。<br>
+               理由二：用可逆矩阵定理 —— <i>A</i> 的第 1 列是零向量，列向量组线性相关（且 <i>Ax</i> = 0 有非零解 <i>x</i> = (1, 0)<sup>T</sup>），所以 <i>A</i> 奇异。</p>
+            <p class="note-inline">💡 用 2×2 公式也行：det <i>A</i> = 0·0 − 1·0 = 0，det = 0 ⇒ 不可逆。</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="e4">
+          <div class="qh"><span class="qno">E4</span><span class="qtxt">用 [A|I] ~ [I|A⁻¹] 求逆并验证。</span></div>
+          <div class="qbody">
+            <div class="mrow"><i>A</i> = <matrix data="1 2; 3 4"></matrix></div>
+            <div class="note-inline">要求：写出每一步行变换，最后用 <i>AA</i><sup>−1</sup> = <i>I</i> 验证。</div>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="e4">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：<i>A</i><sup>−1</sup> = (−2, 1; 3/2, −1/2)</div>
+            <div class="mrow">
+              [<i>A</i>|<i>I</i>] = <matrix data="1 2 | 1 0; 3 4 | 0 1"></matrix>
+              <span class="mnote">　<i>r</i><sub>2</sub> − 3<i>r</i><sub>1</sub></span>
+              ⟶ <matrix data="1 2 | 1 0; 0 -2 | -3 1"></matrix>
+            </div>
+            <div class="mrow">
+              <span class="mnote">　<i>r</i><sub>2</sub>×(−1/2)</span>
+              ⟶ <matrix data="1 2 | 1 0; 0 1 | 3/2 -1/2"></matrix>
+              <span class="mnote">　<i>r</i><sub>1</sub> − 2<i>r</i><sub>2</sub></span>
+              ⟶ <matrix data="1 0 | -2 1; 0 1 | 3/2 -1/2"></matrix>
+            </div>
+            <p>所以 <i>A</i><sup>−1</sup> = <matrix data="-2 1; 3/2 -1/2"></matrix>。</p>
+            <p><b>验证</b>：</p>
+            <div class="mrow">
+              <matrix data="1 2; 3 4"></matrix><matrix data="-2 1; 3/2 -1/2"></matrix>
+              = <matrix data="-2+3 1-1; -6+6 3-2"></matrix>
+              = <matrix data="1 0; 0 1"></matrix> ✔
+            </div>
+            <p class="mnote">用 2×2 公式核对：det <i>A</i> = 1·4 − 2·3 = −2，<i>A</i><sup>−1</sup> = (1/(−2))<matrix data="4 -2; -3 1"></matrix> = <matrix data="-2 1; 3/2 -1/2"></matrix> ✔</p>
+          </div>
+        </div>
+
+        <div class="q" data-qid="e5">
+          <div class="qh"><span class="qno">E5</span><span class="qtxt">可逆矩阵定理综合应用。</span></div>
+          <div class="qbody">
+            <p>设 <i>A</i> 是 3×3 方阵，已知 <i>r</i>(<i>A</i>) = 2。回答：</p>
+            <ol type="a" style="margin:.2em 0">
+              <li><i>A</i> 是否可逆？</li>
+              <li><i>Ax</i> = 0 有什么样的解？</li>
+              <li><i>A</i> 的 RREF 长什么样？</li>
+              <li>对任意 <i>b</i> ∈ ℝ<sup>3</sup>，<i>Ax</i> = <i>b</i> 一定有解吗？</li>
+            </ol>
+          </div>
+          <div class="acts">
+            <button class="btn reveal">显示答案与解析</button>
+            <label class="done"><input type="checkbox" data-prog="e5">已掌握</label>
+          </div>
+          <div class="answer">
+            <div class="alabel">答案：(a) 不可逆；(b) 有无穷多解，解空间维数 1；(c) 有零行；(d) 不一定，存在使系统无解的 <i>b</i></div>
+            <p><b>(a)</b> <i>r</i>(<i>A</i>) = 2 &lt; <i>n</i> = 3，不满足可逆矩阵定理的第 ⑧ 条（满秩 <i>r</i>(<i>A</i>) = <i>n</i>），所以 <b><i>A</i> 不可逆（奇异）</b>。</p>
+            <p><b>(b)</b> 有 3 − 2 = 1 个自由变量 ⇒ <i>Ax</i> = 0 除了零解以外还有非零解，即 <b>无穷多解</b>，解空间维数为 1。（这也等价于定理第 ④ 条不成立。）</p>
+            <p><b>(c)</b> 只有 2 个主元、3 行 ⇒ RREF 中必然有 <b>至少一个零行</b>，形如（示意）：</p>
+            <div class="mrow">
+              <matrix data="1 * 0 *; 0 0 1 *; 0 0 0 0"></matrix>
+            </div>
+            <p><b>(d)</b> <b>不一定</b>。RREF 有零行说明「存在某个 <i>b</i> 使 <i>Ax</i> = <i>b</i> 无解」（对应 Chapter 2 的相容性结论：<i>r</i>(<i>A</i>) ≠ <i>r</i>([<i>A</i>|<i>b</i>])）。<br>
+               但有解时一定<b>不是唯一解</b>：因为存在自由变量，若有解就有无穷多解。</p>
+            <p class="note-inline">💡 一句话总结：<i>r</i>(<i>A</i>) = 2 的 3×3 矩阵，「要么无解，要么无穷多解」，绝不会有唯一解。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="cheat">
+    <div class="mod-head">
+      <span class="mod-num">08</span>
+      <h2>一页速查表（考前 5 分钟）</h2>
+      <span class="from">Cheat Sheet</span>
+    </div>
+    <div class="mod-body">
+      <h3 class="sec">矩阵乘法</h3>
+      <table class="tb">
+        <thead><tr><th style="width:30%">要点</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>维数规则</td><td><i>A</i><sub><i>m</i>×<i>n</i></sub><i>B</i><sub><i>n</i>×<i>p</i></sub> = <i>C</i><sub><i>m</i>×<i>p</i></sub>（中间维数必须相等）</td></tr>
+          <tr><td>向量 × 向量</td><td><i>a</i><sup>T</sup><i>b</i> = 一个数（点积）；<i>ab</i><sup>T</sup> = 一个矩阵（秩 1）</td></tr>
+          <tr><td>矩阵 × 向量</td><td><i>Ax</i> 的分量 = 行点积；<i>Ax</i> = <i>A</i> 的列的线性组合</td></tr>
+          <tr><td>矩阵 × 矩阵（4 种）</td><td>MM1 逐元素点积；MM2 列组合 [<i>Ax</i> <i>Ay</i>]；MM3 行组合；MM4 Σ<sub><i>k</i></sub><i>a<sub>k</sub>b<sub>k</sub></i>*</td></tr>
+          <tr><td>运算规律</td><td>❌ 不交换；✔ 结合律 (<i>AB</i>)<i>C</i> = <i>A</i>(<i>BC</i>)；✔ 分配律 <i>A</i>(<i>B</i>+<i>C</i>) = <i>AB</i>+<i>AC</i>；<i>A</i><sup>0</sup> = <i>I</i></td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sec">初等矩阵</h3>
+      <table class="tb">
+        <thead><tr><th style="width:28%">记号</th><th style="width:26%">作用 / 逆</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><i>E</i>(<i>i</i>, <i>j</i>)</td><td>交换第 <i>i</i>、<i>j</i> 行<br>逆 = 它自己</td><td>把 <i>I</i> 的第 <i>i</i>、<i>j</i> 行互换</td></tr>
+          <tr><td><i>E</i>(<i>i</i>(<i>k</i>))，<i>k</i> ≠ 0</td><td>第 <i>i</i> 行 × <i>k</i><br>逆 = <i>E</i>(<i>i</i>(1/<i>k</i>))</td><td>对角阵，第 <i>i</i> 个对角元为 <i>k</i></td></tr>
+          <tr><td><i>E</i>(<i>ij</i>(<i>k</i>))</td><td>第 <i>j</i> 行的 <i>k</i> 倍加到第 <i>i</i> 行<br>逆 = <i>E</i>(<i>ij</i>(−<i>k</i>))</td><td><i>I</i> 的 (<i>i</i>, <i>j</i>) 位置改成 <i>k</i></td></tr>
+          <tr><td colspan="3"><b>左乘 <i>E</i> = 行变换；右乘 <i>E</i> = 列变换。</b>　求 <i>E</i> 的方法：对 <i>I<sub>n</sub></i> 做一次目标行变换。</td></tr>
+          <tr><td colspan="3"><i>E<sub>k</sub></i>⋯<i>E</i><sub>1</sub><i>A</i> = <i>R</i>（RREF）；合并成 <i>EA</i> = <i>R</i>，其中 <i>E</i> = <i>E<sub>k</sub></i>⋯<i>E</i><sub>1</sub> 可逆，<i>E</i><sup>−1</sup> = <i>E</i><sub>1</sub><sup>−1</sup>⋯<i>E<sub>k</sub></i><sup>−1</sup></td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sec">逆矩阵</h3>
+      <table class="tb">
+        <thead><tr><th style="width:30%">要点</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>定义</td><td>存在 <i>B</i> 使 <b><i>AB</i> = <i>BA</i> = <i>I<sub>n</sub></i></b>；<i>B</i> 唯一，记 <i>A</i><sup>−1</sup>；不可逆 = <b>奇异</b></td></tr>
+          <tr><td>运算性质</td><td>非方阵不可逆；(<i>AB</i>)<sup>−1</sup> = <b><i>B</i><sup>−1</sup><i>A</i><sup>−1</sup></b>；(<i>A</i><sup>T</sup>)<sup>−1</sup> = (<i>A</i><sup>−1</sup>)<sup>T</sup></td></tr>
+          <tr><td>2×2 公式</td><td><i>A</i> = <matrix data="a b; c d"></matrix> ⇒ <i>A</i><sup>−1</sup> = <sup>1</sup>⁄<sub><i>ad</i>−<i>bc</i></sub><matrix data="d -b; -c a"></matrix>，要求 det <i>A</i> = <i>ad</i> − <i>bc</i> ≠ 0</td></tr>
+          <tr><td>求逆算法</td><td>[<i>A</i>|<i>I</i>] ~ [<i>I</i>|<i>A</i><sup>−1</sup>]（左边化到 <i>I</i>，右边自动就是逆）</td></tr>
+          <tr><td>定理 3.1</td><td><i>A</i> 可逆 ⇒ 对每个 <i>b</i> ∈ ℝ<sup><i>n</i></sup>，<i>Ax</i> = <i>b</i> 有唯一解 <i>x</i> = <i>A</i><sup>−1</sup><i>b</i></td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sec">可逆矩阵定理（9 条等价，<i>A</i> 为 <i>n</i>×<i>n</i>）</h3>
+      <table class="tb">
+        <thead><tr><th style="width:26%">视角</th><th>等价命题</th></tr></thead>
+        <tbody>
+          <tr><td>矩阵本身</td><td>① <i>A</i> 可逆　② <i>A</i> ~ <i>I<sub>n</sub></i>　③ <i>A</i> 有 <i>n</i> 个非零主元</td></tr>
+          <tr><td>方程与向量组</td><td>④ <i>Ax</i> = 0 只有平凡解　⑤ <i>A</i> 的列线性无关　⑥ <i>Ax</i> = <i>b</i> 有唯一解 <i>x</i> = <i>A</i><sup>−1</sup><i>b</i>　⑦ <i>A</i> 的列张成 ℝ<sup><i>n</i></sup></td></tr>
+          <tr><td>秩与转置</td><td>⑧ <i>r</i>(<i>A</i>) = <i>n</i>（满秩）　⑨ <i>A</i><sup>T</sup> 可逆</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sec">最容易错的三句话</h3>
+      <div class="box trap">
+        <div class="bt">⚠️ 考前再念一遍</div>
+        <ul>
+          <li>矩阵乘法<b>不交换</b>：<i>AB</i> ≠ <i>BA</i>，所以 (<i>AB</i>)<sup>−1</sup> = <b><i>B</i><sup>−1</sup><i>A</i><sup>−1</sup></b>（顺序反转）、(<i>A</i>+<i>B</i>)<sup>2</sup> ≠ <i>A</i><sup>2</sup>+2<i>AB</i>+<i>B</i><sup>2</sup>。</li>
+          <li>初等矩阵<b>左乘改行、右乘改列</b>；求 <i>E</i> 是「对 <i>I</i> 做一次目标行变换」。</li>
+          <li>可逆的定义要求<b>双侧</b> <i>AB</i> = <i>BA</i> = <i>I</i>；「非方阵不可逆」「方阵未必可逆（det = 0 时奇异）」。</li>
+        </ul>
+      </div>
+
+      <h3 class="sec">解题标准流程</h3>
+      <div class="flow">
+        <div class="step">① 拿到矩阵乘法先看<b>维数</b>：能不能乘？结果几行几列？</div>
+        <div class="arrow">↓</div>
+        <div class="step">② 要算具体值：优先用 MM1（行 · 列）；要理解结构：用 MM2 / MM4</div>
+        <div class="arrow">↓</div>
+        <div class="step">③ 看到「行变换」立刻想成<b>左乘初等矩阵</b>；看到「一步操作」就想「对 <i>I</i> 做同样操作得到 <i>E</i>」</div>
+        <div class="arrow">↓</div>
+        <div class="step">④ 求逆：2×2 用公式 + det；高阶用 [<i>A</i>|<i>I</i>] ~ [<i>I</i>|<i>A</i><sup>−1</sup>]，左右必须同步行变换</div>
+        <div class="arrow">↓</div>
+        <div class="step">⑤ 判断可逆 / 唯一解 / 无关 / 张成，一律回到<b>可逆矩阵定理</b>找等价条件</div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<button id="toTop" title="回到顶部">↑</button>
+
+<footer class="foot">
+  复习网页 · 依据讲义《Chapter 3 Matrix Computation and Elimination》（Florence Ho, University of Macau, ISOM2005 Linear Algebra, 1st Sem 2026/2027）整理。
+  所有定义、定理、例题与结论均来自该讲义，练习题为基于同样知识点的配套训练。
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- 1. 把 <matrix data="..."> 渲染成带方括号的矩阵 ---------- */
+  function buildMatrix(el) {
+    var raw = (el.getAttribute("data") || "").trim();
+    if (!raw) { el.remove(); return; }
+    var rowsRaw = raw.split(";").map(function (s) { return s.trim(); }).filter(function (s) { return s.length; });
+    var rows = [];
+    var augCols = {};
+    rowsRaw.forEach(function (line) {
+      var toks = line.split(/\s+/);
+      var cells = [];
+      toks.forEach(function (t) {
+        if (t === "|") {
+          if (cells.length) { augCols[cells.length - 1] = true; }
+        } else {
+          cells.push(t);
+        }
+      });
+      rows.push(cells);
+    });
+    if (!rows.length) { el.remove(); return; }
+    var ncol = rows.reduce(function (m, r) { return Math.max(m, r.length); }, 0);
+
+    var pivotEntry = {};
+    (el.getAttribute("entry") || "").split(";").forEach(function (pair) {
+      var p = pair.trim().split(",");
+      if (p.length === 2) { pivotEntry[(parseInt(p[0], 10) - 1) + ":" + (parseInt(p[1], 10) - 1)] = true; }
+    });
+    var pivotCols = {};
+    (el.getAttribute("pivot") || "").split(",").forEach(function (c) {
+      var n = parseInt(c.trim(), 10);
+      if (!isNaN(n)) { pivotCols[n - 1] = true; }
+    });
+
+    var box = document.createElement("span");
+    box.className = "mtx";
+    var bl = document.createElement("span");
+    bl.className = "brk l";
+    var grid = document.createElement("span");
+    grid.className = "grid";
+    grid.style.gridTemplateColumns = "repeat(" + ncol + ", minmax(1.15em, auto))";
+
+    rows.forEach(function (row, ri) {
+      for (var c = 0; c < ncol; c++) {
+        var cell = document.createElement("span");
+        cell.className = "cell";
+        cell.textContent = (c < row.length ? row[c] : "");
+        if (pivotCols[c]) { cell.className += " pivotcol"; }
+        if (pivotEntry[ri + ":" + c]) { cell.className += " pivotentry"; }
+        if (augCols[c]) { cell.className += " aug"; }
+        grid.appendChild(cell);
+      }
+    });
+    var br = document.createElement("span");
+    br.className = "brk r";
+    box.appendChild(bl);
+    box.appendChild(grid);
+    box.appendChild(br);
+    if (el.parentNode) { el.parentNode.replaceChild(box, el); }
+  }
+
+  var MatrixEls = Array.prototype.slice.call(document.querySelectorAll("matrix"));
+  MatrixEls.forEach(buildMatrix);
+
+  /* ---------- 2. 展开 / 收起答案 ---------- */
+  function answersOf(scope) {
+    return Array.prototype.slice.call(scope.querySelectorAll(".answer"));
+  }
+  function toggleReveal(btn) {
+    var q = btn.closest(".q");
+    var ans = q ? q.querySelector(".answer") : null;
+    if (!ans) { return; }
+    var open = ans.classList.toggle("open");
+    btn.textContent = open ? "收起答案" : "显示答案与解析";
+  }
+  document.addEventListener("click", function (ev) {
+    var t = ev.target;
+    if (!t || !t.classList) { return; }
+    if (t.classList.contains("reveal")) { toggleReveal(t); }
+  });
+
+  /* ---------- 3. 进度记录（localStorage，失败则退化为内存） ---------- */
+  var STORE_KEY = "linalg-ch3-progress-v1";
+  var THEME_KEY = "linalg-ch3-theme-v1";
+  var memory = {};
+  function load() {
+    try {
+      var s = window.localStorage.getItem(STORE_KEY);
+      return s ? JSON.parse(s) : {};
+    } catch (e) { return memory; }
+  }
+  function save(obj) {
+    memory = obj;
+    try { window.localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch (e) {}
+  }
+  var checked = load();
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("input[data-prog]"));
+
+  function refreshProgress() {
+    var done = boxes.filter(function (b) { return b.checked; }).length;
+    var total = boxes.length || 1;
+    var pct = Math.round(done / total * 100);
+    var fill = document.getElementById("pfill");
+    var text = document.getElementById("ptext");
+    var pctEl = document.getElementById("ppct");
+    if (fill) { fill.style.width = pct + "%"; }
+    if (text) { text.textContent = done + " / " + boxes.length + " 题已掌握"; }
+    if (pctEl) { pctEl.textContent = pct + "%"; }
+  }
+  boxes.forEach(function (b) {
+    var id = b.getAttribute("data-prog");
+    var label = b.closest("label");
+    if (checked[id]) { b.checked = true; if (label) { label.classList.add("checked"); } }
+    b.addEventListener("change", function () {
+      if (b.checked) { checked[id] = true; if (label) { label.classList.add("checked"); } }
+      else { delete checked[id]; if (label) { label.classList.remove("checked"); } }
+      save(checked);
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+
+  /* ---------- 4. 顶部按钮 ---------- */
+  var allAnswers = answersOf(document);
+  function setAll(open) {
+    allAnswers.forEach(function (a) { a.classList.toggle("open", open); });
+    Array.prototype.slice.call(document.querySelectorAll(".btn.reveal")).forEach(function (b) {
+      b.textContent = open ? "收起答案" : "显示答案与解析";
+    });
+  }
+  var bE = document.getElementById("btnExpandAll");
+  var bC = document.getElementById("btnCollapseAll");
+  if (bE) { bE.addEventListener("click", function () { setAll(true); }); }
+  if (bC) { bC.addEventListener("click", function () { setAll(false); }); }
+
+  var bR = document.getElementById("btnReset");
+  if (bR) {
+    bR.addEventListener("click", function () {
+      if (!window.confirm("确定要清空所有「已掌握」标记吗？")) { return; }
+      checked = {};
+      save(checked);
+      boxes.forEach(function (b) {
+        b.checked = false;
+        var l = b.closest("label");
+        if (l) { l.classList.remove("checked"); }
+      });
+      refreshProgress();
+    });
+  }
+
+  /* ---------- 5. 深色模式 ---------- */
+  function applyTheme(mode) {
+    if (mode === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+      if (bT) { bT.textContent = "浅色模式"; bT.classList.add("on"); }
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+      if (bT) { bT.textContent = "深色模式"; bT.classList.remove("on"); }
+    }
+  }
+  var bT = document.getElementById("btnTheme");
+  var savedTheme = null;
+  try { savedTheme = window.localStorage.getItem(THEME_KEY); } catch (e) {}
+  applyTheme(savedTheme === "dark" ? "dark" : "light");
+  if (bT) {
+    bT.addEventListener("click", function () {
+      var dark = document.documentElement.getAttribute("data-theme") === "dark";
+      applyTheme(dark ? "light" : "dark");
+      try { window.localStorage.setItem(THEME_KEY, dark ? "light" : "dark"); } catch (e) {}
+    });
+  }
+
+  /* ---------- 6. 侧栏高亮 + 回到顶部 ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll("nav.toc a"));
+  var sections = links.map(function (a) {
+    var id = a.getAttribute("href").slice(1);
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) { return; }
+        links.forEach(function (a) { a.classList.remove("active"); });
+        var link = links.filter(function (a) { return a.getAttribute("href") === "#" + en.target.id; })[0];
+        if (link) { link.classList.add("active"); }
+      });
+    }, { rootMargin: "-84px 0px -70% 0px", threshold: 0 });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  var toTop = document.getElementById("toTop");
+  if (toTop) {
+    toTop.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
+    window.addEventListener("scroll", function () {
+      if (window.scrollY > 400) { toTop.classList.add("show"); } else { toTop.classList.remove("show"); }
+    }, { passive: true });
+  }
+})();
+</script>
+</body>
+</html>

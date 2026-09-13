@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 2 解线性方程组 · 复习与练习</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1f2733; --muted:#5b6572;
+    --accent:#3b5bdb; --accent-soft:#eaf0ff;
+    --key:#d9480f;  --key-bg:#fff1e6;
+    --hard:#7048e8; --hard-bg:#f3efff;
+    --trap:#e8a000; --trap-bg:#fff8e1;
+    --good:#2b8a3e; --good-bg:#ebfbee;
+    --border:#e3e8f0;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  header{
+    background:linear-gradient(135deg,#2b3a67 0%,#3b5bdb 60%,#6a8dff 100%);
+    color:#fff; padding:40px 24px 34px; text-align:center;
+  }
+  header h1{margin:0 0 6px; font-size:30px; letter-spacing:.5px}
+  header .sub{margin:0; opacity:.92; font-size:15px}
+  header .meta{margin-top:12px; font-size:13px; opacity:.85}
+  .wrap{max-width:980px; margin:0 auto; padding:0 20px}
+  /* progress bar */
+  .progress-card{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px 20px; margin:22px auto 8px; max-width:980px; position:sticky; top:10px;
+    box-shadow:0 4px 16px rgba(30,50,90,.06); z-index:5;
+  }
+  .progress-card .bar{height:9px; background:#e8ecf4; border-radius:99px; overflow:hidden}
+  .progress-card .bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,#3b5bdb,#6a8dff); border-radius:99px; transition:width .3s}
+  .progress-card .lbl{font-size:13px; color:var(--muted); margin-top:8px; display:flex; justify-content:space-between}
+  /* toc */
+  nav.toc{
+    max-width:980px; margin:18px auto; background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:18px 22px; box-shadow:0 4px 16px rgba(30,50,90,.05);
+  }
+  nav.toc h2{margin:0 0 10px; font-size:15px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:1px}
+  nav.toc ol{margin:0; padding-left:20px; columns:2; column-gap:28px}
+  nav.toc li{margin:4px 0; break-inside:avoid}
+  nav.toc a{color:var(--accent); text-decoration:none; font-size:14.5px}
+  nav.toc a:hover{text-decoration:underline}
+  /* sections */
+  section.kp{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:26px 28px; margin:22px auto; max-width:980px; box-shadow:0 4px 16px rgba(30,50,90,.05);
+  }
+  .kp .kicker{font-size:12.5px; letter-spacing:2px; color:var(--accent); font-weight:700; text-transform:uppercase}
+  .kp h2{margin:4px 0 2px; font-size:22px}
+  .kp .en{margin:0 0 14px; color:var(--muted); font-size:14px; font-style:italic}
+  /* badges */
+  .badges{display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 4px}
+  .badge{font-size:12.5px; padding:3px 11px; border-radius:99px; font-weight:600; white-space:nowrap}
+  .badge.key{background:var(--key-bg); color:var(--key); border:1px solid #ffd8a8}
+  .badge.hard{background:var(--hard-bg); color:var(--hard); border:1px solid #d0bfff}
+  .badge.trap{background:var(--trap-bg); color:var(--trap); border:1px solid #ffe066}
+  /* callouts */
+  .callout{border-radius:10px; padding:12px 16px; margin:14px 0; font-size:14.5px}
+  .callout b.tag{display:inline-block; margin-right:6px; font-weight:700}
+  .callout.key{background:var(--key-bg); border-left:4px solid var(--key)}
+  .callout.key b.tag{color:var(--key)}
+  .callout.hard{background:var(--hard-bg); border-left:4px solid var(--hard)}
+  .callout.hard b.tag{color:var(--hard)}
+  .callout.trap{background:var(--trap-bg); border-left:4px solid var(--trap)}
+  .callout.trap b.tag{color:var(--trap)}
+  .callout p{margin:4px 0}
+  .callout ul{margin:6px 0 2px; padding-left:20px}
+  /* content blocks */
+  .block{margin:16px 0}
+  .block h3{font-size:16px; margin:18px 0 8px; color:#2b3a67; border-bottom:2px solid var(--accent-soft); padding-bottom:4px}
+  .formula{
+    background:#f7f9fc; border:1px solid var(--border); border-radius:10px;
+    padding:12px 16px; margin:10px 0; overflow-x:auto; font-family:"Cambria Math","Times New Roman",serif;
+    font-size:16.5px; color:#14213d;
+  }
+  .formula .hl{color:var(--accent); font-weight:600}
+  /* matrix */
+  .mat{display:inline-grid; gap:3px 10px; padding:5px 10px; border-left:2.2px solid #33415c; border-right:2.2px solid #33415c; vertical-align:middle; margin:0 2px}
+  .mat span{text-align:center; font-family:"Cambria Math","Times New Roman",serif; font-size:16px; white-space:nowrap}
+  .mat .sep{border-right:2px dashed #adb5c9; padding-right:6px}
+  /* questions */
+  .qset{margin-top:22px; border-top:1px dashed var(--border); padding-top:14px}
+  .qset h3{margin:0 0 6px; font-size:16px; color:#2b3a67}
+  .question{
+    background:#fafbfe; border:1px solid var(--border); border-radius:10px;
+    padding:14px 16px; margin:12px 0;
+  }
+  .question .qno{display:inline-block; background:var(--accent); color:#fff; font-size:12px; font-weight:700; border-radius:6px; padding:1px 8px; margin-right:8px}
+  .question .q-text{margin:8px 0 6px; font-size:15px}
+  .question .q-text code{background:#eef1f8; border-radius:4px; padding:1px 6px; font-family:Consolas,monospace; font-size:14px}
+  .opts{margin:4px 0 6px; padding-left:22px; font-size:14.5px}
+  .opts li{margin:2px 0}
+  .toggle-btn{
+    background:var(--accent); color:#fff; border:none; border-radius:8px;
+    padding:7px 16px; font-size:13.5px; font-weight:600; cursor:pointer; transition:.15s;
+  }
+  .toggle-btn:hover{background:#2f4cc4}
+  .answer{display:none; margin-top:12px; background:var(--good-bg); border:1px solid #b2f2bb; border-radius:8px; padding:12px 14px; font-size:14.5px}
+  .answer .ans{color:var(--good); font-weight:700}
+  .answer p{margin:4px 0}
+  footer{max-width:980px; margin:30px auto 40px; text-align:center; color:var(--muted); font-size:13px}
+  @media(max-width:640px){ nav.toc ol{columns:1} header h1{font-size:24px} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Chapter 2 · 解线性方程组</h1>
+  <p class="sub">Solving Linear Equations — 复习与练习</p>
+  <p class="meta">ISOM2005 · Linear Algebra · University of Macau · 1st Sem 2026/2027</p>
+</header>
+
+<div class="progress-card">
+  <div class="bar"><i id="progFill"></i></div>
+  <div class="lbl"><span>复习进度（勾选已掌握的知识点）</span><span id="progTxt">0 / 6</span></div>
+</div>
+
+<nav class="toc">
+  <h2>目录 · Outlines</h2>
+  <ol>
+    <li><a href="#kp1">矩阵-向量乘法</a></li>
+    <li><a href="#kp2">消元与等价方程组</a></li>
+    <li><a href="#kp3">行阶梯形 REF 与简化行阶梯形 RREF</a></li>
+    <li><a href="#kp4">RREF 与列关系</a></li>
+    <li><a href="#kp5">RREF 与线性无关</a></li>
+    <li><a href="#kp6">RREF 与秩（Rank）</a></li>
+  </ol>
+</nav>
+
+<div class="wrap">
+
+<!-- ============ 知识点 1 ============ -->
+<section class="kp" id="kp1">
+  <div class="kicker">知识点 1 / Knowledge Point 1</div>
+  <h2>矩阵-向量乘法 Matrix-vector Multiplication</h2>
+  <p class="en">Ax = b</p>
+
+  <div class="badges">
+    <span class="badge key">重点</span>
+    <span class="badge hard">难点</span>
+    <span class="badge trap">易错点</span>
+  </div>
+
+  <div class="block">
+    <h3>核心内容</h3>
+    <div class="formula">
+      A<b>x</b> = x<sub>1</sub>·<b>a</b><sub>1</sub> + x<sub>2</sub>·<b>a</b><sub>2</sub> + ⋯ + x<sub>n</sub>·<b>a</b><sub>n</sub> = <b>b</b>
+    </div>
+    <ul style="margin:6px 0; padding-left:22px">
+      <li><b>定义条件（易错）</b>：A<sub>m×n</sub> 乘向量 <b>x</b> 时，<b>x</b> 的长度必须等于 A 的<b>列数 n</b>（即 <b>x</b> ∈ R<sup>n</sup>），结果 <b>b</b> ∈ R<sup>m</sup>。</li>
+      <li><b>线性组合观点（重点）</b>：Ax 可理解为「A 的各列以 x 的分量为系数的线性组合」。</li>
+      <li><b>运算性质</b>：
+        <div class="formula" style="margin:8px 0">
+          A(<b>w</b>+<b>v</b>) = A<b>w</b> + A<b>v</b><br>
+          A(c<b>w</b>) = c(A<b>w</b>) = (cA)<b>w</b><br>
+          (A+B)<b>w</b> = A<b>w</b> + B<b>w</b> &nbsp;&nbsp;·&nbsp;&nbsp; I<sub>n</sub><b>w</b> = <b>w</b>
+        </div>
+      </li>
+      <li><b>提取列技巧</b>：A<b>e</b><sub>i</sub> = <b>a</b><sub>i</sub>（第 i 个标准单位向量乘 A，得到 A 的第 i 列）。</li>
+      <li><b>判定 A=B</b>：若对所有 <b>w</b> ∈ R<sup>n</sup> 都有 A<b>w</b> = B<b>w</b>，则 A = B（证明时取 <b>w</b>=<b>e</b><sub>i</sub> 逐列比对）。</li>
+    </ul>
+  </div>
+
+  <div class="callout key">
+    <b class="tag">重点</b>
+    <p>把 Ax 记住是「<b>列的线性组合</b>」而不是「逐行点积」，这是后续理解列空间、线性相关、秩的关键直觉。</p>
+  </div>
+  <div class="callout hard">
+    <b class="tag">难点</b>
+    <p>「若对所有 w 都有 Aw=Bw，则 A=B」的证明：分别取标准向量 e<sub>1</sub>,…,e<sub>n</sub>，由 Ae<sub>i</sub>=a<sub>i</sub>、Be<sub>i</sub>=b<sub>i</sub> 推出 a<sub>i</sub>=b<sub>i</sub>。</p>
+  </div>
+  <div class="callout trap">
+    <b class="tag">易错点</b>
+    <ul>
+      <li>维度不匹配：A<sub>m×n</sub> 只能乘 n 维向量；写成 A<sub>3×4</sub> 乘 3 维向量是错误的。</li>
+      <li>忘掉 A<b>e</b><sub>i</sub> = <b>a</b><sub>i</sub> 这个「取列」技巧，导致证明类题目卡壳。</li>
+      <li>混淆 A(cw) 与 (cA)w：两者相等，但 c(Aw) 是把「标量提出到最前面」。</li>
+    </ul>
+  </div>
+
+  <div class="qset">
+    <h3>练习题</h3>
+
+    <div class="question">
+      <span class="qno">Q1</span>
+      <p class="q-text">设 <span class="mat"><span>1</span><span>2</span><span>3</span><span>4</span></span>，<b>x</b> = [5, 6]<sup>T</sup>。用「列的线性组合」计算 A<b>x</b>。</p>
+      <button class="toggle-btn" onclick="toggle('a1',this)">显示答案</button>
+      <div class="answer" id="a1">
+        <p class="ans">答案：A<b>x</b> = [17, 39]<sup>T</sup></p>
+        <p><b>解析：</b>A<b>x</b> = 5·[1,3]<sup>T</sup> + 6·[2,4]<sup>T</sup> = [5+12, 15+24]<sup>T</sup> = [17, 39]<sup>T</sup>。体会「列的组合」而非「行点积」。</p>
+      </div>
+    </div>
+
+    <div class="question">
+      <span class="qno">Q2</span>
+      <p class="q-text">若 A 是 3×4 矩阵，要使 A<b>x</b> 有定义，<b>x</b> 应为几维向量？结果 A<b>x</b> 又是几维？</p>
+      <button class="toggle-btn" onclick="toggle('a2',this)">显示答案</button>
+      <div class="answer" id="a2">
+        <p class="ans">答案：<b>x</b> ∈ R<sup>4</sup>（4 维），结果 A<b>x</b> ∈ R<sup>3</sup>（3 维）。</p>
+        <p><b>解析：</b>向量长度必须等于矩阵<b>列数</b>（4）；结果维度等于矩阵<b>行数</b>（3）。</p>
+      </div>
+    </div>
+  </div>
+
+  <label style="font-size:13.5px;color:var(--muted);cursor:pointer">
+    <input type="checkbox" onchange="markKp(this)"> 已掌握本知识点
+  </label>
+</section>
+
+<!-- ============ 知识点 2 ============ -->
+<section class="kp" id="kp2">
+  <div class="kicker">知识点 2 / Knowledge Point 2</div>
+  <h2>线性方程组的消元与等价变换 Elimination &amp; Equivalent Systems</h2>
+  <p class="en">Equivalent systems · Augmented matrix · Back substitution</p>
+
+  <div class="badges">
+    <span class="badge key">重点</span>
+    <span class="badge trap">易错点</span>
+  </div>
+
+  <div class="block">
+    <h3>核心内容</h3>
+    <ul style="margin:6px 0; padding-left:22px">
+      <li><b>等价方程组</b>：解集完全相同的两个方程组互称等价。</li>
+      <li><b>三种初等行运算</b>（产生等价方程组）：
+        <div class="formula" style="margin:8px 0">
+          ① 换行 &nbsp;R<sub>i</sub> ↔ R<sub>j</sub><br>
+          ② 倍乘 &nbsp;kR<sub>i</sub> → R<sub>i</sub> &nbsp;(k ≠ 0)<br>
+          ③ 倍加 &nbsp;R<sub>i</sub> + kR<sub>j</sub> → R<sub>i</sub> &nbsp;(i ≠ j)
+        </div>
+      </li>
+      <li><b>可逆性</b>：三种行运算都可逆，且逆变换是同类运算，因此不改变解集。</li>
+      <li><b>增广矩阵</b>：把系数矩阵 A 和常数列 b 拼成 [A | b]（大小 m×(n+1)）。</li>
+      <li><b>回代</b>：消元成上三角后，从下往上代入求解。</li>
+    </ul>
+  </div>
+
+  <div class="callout key">
+    <b class="tag">重点</b>
+    <p>三种行运算（换行 / 倍乘 / 倍加）是贯穿全章的工具，务必记牢它们的记号与「可逆」特性。</p>
+  </div>
+  <div class="callout trap">
+    <b class="tag">易错点</b>
+    <ul>
+      <li>倍乘必须 <b>k ≠ 0</b>：用「某行 ×0」会丢失方程信息、改变解集，是高频陷阱。</li>
+      <li>「等价」指<b>解集相同</b>，不是「方程长得一样」。</li>
+      <li>增广矩阵写漏常数列 b（只写 A 而不写 [A|b]）。</li>
+    </ul>
+  </div>
+
+  <div class="qset">
+    <h3>练习题</h3>
+
+    <div class="question">
+      <span class="qno">Q1</span>
+      <p class="q-text">下列哪个操作<b>不能</b>保证方程组解集不变？</p>
+      <ul class="opts">
+        <li>A. 交换两行</li>
+        <li>B. 某一行乘以 0</li>
+        <li>C. 某一行乘以 3</li>
+        <li>D. 某一行加上另一行的 2 倍</li>
+      </ul>
+      <button class="toggle-btn" onclick="toggle('a3',this)">显示答案</button>
+      <div class="answer" id="a3">
+        <p class="ans">答案：B</p>
+        <p><b>解析：</b>乘以 0 不可逆（丢失信息），会改变解集；其余三项都是合法的初等行运算。</p>
+      </div>
+    </div>
+
+    <div class="question">
+      <span class="qno">Q2</span>
+      <p class="q-text">把方程组写成增广矩阵：</p>
+      <div class="formula">x<sub>1</sub> + 3x<sub>2</sub> = 2；&nbsp; 3x<sub>1</sub> + x<sub>2</sub> = 8</div>
+      <button class="toggle-btn" onclick="toggle('a4',this)">显示答案</button>
+      <div class="answer" id="a4">
+        <p class="ans">答案：<span class="mat"><span>1</span><span>3</span><span class="sep">2</span><span>3</span><span>1</span><span class="sep">8</span></span></p>
+        <p><b>解析：</b>系数矩阵加常数列，即 [1 3 | 2; 3 1 | 8]，虚线左侧是 A，右侧是 b。</p>
+      </div>
+    </div>
+  </div>
+
+  <label style="font-size:13.5px;color:var(--muted);cursor:pointer">
+    <input type="checkbox" onchange="markKp(this)"> 已掌握本知识点
+  </label>
+</section>
+
+<!-- ============ 知识点 3 ============ -->
+<section class="kp" id="kp3">
+  <div class="kicker">知识点 3 / Knowledge Point 3</div>
+  <h2>行阶梯形 REF 与简化行阶梯形 RREF</h2>
+  <p class="en">Row Echelon Form · Reduced Row Echelon Form · Gaussian Elimination</p>
+
+  <div class="badges">
+    <span class="badge key">重点</span>
+    <span class="badge hard">难点</span>
+    <span class="badge trap">易错点</span>
+  </div>
+
+  <div class="block">
+    <h3>核心内容</h3>
+    <ul style="margin:6px 0; padding-left:22px">
+      <li><b>主元（pivot / leading entry）</b>：某非零行最左边的非零元素。</li>
+      <li><b>REF（行阶梯形）</b>：
+        ① 非零行都在零行<b>之上</b>；② 主元呈阶梯状（每行的主元都在下一行主元的<b>左侧</b>）。</li>
+      <li><b>RREF（简化行阶梯形）</b>：在 REF 基础上，主元所在列是<b>标准向量</b>（主元 = 1，且该列其余全为 0）。RREF 是<b>唯一</b>的。</li>
+      <li><b>高斯消元法</b>：求 RREF 的算法（消元 → 归一 → 回代消去上方元素）。</li>
+    </ul>
+  </div>
+
+  <div class="callout key">
+    <b class="tag">重点</b>
+    <p>RREF 的<b>唯一性</b>是本章最重要的结论之一：同一矩阵无论怎么消元，最终 RREF 唯一。</p>
+  </div>
+  <div class="callout hard">
+    <b class="tag">难点</b>
+    <p>区分 REF 与 RREF：REF 只要求「阶梯 + 主元在上方」，允许主元上方还有非零数；RREF 还要求主元列是标准向量。</p>
+  </div>
+  <div class="callout trap">
+    <b class="tag">易错点</b>
+    <ul>
+      <li>把 REF 误判成 RREF（忘了主元列上方必须全为 0）。</li>
+      <li>认为 REF 也唯一——其实 REF 不唯一，只有 RREF 唯一。</li>
+      <li>主元不一定等于 1（REF 中主元可以是任意非零数，只有 RREF 强制主元为 1）。</li>
+    </ul>
+  </div>
+
+  <div class="qset">
+    <h3>练习题</h3>
+
+    <div class="question">
+      <span class="qno">Q1</span>
+      <p class="q-text">判断矩阵 <span class="mat"><span>1</span><span>2</span><span>3</span><span>0</span><span>1</span><span>4</span><span>0</span><span>0</span><span>1</span></span> 是 REF、RREF，还是两者都不是？</p>
+      <button class="toggle-btn" onclick="toggle('a5',this)">显示答案</button>
+      <div class="answer" id="a5">
+        <p class="ans">答案：是 REF，但不是 RREF。</p>
+        <p><b>解析：</b>主元 1,1,1 呈阶梯排列、零行在下 → 满足 REF；但主元列上方有非零元素（2、3、4）→ 不满足 RREF。</p>
+      </div>
+    </div>
+
+    <div class="question">
+      <span class="qno">Q2</span>
+      <p class="q-text">关于 RREF 与 REF，下列说法正确的是？</p>
+      <ul class="opts">
+        <li>A. RREF 唯一，REF 也唯一</li>
+        <li>B. RREF 唯一，REF 不唯一</li>
+        <li>C. RREF 不唯一，REF 唯一</li>
+        <li>D. 两者都不唯一</li>
+      </ul>
+      <button class="toggle-btn" onclick="toggle('a6',this)">显示答案</button>
+      <div class="answer" id="a6">
+        <p class="ans">答案：B</p>
+        <p><b>解析：</b>RREF 唯一；REF 可因消元顺序不同而不同，不唯一。</p>
+      </div>
+    </div>
+  </div>
+
+  <label style="font-size:13.5px;color:var(--muted);cursor:pointer">
+    <input type="checkbox" onchange="markKp(this)"> 已掌握本知识点
+  </label>
+</section>
+
+<!-- ============ 知识点 4 ============ -->
+<section class="kp" id="kp4">
+  <div class="kicker">知识点 4 / Knowledge Point 4</div>
+  <h2>RREF 与列关系 Column Correspondence Principle</h2>
+  <p class="en">Row operations preserve column relations</p>
+
+  <div class="badges">
+    <span class="badge key">重点</span>
+    <span class="badge hard">难点</span>
+    <span class="badge trap">易错点</span>
+  </div>
+
+  <div class="block">
+    <h3>核心内容</h3>
+    <ul style="margin:6px 0; padding-left:22px">
+      <li><b>列对应原理</b>：设 A = [a<sub>1</sub>,…,a<sub>n</sub>]，RREF 为 R = [r<sub>1</sub>,…,r<sub>n</sub>]。
+        <ul>
+          <li>若 a<sub>i</sub> 是其他列的线性组合，则 r<sub>i</sub> 是对应列的<b>同系数</b>线性组合；反之亦然。</li>
+          <li>增广矩阵 [A|b] 的 RREF 为 [R|b′]，且 Ax=b 与 Rx=b′ 同解。</li>
+        </ul>
+      </li>
+      <li><b>行与列的区别（核心结论）</b>：
+        <table style="border-collapse:collapse;width:100%;margin:10px 0;font-size:14.5px">
+          <tr style="background:#f0f3fa"><th style="border:1px solid var(--border);padding:6px 10px;text-align:left">对象</th><th style="border:1px solid var(--border);padding:6px 10px;text-align:left">线性关系</th><th style="border:1px solid var(--border);padding:6px 10px;text-align:left">span（张成）</th></tr>
+          <tr><td style="border:1px solid var(--border);padding:6px 10px"><b>行</b></td><td style="border:1px solid var(--border);padding:6px 10px">被改变</td><td style="border:1px solid var(--border);padding:6px 10px">不变</td></tr>
+          <tr><td style="border:1px solid var(--border);padding:6px 10px"><b>列</b></td><td style="border:1px solid var(--border);padding:6px 10px">不变</td><td style="border:1px solid var(--border);padding:6px 10px">被改变</td></tr>
+        </table>
+      </li>
+    </ul>
+  </div>
+
+  <div class="callout key">
+    <b class="tag">重点</b>
+    <p>行变换<b>保持列之间的线性关系</b>（列关系不变），这是用 RREF 判断列相关/独立的根据。</p>
+  </div>
+  <div class="callout hard">
+    <b class="tag">难点</b>
+    <p>记住「行的 span 不变、列的关系不变」这组「十字交叉」结论，容易记反。</p>
+  </div>
+  <div class="callout trap">
+    <b class="tag">易错点</b>
+    <ul>
+      <li>把「行关系」和「列关系」搞混：行变换改变的是<b>行之间</b>的关系，不改变<b>列之间</b>的关系。</li>
+      <li>误以为列的 span 也不变——列的 span 会变（行变换后列向量本身变了）。</li>
+    </ul>
+  </div>
+
+  <div class="qset">
+    <h3>练习题</h3>
+
+    <div class="question">
+      <span class="qno">Q1</span>
+      <p class="q-text">A 经初等行变换得到 R。已知 R 的第 3 列 r<sub>3</sub> = r<sub>1</sub> + 2r<sub>2</sub>，则 A 的第 3 列 a<sub>3</sub> = ?</p>
+      <button class="toggle-btn" onclick="toggle('a7',this)">显示答案</button>
+      <div class="answer" id="a7">
+        <p class="ans">答案：a<sub>3</sub> = a<sub>1</sub> + 2a<sub>2</sub></p>
+        <p><b>解析：</b>列对应原理——列之间的线性关系（含系数）在行变换下保持不变。</p>
+      </div>
+    </div>
+
+    <div class="question">
+      <span class="qno">Q2</span>
+      <p class="q-text">对矩阵做初等行变换后，下列哪一项<b>不变</b>？</p>
+      <ul class="opts">
+        <li>A. 列之间的线性关系</li>
+        <li>B. 行之间的线性关系</li>
+        <li>C. 列的 span</li>
+        <li>D. 矩阵所有元素</li>
+      </ul>
+      <button class="toggle-btn" onclick="toggle('a8',this)">显示答案</button>
+      <div class="answer" id="a8">
+        <p class="ans">答案：A</p>
+        <p><b>解析：</b>行变换保持列关系不变；行的关系会变、列的 span 会变、元素当然也变。</p>
+      </div>
+    </div>
+  </div>
+
+  <label style="font-size:13.5px;color:var(--muted);cursor:pointer">
+    <input type="checkbox" onchange="markKp(this)"> 已掌握本知识点
+  </label>
+</section>
+
+<!-- ============ 知识点 5 ============ -->
+<section class="kp" id="kp5">
+  <div class="kicker">知识点 5 / Knowledge Point 5</div>
+  <h2>RREF 与线性无关 RREF &amp; Linear Independence</h2>
+  <p class="en">Pivot columns are independent</p>
+
+  <div class="badges">
+    <span class="badge key">重点</span>
+    <span class="badge hard">难点</span>
+    <span class="badge trap">易错点</span>
+  </div>
+
+  <div class="block">
+    <h3>核心内容</h3>
+    <ul style="margin:6px 0; padding-left:22px">
+      <li><b>主元列线性无关</b>；<b>非主元列</b>是前面主元列的线性组合。</li>
+      <li><b>定理</b>：R<sup>m</sup> 中多于 m 个向量必线性相关（即 m &lt; n 时，A<sub>m×n</sub> 的列不可能全部独立）。</li>
+      <li><b>方阵情形</b>：A<sub>n×n</sub> 全部列无关 ⟺ RREF = I<sub>n</sub>（单位阵）。</li>
+      <li><b>高瘦矩阵</b>：A<sub>m×n</sub>（m &gt; n）全部列无关 ⟺ RREF 形如 <span class="mat"><span>I<sub>n</sub></span><span>0</span></span>（上方单位阵、下方零行）。</li>
+    </ul>
+  </div>
+
+  <div class="callout key">
+    <b class="tag">重点</b>
+    <p>判断列是否线性相关，只需看 RREF：<b>主元列 ↔ 无关</b>，非主元列是主元列的线性组合。</p>
+  </div>
+  <div class="callout hard">
+    <b class="tag">难点</b>
+    <p>「多于 m 个向量在 R<sup>m</sup> 中必相关」这一结论，用来解释为何 m &lt; n 时列一定相关。</p>
+  </div>
+  <div class="callout trap">
+    <b class="tag">易错点</b>
+    <ul>
+      <li>以为「非主元列」之间也一定无关——其实非主元列正是主元列的线性组合，必然相关。</li>
+      <li>主元列不一定对应原矩阵 A 中「编号相同的列」独立吗？—— 会独立，但列关系与 R 一一对应，注意别弄错列的下标。</li>
+    </ul>
+  </div>
+
+  <div class="qset">
+    <h3>练习题</h3>
+
+    <div class="question">
+      <span class="qno">Q1</span>
+      <p class="q-text">5 个向量都位于 R<sup>3</sup> 中，它们能否线性无关？为什么？</p>
+      <button class="toggle-btn" onclick="toggle('a9',this)">显示答案</button>
+      <div class="answer" id="a9">
+        <p class="ans">答案：不能。</p>
+        <p><b>解析：</b>R<sup>3</sup> 中多于 3 个向量必线性相关（5 &gt; 3）。更一般地，R<sup>m</sup> 中超过 m 个向量必相关。</p>
+      </div>
+    </div>
+
+    <div class="question">
+      <span class="qno">Q2</span>
+      <p class="q-text">3×3 方阵 A 的三列线性无关，则 A 的 RREF 是什么？</p>
+      <button class="toggle-btn" onclick="toggle('a10',this)">显示答案</button>
+      <div class="answer" id="a10">
+        <p class="ans">答案：3×3 单位矩阵 I<sub>3</sub>。</p>
+        <p><b>解析：</b>三列无关 → 3 个主元列 → 无自由变量、无零行 → RREF 的每一列都是标准向量，即单位阵。</p>
+      </div>
+    </div>
+  </div>
+
+  <label style="font-size:13.5px;color:var(--muted);cursor:pointer">
+    <input type="checkbox" onchange="markKp(this)"> 已掌握本知识点
+  </label>
+</section>
+
+<!-- ============ 知识点 6 ============ -->
+<section class="kp" id="kp6">
+  <div class="kicker">知识点 6 / Knowledge Point 6</div>
+  <h2>RREF 与秩 Rank</h2>
+  <p class="en">Rank · Nullity · Full rank · Consistency</p>
+
+  <div class="badges">
+    <span class="badge key">重点</span>
+    <span class="badge hard">难点</span>
+    <span class="badge trap">易错点</span>
+  </div>
+
+  <div class="block">
+    <h3>核心内容</h3>
+    <ul style="margin:6px 0; padding-left:22px">
+      <li><b>秩的定义</b>：r(A) = A<sub>m×n</sub> 中线性无关列的最大数目。</li>
+      <li><b>求秩</b>：r(A) = r(R) = <b>主元列数</b> = <b>非零行数</b>。</li>
+      <li><b>零空间维数（Nullity）</b>：Nullity = n − r(A)（列数 − 秩）。</li>
+      <li><b>满秩</b>：r(A) = min{m, n}。</li>
+      <li><b>自由变量与基本变量</b>：无主元的列对应自由变量，其余是基本变量。</li>
+      <li><b>一致性判定</b>：Ax=b 不一致 ⟺ [A|b] 的 RREF 出现形如 [0 … 0 | d]（d≠0）的行 ⟺ r(A) ≠ r([A|b])。</li>
+      <li><b>对任意 b 都一致</b>：⟺ r(A) = m ⟺ R 无零行 ⟺ 每行都有主元 ⟺ 列张成整个 R<sup>m</sup>。</li>
+    </ul>
+  </div>
+
+  <div class="callout key">
+    <b class="tag">重点</b>
+    <p>r(A) = 主元列数 = 非零行数，是「数主元」求秩的快捷方法；一致性看 r(A) 是否等于 r([A|b])。</p>
+  </div>
+  <div class="callout hard">
+    <b class="tag">难点</b>
+    <p>「对任意 b 都一致 ⟺ r(A)=m」这条等价链（课件第 27 页），是概念题的高频考点。</p>
+  </div>
+  <div class="callout trap">
+    <b class="tag">易错点</b>
+    <ul>
+      <li>Nullity = <b>n</b> − r(A)（是「列数」减秩），误用成「行数 m 减秩」。</li>
+      <li>把 r(A) 与「矩阵列数」或「行数」混淆。</li>
+      <li>看到 [0…0 | d≠0] 行却不判不一致——这行代表矛盾方程 0 = d。</li>
+    </ul>
+  </div>
+
+  <div class="qset">
+    <h3>练习题</h3>
+
+    <div class="question">
+      <span class="qno">Q1</span>
+      <p class="q-text">若 A 是 4×6 矩阵，且 r(A) = 3，求 Nullity。</p>
+      <button class="toggle-btn" onclick="toggle('a11',this)">显示答案</button>
+      <div class="answer" id="a11">
+        <p class="ans">答案：Nullity = 3</p>
+        <p><b>解析：</b>Nullity = n − r(A) = 6 − 3 = 3。</p>
+      </div>
+    </div>
+
+    <div class="question">
+      <span class="qno">Q2</span>
+      <p class="q-text">增广矩阵 [A|b] 的 RREF 出现一行 [0 0 0 | 5]，方程组 Ax=b 是否一致？</p>
+      <button class="toggle-btn" onclick="toggle('a12',this)">显示答案</button>
+      <div class="answer" id="a12">
+        <p class="ans">答案：不一致（无解）。</p>
+        <p><b>解析：</b>该行表示 0=5，矛盾；此时 r(A) &lt; r([A|b])，故方程组不一致。</p>
+      </div>
+    </div>
+  </div>
+
+  <label style="font-size:13.5px;color:var(--muted);cursor:pointer">
+    <input type="checkbox" onchange="markKp(this)"> 已掌握本知识点
+  </label>
+</section>
+
+</div>
+
+<footer>
+  依据课件《Chapter 2 Solving Linear Equations》(ISOM2005 · Linear Algebra) 整理 · 共 6 个知识点、12 道练习题
+</footer>
+
+<script>
+  function toggle(id, btn){
+    var el = document.getElementById(id);
+    if(el.style.display === 'block'){
+      el.style.display = 'none';
+      btn.textContent = '显示答案';
+    }else{
+      el.style.display = 'block';
+      btn.textContent = '隐藏答案';
+    }
+  }
+  function markKp(cb){
+    var boxes = document.querySelectorAll('input[onchange="markKp(this)"]');
+    var done = 0;
+    boxes.forEach(function(b){ if(b.checked) done++; });
+    var total = boxes.length;
+    var pct = Math.round(done/total*100);
+    document.getElementById('progFill').style.width = pct + '%';
+    document.getElementById('progTxt').textContent = done + ' / ' + total;
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工程硕博士 · 校招企业基地岗位地图（新一代信息通信技术）</title>
+<style>
+  :root{
+    --bg:#eef2f8; --card:#fff; --ink:#15202b; --ink-soft:#3c4c5e; --muted:#65788c;
+    --line:#dbe3ee; --brand:#2749c8; --brand-soft:#e7ecfb; --p0:#1f5fd0; --p0s:#e6efff;
+    --p1:#7a3fd0; --p1s:#f0e8ff; --p2:#d1502c; --p2s:#ffeee7; --ok:#128a5e; --oks:#e2f7ee;
+    --warn:#b4690e; --warns:#fff4e0;
+    --shadow:0 1px 2px rgba(21,32,43,.06),0 6px 22px rgba(21,32,43,.07);
+    --sans:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Noto Sans SC",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14.5px;line-height:1.7}
+  header.top{position:sticky;top:0;z-index:30;background:linear-gradient(100deg,var(--brand),#4a2ecb 92%);color:#fff;padding:13px 20px;box-shadow:0 4px 20px rgba(24,40,110,.26)}
+  header.top h1{margin:0;font-size:17.5px;font-weight:650}
+  header.top .sub{font-size:12.5px;opacity:.87;margin-top:2px}
+  .layout{display:flex;gap:18px;max-width:1480px;margin:0 auto;padding:18px 18px 70px;align-items:flex-start}
+  aside{position:sticky;top:74px;flex:0 0 290px;max-height:calc(100vh - 92px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+  aside h2{font-size:12.5px;letter-spacing:.12em;color:var(--muted);margin:0 0 8px 4px;font-weight:650}
+  #q{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:13.5px;margin-bottom:10px;background:var(--bg);color:var(--ink)}
+  #q:focus{outline:2px solid var(--brand-soft);border-color:var(--brand)}
+  .grp{font-size:11.5px;color:var(--muted);margin:12px 0 4px 4px;font-weight:650;letter-spacing:.04em}
+  .ent{display:block;width:100%;text-align:left;border:1px solid transparent;background:transparent;color:var(--ink-soft);
+       font-family:inherit;font-size:13.8px;padding:7px 10px;border-radius:9px;cursor:pointer;transition:.14s;margin-bottom:2px}
+  .ent:hover{background:var(--brand-soft);color:var(--brand)}
+  .ent.on{background:var(--brand-soft);color:var(--brand);font-weight:650;border-color:#c3d3f5}
+  .ent .n{float:right;font-size:11.5px;color:var(--muted)}
+  aside small{display:block;color:var(--muted);font-size:11.5px;margin-top:12px;line-height:1.6;border-top:1px dashed var(--line);padding-top:10px}
+  main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:16px}
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .mod-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--brand-soft),transparent)}
+  .mod-head h2{margin:0;font-size:17px;font-weight:650}
+  .mod-head .from{margin-left:auto;font-size:12px;color:var(--muted)}
+  .body{padding:14px 18px 18px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-bottom:8px}
+.tag{font-size:11.5px;padding:1.5px 9px;border-radius:999px;font-weight:650;white-space:nowrap;border:1px solid transparent}
+  .P0{background:var(--p0s);color:var(--p0);border-color:var(--p0)}
+  .P1{background:var(--p1s);color:var(--p1);border-color:var(--p1)}
+  .P2{background:var(--p2s);color:var(--p2);border-color:var(--p2)}
+  .src{background:var(--warns);color:var(--warn);border-color:#e8c98a}
+  .src-ok{background:var(--oks);color:var(--ok);border-color:#9ad9bd}
+  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:10px 0 4px}
+  .kpi{border:1px solid var(--line);border-radius:11px;padding:9px 12px;background:var(--bg)}
+  .kpi b{display:block;font-size:12px;color:var(--muted);font-weight:600}
+  .kpi span{font-size:14px;font-weight:650;color:var(--brand)}
+  .basecard{border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden;background:var(--bg)}
+  .basehead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 14px;cursor:pointer;user-select:none;background:var(--card)}
+  .basehead:hover{background:var(--brand-soft)}
+  .basehead .city{font-size:12px;font-weight:650;color:#fff;background:var(--brand);border-radius:6px;padding:1px 8px}
+  .basehead .unit{font-weight:650;flex:1 1 220px}
+  .basehead .arrow{color:var(--muted);transition:.2s}
+  .basecard.open .arrow{transform:rotate(90deg)}
+  .basedetail{display:none;padding:12px 14px 14px;border-top:1px dashed var(--line)}
+  .basecard.open .basedetail{display:block}
+  .row{display:grid;grid-template-columns:104px 1fr;gap:8px;padding:6px 0;border-bottom:1px dotted var(--line)}
+  .row:last-child{border-bottom:none}
+  .row .k{font-size:12.5px;color:var(--muted);font-weight:650}
+  .row .v{font-size:13.6px}
+  .jobs{display:flex;gap:6px;flex-wrap:wrap}
+  .job{background:var(--brand-soft);color:var(--brand);border-radius:6px;padding:1px 9px;font-size:12.5px}
+  .note{font-size:12.5px;color:var(--muted)}
+  .callout{border-radius:11px;padding:11px 14px;margin:10px 0;background:var(--brand-soft);border:1px solid #b9c9f2}
+  .callout .ct{font-weight:700;color:var(--brand);font-size:13.5px;margin-bottom:3px}
+  .box{border-radius:11px;padding:11px 14px;margin:10px 0;border:1px solid}
+  .box.trap{background:var(--p2s);border-color:#f2b9a4}
+  .box.key{background:var(--p0s);border-color:#a9c6f5}
+  .box.hard{background:var(--p1s);border-color:#c9aef0}
+  .box .bt{font-weight:700;font-size:13.5px;margin-bottom:3px}
+  .box.trap .bt{color:var(--p2)} .box.key .bt{color:var(--p0)} .box.hard .bt{color:var(--p1)}
+  ul{margin:.3em 0 .4em;padding-left:1.3em} li{margin:.22em 0}
+  a{color:var(--brand)}
+  footer.foot{max-width:1480px;margin:0 auto;padding:0 18px 30px;color:var(--muted);font-size:12.5px;text-align:center}
+  #toTop{position:fixed;right:20px;bottom:20px;z-index:40;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--brand);font-size:18px;cursor:pointer;box-shadow:var(--shadow);display:none}
+  #toTop.show{display:block}
+  @media (max-width:960px){ .layout{flex-direction:column;padding:12px 12px 60px} aside{position:static;width:100%;max-height:none} }
+  @media print{ aside,#toTop{display:none} .basedetail{display:block!important} }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>工程硕博士 · 校招企业基地岗位地图（新一代信息通信技术）</h1>
+  <div class="sub">点企业 → 点基地/研究所 → 看开放岗位、薪资、福利、企业文化与人物画像需求　|　维度优先级：P0 薪资·业务前景·技术复用 / P1 base·福利保险 / P2 企业文化·户口</div>
+</header>
+
+<div class="layout">
+  <aside>
+    <h2>企业导航</h2>
+    <input id="q" placeholder="搜索企业 / 城市 / 岗位，如：南京、光通信">
+    <div id="list"></div>
+    <small>数据来源分级标注：<span class="tag src-ok">官方</span> 宣讲会或企业公开材料；<span class="tag src">第三方</span> Offer 汇总平台；其余为我的估算区间，仅供排序参考。</small>
+  </aside>
+
+  <main>
+    <section class="card">
+      <div class="mod-head"><h2 id="entTitle">请选择左侧企业</h2><span class="from" id="entMeta"></span></div>
+      <div class="body">
+        <div class="legend">
+          <span><span class="tag P0">P0</span> 薪资 / 核心业务前景 / 技术复用</span>
+          <span><span class="tag P1">P1</span> base / 福利保险</span>
+          <span><span class="tag P2">P2</span> 企业文化 / 户口</span>
+        </div>
+        <div id="summary" class="summary"></div>
+        <div id="bases"><p class="note">左侧选择企业后，这里会列出该企业的全部基地 / 研究所。点击任一基地即可展开：开放岗位、薪资、福利待遇、企业文化、人物画像需求。</p></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="mod-head"><h2>怎么用这张地图做决策</h2><span class="from">Decision guide</span></div>
+      <div class="body">
+        <div class="box key">
+          <div class="bt">🎯 三步法</div>
+          <ul>
+            <li><b>第一步：按 P0 圈定 3–5 家</b>。先看薪资与赛道，再确认这家企业的技术栈你能不能复用（做信号处理的别去投纯软件岗）。</li>
+            <li><b>第二步：按 P1 排掉你接受不了的 base</b>。同一家集团在不同城市的待遇与生活成本差别很大，先确定城市再谈其他。</li>
+            <li><b>第三步：按 P2 做最后取舍</b>。如果需要北京/上海户口，就把航天系、航空工业、中国星网、北方华创排在前面，并接受薪资上的一定让步。</li>
+          </ul>
+        </div>
+        <div class="box trap">
+          <div class="bt">⚠️ 三个常见误判</div>
+          <ul>
+            <li><b>把集团的薪资当成研究所的薪资</b>：中国电科 14 所与 38 所的待遇可能差出一倍，一定要看到"所"这一层。</li>
+            <li><b>忽略专项的"校企双导师 + 2 年驻企"</b>：你实际待的地方是企业基地，不是学校。选基地＝选未来两年的生活。</li>
+            <li><b>只看起薪不看留企率</b>：专项第一届留企率 46%、国防军工方向 60%，选之前先想清楚你能不能接受这个去向分布。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<button id="toTop">↑</button>
+<footer class="foot">
+  本页依据《关于做好 2027 年工程硕博士专项推免生招生工作的通知》、2026-09-09 卓越工程师培养宣讲会材料（含各培养单位介绍页），以及公开网络信息整理。<br>
+  岗位为方向性列举，非当年正式岗位目录；薪资中标注【第三方】【估算】的条目未经企业确认，仅供排序参考。最终以国家卓越工程师学院与各企业当年校招公告为准。
+</footer>
+
+<script>
+const DATA = [
+  /* ============ A 组 通信设备与终端 ============ */
+  {ent:"华为", field:"A", group:"通信设备与终端", desc:"通信设备全球第一、5G/5.5G 标准主导，同时覆盖终端、昇腾算力与海思芯片；三方向通吃，技术复用度最高。",
+   bases:[
+    {city:"深圳", unit:"华为总部 / 2012 实验室 / 海思", biz:"无线、光传输、芯片设计、AI 算力", jobs:["通信算法","协议栈","基带","芯片设计/验证","软件","硬件"],
+     salary:"硕士主要定级 13–15 级：18–20k / 23–25k / 26–31k ×（14–16 月），总包约 25–50 万；博士 16–17 级，另有天才少年（百万起）", src:"第三方",
+     welfare:"六险一金 + 补充医疗 + 股票（TUP）+ 班车食堂 + 出差补贴", culture:"狼性、绩效强绑定、节奏快、强度大",
+     persona:"能扛压、动手强、对通信底座有真兴趣；接受高强度与长期出差；面试极重视项目细节追问"},
+    {city:"东莞", unit:"松山湖基地（终端与制造）", biz:"终端、通信模块、先进制造", jobs:["硬件","射频","测试","结构","工艺"],
+     salary:"同华为定级体系，13–15 级总包约 25–50 万", src:"第三方", welfare:"同深圳体系，含园区宿舍/班车", culture:"制造与研发协同、节奏快",
+     persona:"愿意扎根制造一线、动手与现场问题解决能力强"},
+    {city:"西安", unit:"西安研究所（西研所）", biz:"无线、终端软件、云计算", jobs:["通信算法","软件开发","嵌入式","云计算"],
+     salary:"同华为定级体系；西安生活成本低于深圳，实际购买力更优", src:"第三方", welfare:"同体系，六险一金 + 补充医疗 + 股票",
+     culture:"与深圳同绩效体系，节奏略缓于总部", persona:"想留在西安但保持大厂强度的人；本地生源优势明显"},
+    {city:"上海", unit:"上海研究所（上研所）/ 海思部分团队", biz:"无线、芯片、终端", jobs:["芯片设计","无线算法","软件"],
+     salary:"同定级体系；上海落户可协助（应届生打分）", src:"第三方", welfare:"同体系", culture:"高端研发集中，芯片与无线岗位含金量高",
+     persona:"目标是芯片或无线前沿方向、同时在意上海户口的人"},
+    {city:"北京 / 南京 / 成都 / 武汉 / 杭州", unit:"北研所 / 南研所 / 成研所 / 武研所 / 杭研所", biz:"云、网络、终端、计算、光", jobs:["软件","算法","网络","存储","光通信"],
+     salary:"同定级体系，各研究所按当地系数微调", src:"第三方", welfare:"同体系", culture:"大平台、内部转岗机会多",
+     persona:"希望以华为为跳板在某个城市长期发展的人；注意各所业务侧重差异很大"}]},
+
+  {ent:"中国信科（大唐 + 烽火）", field:"A", group:"通信设备与终端", desc:"光通信与光模块、5G/6G 标准与设备，国内光通信第一梯队，标准话语权强。",
+   bases:[
+    {city:"武汉", unit:"烽火通信（总部）/ 光纤通信技术与网络国家重点实验室", biz:"光传输、光模块、光接入、芯片", jobs:["光通信","通信算法","协议栈","硬件","光模块测试"],
+     salary:"硕士约 18–30 万（央企体系）", src:"估算", welfare:"六险二金 + 住房补贴 + 央企福利 + 武汉人才政策", culture:"央企 + 通信行业节奏，稳定，标准与预研氛围重",
+     persona:"电磁场/光通信基础扎实，愿意在光传输这条长周期技术线上长期积累；对标准与专利工作有兴趣的人加分"},
+    {city:"北京", unit:"大唐电信 / 无线移动通信国家重点实验室", biz:"5G/6G 标准、无线接入、芯片", jobs:["无线算法","标准研究","芯片","软件"],
+     salary:"硕士约 18–30 万", src:"估算", welfare:"六险二金 + 央企福利", culture:"标准研究氛围浓、论文与专利产出多",
+     persona:"对 3GPP 标准、协议栈感兴趣，英语好（标准会议与国际提案需要）"},
+    {city:"西安 / 上海", unit:"烽火西安研发中心 / 上海研发中心", biz:"光通信设备、软件、测试", jobs:["软件","测试","硬件"],
+     salary:"硕士约 16–26 万（略低于武汉总部）", src:"估算", welfare:"六险二金 + 补贴", culture:"项目交付导向", persona:"想留在西安做光通信的人；注意分支机构的项目强度与总部不同"}]},
+
+  {ent:"vivo（东莞维沃）", field:"A", group:"通信设备与终端", desc:"终端、影像算法、通信协议、自研芯片（ISP/电源），2027 届校招已启动。",
+   bases:[
+    {city:"东莞", unit:"vivo 全球总部（长安 / 松山湖）", biz:"终端研发、影像、通信、系统", jobs:["影像算法","通信协议","Android 系统","嵌入式","芯片"],
+     salary:"硕士年薪约 28–45 万+，月薪 15–22k（技术岗更高）；分固定薪资制（高底薪 + 2–3 月年终）与浮动薪资制", src:"第三方",
+     welfare:"六险一金 + 带薪年假 + 年度旅游 + 通勤/餐饮补贴", culture:"项目驱动、氛围年轻、迭代快",
+     persona:"对终端体验敏感、能快速迭代；影像与通信协议方向最看动手与调试能力，面试会追问实验细节"},
+    {city:"深圳", unit:"vivo 深圳研发中心", biz:"通信、系统、AI", jobs:["通信协议","AI 算法","系统","软件"],
+     salary:"同 vivo 薪酬体系", src:"第三方", welfare:"同体系 + 深圳人才政策", culture:"节奏快、跨部门协作多",
+     persona:"希望在深圳发展但不想进纯互联网的人；深圳落户相对容易"},
+    {city:"西安 / 杭州 / 上海 / 北京", unit:"各研发中心", biz:"通信、影像、系统、芯片", jobs:["算法","软件","嵌入式","测试"],
+     salary:"同体系统一，按城市系数微调", src:"第三方", welfare:"同体系", culture:"与总部协同研发", persona:"本地生源或希望定点发展的同学，注意各中心业务侧重不同"}]},
+
+  {ent:"OPPO（广东移动通信）", field:"A", group:"通信设备与终端", desc:"终端、通信、影像与自研系统，与 vivo 同赛道，节奏相近。",
+   bases:[
+    {city:"深圳", unit:"OPPO 全球总部（前海 / 长安）", biz:"终端、系统、影像、通信", jobs:["通信协议","影像算法","系统与内核","嵌入式","芯片"],
+     salary:"硕士约 25–45 万（含年终与项目奖）", src:"估算", welfare:"六险一金 + 餐补 + 班车 + 租房补贴", culture:"工程师文化、讲求极致体验、节奏快",
+     persona:"对手机体验有强感知、愿意做长期打磨；面试重视项目深度与代码/调试能力"},
+    {city:"东莞", unit:"OPPO 东莞研发与制造基地", biz:"制造、测试、硬件", jobs:["硬件","射频","测试","工艺"],
+     salary:"略低于深圳总部", src:"估算", welfare:"同体系", culture:"制造与研发一体", persona:"愿意扎根制造现场、动手强"},
+    {city:"西安 / 上海 / 北京 / 杭州", unit:"各研究院", biz:"系统、影像、通信、AI", jobs:["算法","软件","嵌入式"],
+     salary:"同体系按城市系数", src:"估算", welfare:"同体系", culture:"与总部协同", persona:"结合生源地选择，注意研究院业务侧重"}]},
+
+  {ent:"华工科技", field:"A", group:"通信设备与终端", desc:"激光装备、光模块（数通 800G/1.6T）、传感器；AI 算力带动光模块高景气。",
+   bases:[
+    {city:"武汉", unit:"华工科技总部（激光 / 光模块 / 传感器三大业务）", biz:"激光加工、光模块、传感器", jobs:["光模块硬件","光电","嵌入式","工艺","激光应用"],
+     salary:"硕士约 15–25 万", src:"估算", welfare:"五险一金 + 上市公司福利 + 股权激励", culture:"制造业文化、工艺导向、稳中求进",
+     persona:"光电与硬件基础扎实、愿意做产品化落地；比起算法，这里更看你能不能把东西做出来并测出来"}]},
+
+  /* ============ B 组 军工央企与研究所 ============ */
+  {ent:"中国电科（CETC）", field:"B", group:"军工央企与研究所", desc:"雷达、电子对抗、通信、微电子、光电；国防信息化主力，下属研究所众多，各所待遇与方向差异极大。宣讲会明确点到的培养单位包括十一所（光电）、十八所（天津）、五十所等。",
+   bases:[
+    {city:"南京", unit:"十四所（雷达）/ 二十八所（指控）/ 五十五所（化合物半导体）", biz:"雷达系统、指挥控制、微电子",
+     jobs:["信号处理","射频/天线","嵌入式","芯片设计","系统集成"],
+     salary:"硕士约 20–32 万、博士约 28–45 万（含绩效，各所差异大）", src:"估算",
+     welfare:"六险二金 + 住房补贴 + 安家费（部分所）+ 南京人才政策", culture:"军工文化、保密严格、任务导向、节奏稳但节点紧",
+     persona:"信号处理与电磁场基础扎实、能接受保密与型号任务节奏；十四所最看重数理基础与抗压能力，五十五所看重微电子/器件功底"},
+    {city:"合肥", unit:"三十八所（雷达电子）", biz:"雷达、电子对抗、软件", jobs:["信号处理","雷达算法","软件","硬件"],
+     salary:"硕士约 18–30 万", src:"估算", welfare:"六险二金 + 住房补贴 + 合肥人才政策", culture:"军工 + 科研双线", persona:"想做雷达与对抗算法、愿意长期扎根合肥的人"},
+    {city:"成都", unit:"十所 / 二十九所", biz:"通信与对抗、测控、电子系统", jobs:["通信","信号处理","软件","嵌入式"],
+     salary:"硕士约 18–30 万", src:"估算", welfare:"六险二金 + 补贴 + 成都人才政策", culture:"研究所文化，项目与预研并重", persona:"通信与电子对抗方向，成都生活成本友好、适合长期发展"},
+    {city:"西安", unit:"二十所 / 三十九所", biz:"导航、天线与测控", jobs:["导航制导","天线","射频","信号处理"],
+     salary:"硕士约 16–28 万", src:"估算", welfare:"六险二金 + 补贴", culture:"军工研究所节奏", persona:"陕西生源优先考虑；天线与微波方向对口度高"},
+    {city:"北京 / 天津", unit:"十一所（光电科技，北京）/ 十八所（天津）", biz:"光电、激光、电源与新能源", jobs:["光电","激光","电路","材料","工艺"],
+     salary:"硕士约 18–30 万；北京单位户口优势明显", src:"估算", welfare:"六险二金 + 北京户口指标（视单位名额）", culture:"光电与器件制造文化", persona:"光电/材料/物理背景；若目标是北京户口，十八所（天津）与十一所（北京）要分开权衡"},
+    {city:"上海 / 石家庄 / 无锡 / 广州 / 桂林", unit:"五十所、二十三所、三十二所、五十四所、十三所、五十八所、七所、三十四所", biz:"通信、微电子、软件、光通信等",
+     jobs:["通信","芯片","软件","射频","算法"], salary:"硕士约 16–30 万（城市与所差异大）", src:"估算",
+     welfare:"六险二金 + 当地人才政策", culture:"以所为单位的独立文化", persona:"先锁定城市再锁定所；十三所/五十五所的化合物半导体是国家重点方向"}]},
+
+  {ent:"航天科工 / 航天科技", field:"B", group:"军工央企与研究所", desc:"导弹、雷达、航天器、测控通信；国家主干力量，项目周期长、稳定性高，北京上海单位户口优势明显。",
+   bases:[
+    {city:"北京", unit:"航天科工二院 / 三院，航天科技一院 / 五院", biz:"导弹、雷达、航天器、测控", jobs:["制导控制","雷达","遥测遥控","嵌入式","系统工程"],
+     salary:"硕士约 20–30 万、博士约 28–45 万（含安家费差异大）", src:"估算", welfare:"六险二金 + 安家费 + 住房补贴 + 北京户口指标（视单位）",
+     culture:"军工文化、保密严格、型号任务导向、集体荣誉感强", persona:"数理基础扎实、能接受长周期型号任务与保密约束；对国防事业有真实认同感（面试会直接问动机）"},
+    {city:"西安", unit:"航天科技四院 / 六院，航天科工相关所", biz:"固体动力、液体动力、测控", jobs:["控制","仿真","嵌入式","测试"],
+     salary:"硕士约 16–28 万", src:"估算", welfare:"六险二金 + 安家费 + 西安人才政策", culture:"研究所文化", persona:"陕西生源优先；动力与测控方向对口"},
+    {city:"上海", unit:"航天科技八院", biz:"运载、卫星、测控", jobs:["总体设计","控制","通信","测试"],
+     salary:"硕士约 18–30 万；上海户口可解决概率较高", src:"估算", welfare:"六险二金 + 住房补贴 + 上海落户支持", culture:"精密与总体文化", persona:"想在长三角且重视户口的人；八院对总体与通信岗位需求稳定"}]},
+
+  {ent:"航空工业", field:"B", group:"军工央企与研究所", desc:"航电系统、机载通信与雷达、飞控；宣讲会点到的培养单位包括中国航空综合技术研究所（301 所）与洛阳电光设备研究所（613 所）。",
+   bases:[
+    {city:"北京", unit:"中国航空综合技术研究所（301 所）", biz:"标准化与质量技术、适航与可靠性、标准情报", jobs:["标准化研究","可靠性","数据分析","软件"],
+     salary:"硕士约 18–28 万；北京户口指标较好", src:"估算", welfare:"六险二金 + 北京户口/住房补贴", culture:"标准化与质量文化、严谨、文字与协调工作多",
+     persona:"细节控、英语好（国际标准）、擅长写规范与协调；适合不追求硬件一线但想做体系与标准的人（301 所在宣讲会自述为'以标准为根、质量为先、数据为基'）"},
+    {city:"洛阳", unit:"洛阳电光设备研究所（613 所）", biz:"火力控制、光电探测与对抗、瞄准显示", jobs:["光电","控制","嵌入式","软件","信号处理"],
+     salary:"硕士约 15–25 万（洛阳生活成本低，实际购买力强）", src:"估算", welfare:"六险二金 + 住房补贴 + 安家费", culture:"军工研究所、光电特色鲜明、稳定性高",
+     persona:"想做火控与光电系统、愿意在洛阳长期生活的人；613 所以火控系统与航空光电为专业方向"},
+    {city:"无锡 / 成都 / 西安", unit:"607 所、雷电院、成飞 / 西飞研究院", biz:"机载雷达、航电、飞控", jobs:["雷达","航电软件","电子","控制"],
+     salary:"硕士约 16–28 万", src:"估算", welfare:"六险二金 + 当地人才政策", culture:"军工体系、保密", persona:"雷达与航电方向；注意不同单位的出差与外场试验强度"}]},
+
+  {ent:"兵器工业", field:"B", group:"军工央企与研究所", desc:"兵器装备、光电、雷达、惯性导航；稳定性高，涉密要求强。",
+   bases:[
+    {city:"北京", unit:"兵器工业集团在京研究所", biz:"装备总体、光电、惯导", jobs:["光电","惯导","控制","嵌入式"],
+     salary:"硕士约 18–28 万；北京单位户口指标视名额", src:"估算", welfare:"六险二金 + 住房补贴", culture:"军工文化、保密严格", persona:"政治素养与保密意识是硬门槛；面试会重点考察动机与稳定性"},
+    {city:"西安 / 南京 / 重庆", unit:"地方研究所与厂所", biz:"光电、惯导、火控", jobs:["光电","控制","软件","测试"],
+     salary:"硕士约 15–25 万", src:"估算", welfare:"六险二金 + 当地政策", culture:"厂所一体文化", persona:"愿意扎根当地、动手能力强的人"}]},
+
+  {ent:"中国船舶", field:"B", group:"军工央企与研究所", desc:"舰船电子、雷达、通信、水声；宣讲会展示了以 701 为代表的文化建设场景，稳定性高。",
+   bases:[
+    {city:"武汉", unit:"七〇一所（中国舰船研究设计中心）/ 七二二所（通信）/ 七〇九所（计算机）", biz:"舰船总体设计、舰船通信、指挥系统",
+     jobs:["通信","信号处理","软件","嵌入式","系统集成"],
+     salary:"硕士约 16–26 万", src:"估算", welfare:"六险二金 + 住房补贴 + 武汉人才政策", culture:"军工文化 + 大型总体设计协作，团队作战特征明显",
+     persona:"能在大团队里做子系统配合、愿意长期保密作业；通信与指控方向对电子信息工程最对口"},
+    {city:"连云港 / 南京 / 无锡 / 上海", unit:"七一六所、七二四所、七〇二所、上海船舶研究单位", biz:"雷达、天线、总体、电子", jobs:["雷达","天线","电子","软件"],
+     salary:"硕士约 15–28 万", src:"估算", welfare:"六险二金 + 当地政策", culture:"军工研究所文化", persona:"按城市与专业方向选择；七一六所的雷达与指挥系统需求量大"}]},
+
+  /* ============ C 组 新型央企与国家平台 ============ */
+  {ent:"中国星网", field:"C", group:"新型央企与国家平台", desc:"卫星互联网（国家重点新央企），与 5G/6G 融合的下一代通信基础设施，战略级新赛道。",
+   bases:[
+    {city:"北京 / 雄安", unit:"中国星网集团总部与研究院", biz:"卫星互联网总体、星地协议、载荷", jobs:["通信载荷","星地协议","卫星网络","软件定义","总体设计"],
+     salary:"硕士约 20–35 万（新央企为抢高端人才薪酬较有竞争力）", src:"估算", welfare:"央企福利 + 落户政策倾斜 + 住房补贴", culture:"新兴央企、机制较活、成长空间大、军工与航天背景强",
+     persona:"对新赛道有热情、愿意参与从 0 到 1 的体系建设；通信与网络基础扎实、能接受北京落户周期；面试看重'战略理解力'而不只是技术细节"},
+    {city:"重庆 / 上海", unit:"星网下属研究院与产业基地", biz:"终端、网络、应用", jobs:["通信","软件","终端","测试"],
+     salary:"硕士约 18–30 万", src:"估算", welfare:"央企福利 + 当地人才政策", culture:"产业落地导向", persona:"希望在非北京地区进入卫星互联网赛道的人"}]},
+
+  {ent:"中国电子（CEC）", field:"C", group:"新型央企与国家平台", desc:"信创与网信体系，自主计算全栈布局：麒麟操作系统信创市场出货量第一、达梦数据库连续 6 年领跑国产数据库市场；含飞腾 CPU 与盛科网络交换芯片。宣讲会展示的培养方向覆盖云计算平台、数字广东、数字金融、数字安全。",
+   bases:[
+    {city:"北京", unit:"中国电子集团总部 / 中国软件 / 中国系统", biz:"信创总体、操作系统、数字政府、数字安全", jobs:["操作系统","嵌入式","网络安全","系统集成","软件开发"],
+     salary:"硕士约 18–28 万", src:"估算", welfare:"六险二金 + 央企福利 + 北京户口（部分单位）", culture:"央企体系、信创使命感强、体系内晋升稳定",
+     persona:"愿意做自主可控的底层系统（操作系统/数据库/CPU 生态），而不是只做上层应用；对国产替代有认同感的人在这里加分明显"},
+    {city:"天津 / 上海", unit:"麒麟软件（天津）/ 华大半导体（上海）", biz:"操作系统、MCU 与功率半导体", jobs:["操作系统","内核开发","芯片设计","测试"],
+     salary:"硕士约 18–28 万", src:"估算", welfare:"六险二金 + 当地人才政策", culture:"技术自主文化", persona:"想做操作系统内核或芯片的人；麒麟软件对 C/C++ 与内核调试能力要求高"},
+    {city:"深圳", unit:"中国电子深圳基地（中国长城 / 迈普通信）", biz:"整机、网络设备、存储", jobs:["硬件","嵌入式","网络","测试"],
+     salary:"硕士约 20–30 万", src:"估算", welfare:"六险二金 + 深圳人才政策", culture:"制造与研发协同", persona:"想做整机与网络设备硬件、希望在深圳发展的人"}]},
+
+  /* ============ PDF 补充培养单位 ============ */
+  {ent:"北方华创（PDF 补充）", field:"D", group:"PDF 补充培养单位", desc:"集成电路装备龙头（刻蚀、薄膜、清洗、炉管），国产替代最核心环节之一。宣讲会明确给出了联合培养研究生的待遇细节，是本次资料中最具体的一份。",
+   bases:[
+    {city:"北京", unit:"北方华创总部与研发中心", biz:"刻蚀、薄膜、清洗、炉管设备研发与服务", jobs:["设备研发","工艺开发","控制软件","射频电源","机械/真空"],
+     salary:"实习津贴 8000 元/月 + 年终奖金 + 加班费 + 项目奖金 + 全勤奖金 + 饭补 + 差旅补贴；转正后'毕业入职后高于同期应届生薪酬待遇'，实习期计入司龄", src:"官方",
+     welfare:"员工餐厅、免费宿舍、班车、健身房、员工健康管理、意外保险、团建、带薪假、人身保险；<b>北京户口指标倾斜</b>；行业大咖带教、提前参与内部评优评奖、毕业优先录用", culture:"硬科技制造文化、工艺导向、重视长期培养（宣讲会明确'优秀者职级及薪酬待遇均高于同年级非专项学生'）",
+     persona:"宣讲会给出的画像很直接：愿意长周期做设备与工艺、能接受现场调试；有机械/电子/控制/材料/物理任一基础即可切入；他们最看重'能不能在真实产线上坚持下来'——因此面试时表达长期驻京驻厂的意愿是关键"},
+    {city:"西安 / 无锡", unit:"北方华创西安、无锡基地", biz:"设备制造与服务", jobs:["工艺","设备工程","测试","现场服务"],
+     salary:"同体系（略低于北京）", src:"估算", welfare:"同体系 + 当地人才政策", culture:"制造与服务导向", persona:"想在西安/无锡发展、愿意做设备现场工作的人"}]},
+
+  {ent:"中国能建（PDF 补充）", field:"D", group:"PDF 补充培养单位", desc:"智慧能源领域联培企业。宣讲会展示的是中国电力工程顾问集团西北电力设计院（西北院）的实力数据。",
+   bases:[
+    {city:"西安", unit:"中国能建西北电力设计院（西北院）", biz:"电力工程勘测设计、太阳能热发电、储能技术", jobs:["电气设计","新能源","储能","结构/土木","测绘","造价"],
+     salary:"硕士约 15–25 万（设计院体系，含项目绩效）", src:"估算",
+     welfare:"六险二金 + 住房补贴 + 西安人才政策；单位设有博士后科研工作站、国家勘察设计大师工作室、太阳能热发电技术中心、储能技术中心",
+     culture:"设计院文化、师带徒、重规范与图纸质量、出差与现场服务较多",
+     persona:"宣讲会给出的实力数据：西北院共有员工 1760 人，其中从事勘测设计专业技术人员 1500 人，各类注册执业资格人员近 800 人（注册电气、结构、公用设备、造价、监理、土木、环保、测绘、建造、会计）。<br>画像：细心、规范意识强、能接受设计院的节点节奏；电气工程/自动化/新能源背景比纯电子信息更对口"}]}
+];
+
+const FIELD_NAME = {A:"A 组 · 通信设备与终端", B:"B 组 · 军工央企与研究所", C:"C 组 · 新型央企与国家平台", D:"D 组 · PDF 补充培养单位"};
+
+const list = document.getElementById("list");
+const basesBox = document.getElementById("bases");
+const summary = document.getElementById("summary");
+const entTitle = document.getElementById("entTitle");
+const entMeta = document.getElementById("entMeta");
+
+function renderList(filter){
+  const f = (filter||"").trim().toLowerCase();
+  let html = "";
+  ["A","B","C","D"].forEach(g => {
+    const ents = DATA.filter(e => e.field === g).filter(e => {
+      if(!f) return true;
+      if(e.ent.toLowerCase().includes(f)) return true;
+      return e.bases.some(b => (b.city+b.unit+b.biz+(b.jobs||[]).join("")).toLowerCase().includes(f));
+    });
+    if(!ents.length) return;
+    html += '<div class="grp">' + FIELD_NAME[g] + '</div>';
+    ents.forEach(e => {
+      html += '<button class="ent" data-ent="' + e.ent + '">' + e.ent + '<span class="n">' + e.bases.length + ' 个基地</span></button>';
+    });
+  });
+  list.innerHTML = html || '<p class="note" style="padding:6px 4px">没有匹配的企业或城市</p>';
+}
+
+function renderEnt(name){
+  const e = DATA.find(x => x.ent === name);
+  if(!e) return;
+  document.querySelectorAll(".ent").forEach(b => b.classList.toggle("on", b.dataset.ent === name));
+  entTitle.textContent = e.ent;
+  entMeta.textContent = FIELD_NAME[e.field];
+  summary.innerHTML =
+    '<div class="kpi"><b>基地 / 研究所数量 <span class="tag P1">P1</span></b><span>' + e.bases.length + ' 个</span></div>' +
+    '<div class="kpi"><b>涉及城市 <span class="tag P1">P1</span></b><span>' + e.bases.map(b=>b.city).join("、") + '</span></div>' +
+    '<div class="kpi"><b>技术方向 <span class="tag P0">P0</span></b><span>' + [...new Set(e.bases.flatMap(b=>b.jobs||[]))].slice(0,6).join(" / ") + '</span></div>';
+  let h = '<div class="callout"><div class="ct">企业定位</div>' + e.desc + '</div>';
+  h += '<p class="note">点击下面任意基地卡片即可展开或收起详情（岗位 / 薪资 / 福利 / 文化 / 人物画像）。</p>';
+  e.bases.forEach((b,i) => {
+    const srcTag = b.src === "官方" ? '<span class="tag src-ok">官方</span>' : (b.src === "第三方" ? '<span class="tag src">第三方</span>' : '<span class="tag src">估算</span>');
+    h += '<div class="basecard' + (i===0?' open':'') + '" data-base="' + e.ent + '|' + i + '">' +
+      '<div class="basehead"><span class="city">' + b.city + '</span><span class="unit">' + b.unit + '</span>' + srcTag + '<span class="arrow">▶</span></div>' +
+      '<div class="basedetail">' +
+        '<div class="row"><div class="k">主营方向</div><div class="v">' + b.biz + '</div></div>' +
+        '<div class="row"><div class="k">开放岗位 <span class="tag P0">P0</span></div><div class="v"><div class="jobs">' + (b.jobs||[]).map(j=>'<span class="job">'+j+'</span>').join("") + '</div></div></div>' +
+        '<div class="row"><div class="k">薪资 <span class="tag P0">P0</span></div><div class="v">' + b.salary + '</div></div>' +
+        '<div class="row"><div class="k">福利待遇 <span class="tag P1">P1</span></div><div class="v">' + b.welfare + '</div></div>' +
+        '<div class="row"><div class="k">企业文化 <span class="tag P2">P2</span></div><div class="v">' + b.culture + '</div></div>' +
+        '<div class="row"><div class="k">人物画像需求</div><div class="v">' + b.persona + '</div></div>' +
+      '</div></div>';
+  });
+  basesBox.innerHTML = h;
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+list.addEventListener("click", ev => {
+  const btn = ev.target.closest(".ent");
+  if(btn) renderEnt(btn.dataset.ent);
+});
+
+basesBox.addEventListener("click", ev => {
+  const head = ev.target.closest(".basehead");
+  if(!head) return;
+  head.parentElement.classList.toggle("open");
+});
+
+document.getElementById("q").addEventListener("input", ev => renderList(ev.target.value));
+
+const toTop = document.getElementById("toTop");
+toTop.addEventListener("click", () => window.scrollTo({top:0, behavior:"smooth"}));
+window.addEventListener("scroll", () => toTop.classList.toggle("show", window.scrollY > 500), {passive:true});
+
+renderList("");
+renderEnt("华为");
+</script>
+</body>
+</html>

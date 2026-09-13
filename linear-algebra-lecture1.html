@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 1 向量与矩阵 · 复习</title>
+<style>
+  :root{
+    --bg:#eef1f8; --card:#ffffff; --ink:#1f2430; --mut:#5c6474;
+    --acc:#4f46e5; --acc2:#6366f1;
+    --focus:#e11d48; --focus-bg:#fff1f2;
+    --hard:#7c3aed; --hard-bg:#f5f3ff;
+    --pit:#ea580c; --pit-bg:#fff7ed;
+    --ex:#0e7490; --ex-bg:#ecfeff;
+    --ok:#059669; --ok-bg:#ecfdf5; --bad:#dc2626; --bad-bg:#fef2f2;
+    --line:#e4e7f0; --line2:#d7dbf0; --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:
+    radial-gradient(1000px 500px at 85% -10%, #e4e7ff 0%, transparent 60%),
+    radial-gradient(800px 420px at -10% 10%, #dbeafe 0%, transparent 55%), var(--bg);
+    color:var(--ink);
+    font-family:"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    line-height:1.75}
+  a{color:var(--acc); text-decoration:none}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 20px 60px}
+  header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line)}
+  .h-in{max-width:1180px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .logo{width:42px;height:42px;border-radius:12px; display:grid;place-items:center; flex:0 0 auto;
+    background:linear-gradient(135deg,var(--acc),#22d3ee); color:#fff; font-weight:800}
+  .h-t h1{margin:0; font-size:18px}
+  .h-t p{margin:0; color:var(--mut); font-size:12px}
+  .h-actions{margin-left:auto; display:flex; gap:8px}
+  .btn{border:1px solid var(--line2); background:#fff; border-radius:10px; padding:7px 12px; font-size:13px;
+    cursor:pointer; color:var(--ink)}
+  .btn:hover{border-color:var(--acc); color:var(--acc)}
+  .pwrap{margin-top:8px; height:7px; border-radius:99px; background:#e7e9f4; overflow:hidden}
+  #pbar{height:100%; width:0%; background:linear-gradient(90deg,var(--acc),#22d3ee); transition:width .3s}
+  .h-stats{font-size:12.5px; color:var(--mut); margin-top:4px; display:flex; gap:14px}
+  .h-stats b{color:var(--acc)}
+  .layout{display:flex; gap:26px; align-items:flex-start; margin-top:24px}
+  aside{width:248px; flex:0 0 248px; position:sticky; top:120px; max-height:calc(100vh - 150px); overflow:auto;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px}
+  aside h3{margin:2px 4px 10px; font-size:12px; letter-spacing:2px; color:var(--mut)}
+  .nav-i{display:flex; align-items:center; gap:9px; padding:8px 9px; border-radius:10px; color:var(--ink);
+    font-size:13.5px; margin-bottom:2px; border-left:3px solid transparent}
+  .nav-i:hover{background:#f3f4fd}
+  .nav-i.active{background:#eef0ff; border-left-color:var(--acc); font-weight:700}
+  .nav-i .num{color:var(--mut)}
+  .nav-i .cnt{margin-left:auto; font-size:11.5px; background:#eef0f7; border-radius:99px; padding:1px 7px}
+  .nav-i .cnt.good{background:var(--ok-bg); color:var(--ok)}
+  .nav-i .cnt.mix{background:#fffbeb; color:#b45309}
+  .legend{margin-top:10px; font-size:12px; color:var(--mut); display:grid; gap:4px}
+  .legend span::before{content:"●"; margin-right:6px}
+  .lg-f::before{color:var(--focus)} .lg-h::before{color:var(--hard)} .lg-p::before{color:var(--pit)}
+  main{flex:1; min-width:0}
+  .hero{background:linear-gradient(135deg,#155e75,var(--ex) 55%,#0e7490); color:#fff; border-radius:22px;
+    padding:24px 26px; box-shadow:0 14px 30px rgba(14,116,144,.25)}
+  .hero .kicker{font-size:12px; letter-spacing:3px; opacity:.85; margin:0 0 6px}
+  .hero h1{margin:0; font-size:24px}
+  .hero p{margin:8px 0 0; opacity:.94; font-size:13px; max-width:760px}
+  .map{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+  .map a{color:#fff; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3);
+    padding:4px 11px; border-radius:99px; font-size:12px}
+  .map a:hover{background:rgba(255,255,255,.3)}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); margin-top:24px;
+    box-shadow:0 4px 18px rgba(30,35,60,.05); scroll-margin-top:120px}
+  .card-head{display:flex; align-items:flex-start; gap:14px; padding:20px 22px 12px}
+  .no{flex:0 0 auto; width:46px; height:46px; border-radius:14px; display:grid; place-items:center;
+    background:#eef0ff; color:var(--acc); font-weight:800; font-size:19px}
+  .titles{flex:1; min-width:0}
+  .titles h2{margin:0; font-size:19px}
+  .titles .en{color:var(--mut); font-size:12px}
+  .chips{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{font-size:11.5px; border-radius:99px; padding:3px 10px; font-weight:600}
+  .chip-focus{background:var(--focus-bg); color:var(--focus)}
+  .chip-hard{background:var(--hard-bg); color:var(--hard)}
+  .chip-pit{background:var(--pit-bg); color:var(--pit)}
+  .body{padding:0 22px 22px}
+  .blk{margin-top:12px}
+  .blk h3{margin:0 0 8px; font-size:15px}
+  .blk ul{margin:0; padding:0; list-style:none; display:grid; gap:7px}
+  .blk li{padding-left:22px; position:relative; font-size:14px}
+  .blk-sum li::before{content:"▸"; position:absolute; left:2px; color:var(--acc); font-weight:700}
+  .ex{margin-top:12px; background:var(--ex-bg); border:1px solid #a5f3fc; border-radius:13px; padding:13px 15px}
+  .ex h3{margin:0 0 8px; font-size:15px; color:var(--ex)}
+  .ex-q{font-size:13.8px; background:rgba(255,255,255,.85); border:1px solid #cffafe; border-radius:9px;
+    padding:8px 12px; margin-bottom:8px}
+  .ex-q b{color:var(--ex)}
+  .ex-s{font-size:13.6px; padding:2px 2px 4px}
+  .ex-s b{color:#115e59}
+  .igrid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px}
+  .ig{border-radius:12px; padding:12px 14px; border:1px solid}
+  .ig h3{margin:0 0 6px; font-size:13.5px}
+  .ig ul{margin:0; padding:0; list-style:none; display:grid; gap:5px}
+  .ig li{padding-left:20px; font-size:12.8px; position:relative}
+  .ig-focus{background:var(--focus-bg); border-color:#fecdd3} .ig-focus h3{color:var(--focus)}
+  .ig-focus li::before{content:"★"; position:absolute; left:0; color:var(--focus)}
+  .ig-hard{background:var(--hard-bg); border-color:#ddd6fe} .ig-hard h3{color:var(--hard)}
+  .ig-hard li::before{content:"▲"; position:absolute; left:0; color:var(--hard)}
+  .ig-pit{background:var(--pit-bg); border-color:#fed7aa} .ig-pit h3{color:var(--pit)}
+  .ig-pit li::before{content:"!"; position:absolute; left:2px; font-weight:800; color:var(--pit)}
+  .quiz{border-top:1.5px dashed var(--line2); margin-top:16px; padding-top:4px}
+  .quiz h3{margin:12px 0 2px; font-size:15px}
+  .quiz .qhint{font-size:12px; color:var(--mut); margin:2px 0 10px}
+  .q{background:#fafbff; border:1px solid var(--line); border-radius:13px; padding:14px 16px; margin-bottom:13px}
+  .q-text{font-size:14.2px; font-weight:600}
+  .q-meta{display:flex; gap:8px; margin-bottom:7px}
+  .tagq{font-size:11px; border-radius:6px; padding:2px 8px; background:#eef0ff; color:var(--acc); font-weight:600}
+  .opts{display:grid; gap:8px; margin-top:9px}
+  .opt{display:flex; gap:10px; align-items:flex-start; text-align:left; width:100%; border:1.5px solid var(--line);
+    background:#fff; border-radius:10px; padding:8px 12px; font-size:13.3px; color:var(--ink); cursor:pointer; font-family:inherit}
+  .opt:hover:not(:disabled){border-color:var(--acc2); background:#f5f6ff}
+  .opt:disabled{cursor:default}
+  .ol{flex:0 0 auto; width:22px; height:22px; border-radius:7px; display:grid; place-items:center; font-size:12px;
+    font-weight:700; background:#eef0f7; color:var(--mut)}
+  .opt.right{border-color:var(--ok); background:var(--ok-bg)}
+  .opt.right .ol{background:var(--ok); color:#fff}
+  .opt.wrong{border-color:var(--bad); background:var(--bad-bg)}
+  .opt.wrong .ol{background:var(--bad); color:#fff}
+  .fb{display:none; margin-top:11px; border-radius:11px; padding:9px 13px; font-size:13.3px; border:1px solid}
+  .fb.show{display:block}
+  .fb-ok{background:var(--ok-bg); border-color:#a7f3d0}
+  .fb-bad{background:var(--bad-bg); border-color:#fecaca}
+  footer{color:var(--mut); font-size:12.5px; text-align:center; padding:26px 0 4px}
+  @media (max-width:920px){
+    .layout{display:block} aside{display:none} .igrid{grid-template-columns:1fr}
+    .h-t h1{font-size:15px} .hero h1{font-size:20px}
+  }
+  @media print{ header,aside,.h-actions,.map{display:none} .card{break-inside:avoid} }
+</style>
+</head>
+<body>
+<header>
+  <div class="h-in">
+    <div class="logo">LA</div>
+    <div class="h-t">
+      <h1>Lecture 1 向量与矩阵 · 复习手册</h1>
+      <p>ISOM2005 Linear Algebra（澳门大学）· Vectors and Matrices · 知识点 + 例题讲解 + 自测练习</p>
+    </div>
+    <div class="h-actions">
+      <button class="btn" id="btnReset">↺ 重置练习</button>
+      <button class="btn" id="btnPrint">🖨 打印</button>
+    </div>
+    <div style="flex-basis:100%">
+      <div class="pwrap"><div id="pbar"></div></div>
+      <div class="h-stats"><span>已作答 <b id="stAns">0</b> / 12 题</span><span>答对 <b id="stRight">0</b> 题</span><span id="stState"></span></div>
+    </div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="layout">
+    <aside>
+      <h3>知识点导航</h3>
+      <nav id="side"></nav>
+      <div class="legend">
+        <span class="lg-f">重点</span><span class="lg-h">难点</span><span class="lg-p">易错点</span>
+      </div>
+      <p style="font-size:12px;color:var(--mut)">记法：(a,b)<sup>T</sup> 表示列向量；A<sub>m×n</sub> 表示 m 行 n 列矩阵。</p>
+    </aside>
+    <main>
+      <div class="hero">
+        <p class="kicker">REVIEW · LECTURE 1</p>
+        <h1>🧮 Vectors and Matrices · 向量与矩阵</h1>
+        <p>覆盖 Lecture 1.pdf 全部知识点：向量与线性组合、点积与夹角、矩阵与特殊矩阵、转置、列空间与秩、线性方程组解的判定。每个知识点先给出定义，紧跟例题讲解帮助理解，再标注重点 / 难点 / 易错点，最后配 2 道自测题，共 12 题。</p>
+        <div class="map" id="map"></div>
+      </div>
+      <div id="content"></div>
+      <footer>整理自：D:\新建文件夹 (3)\Lecture 1.pdf（ISOM2005-Linear Algebra, University of Macau, 1st Sem 2026/2027）· 仅供个人复习使用</footer>
+    </main>
+  </div>
+</div>
+<script>
+(function(){
+  var L = ["A","B","C","D","E"];
+  var state = {};
+  var S = [    {
+      id:"g1", no:"01", zh:"向量与线性组合", en:"Vectors · Scalar Multiplication · Vector Addition · Linear Combination",
+      defs:[
+        "<b>向量</b>：一列（或一行）数字。列向量 v=(v<sub>1</sub>,v<sub>2</sub>,…,v<sub>m</sub>)<sup>T</sup>；行向量 (v<sub>1</sub> v<sub>2</sub> … v<sub>m</sub>)。本课程默认向量就是列向量（除非特别说明），分量即 v<sub>i</sub>。",
+        "<b>数乘（标量乘）</b>：每个分量都乘同一个数。性质：(ab)v=a(bv)、(a+b)v=av+bv、a(v+w)=av+aw、0v=0、1v=v、(−1)v=−v。",
+        "<b>向量加法</b>：只有维数（分量个数）相同的向量才能相加，逐分量相加；满足交换律 v+w=w+v 与结合律 (u+v)+w=u+(v+w)。",
+        "<b>线性组合</b>：若 v<sub>1</sub>,…,v<sub>n</sub> 都是 m 元向量，a<sub>1</sub>,…,a<sub>n</sub> 是标量，则 a<sub>1</sub>v<sub>1</sub>+a<sub>2</sub>v<sub>2</sub>+…+a<sub>n</sub>v<sub>n</sub> 称为这些向量的线性组合。",
+        "<b>向量空间与标准向量</b>：R<sup>n</sup> 是全体 n 元向量的集合；若一个集合含全部 n 元向量并对加法、数乘封闭，就称向量空间。零向量 0 满足 0+v=v、0v=0；标准向量 e<sub>i</sub> 只在第 i 个分量为 1，{e<sub>1</sub>,…,e<sub>n</sub>} 是 R<sup>n</sup> 中最简单的一组独立向量。"
+      ],
+      ex:[
+        {p:"v<sub>1</sub>=(1,3)<sup>T</sup>，v<sub>2</sub>=(3,1)<sup>T</sup>，b=(2,8)<sup>T</sup>。b 能否写成 b=a<sub>1</sub>v<sub>1</sub>+a<sub>2</sub>v<sub>2</sub>？若能，求 a<sub>1</sub>,a<sub>2</sub>。",
+         s:"设 b=a<sub>1</sub>v<sub>1</sub>+a<sub>2</sub>v<sub>2</sub>，逐分量相等得 a<sub>1</sub>+3a<sub>2</sub>=2、3a<sub>1</sub>+a<sub>2</sub>=8，解得 a<sub>2</sub>=−1/4、a<sub>1</sub>=11/4。验证：11/4·(1,3)−1/4·(3,1)=(2,8) ✓（即 E.g.1）。"},
+        {p:"任意两个 2 维向量都能张成整个 xy 平面吗？",
+         s:"不一定。若两向量成比例（线性相关），例如 (1,2)<sup>T</sup> 与 (2,4)<sup>T</sup>，线性组合只会落在同一条直线上；只有两向量线性无关（不成比例）时才能张成 R<sup>2</sup>。例中 (1,3) 与 (3,1) 不成比例，所以任意 w=(w<sub>1</sub>,w<sub>2</sub>)<sup>T</sup> 都可表示。"}
+      ],
+      focus:[
+        "默认列向量；加法要求同维，数乘与加法都逐分量进行。",
+        "判断能否表示成线性组合：设未知系数、列方程、求解。",
+        "两个 2 维向量张成 R<sup>2</sup> ⇔ 它们线性无关（不成比例）。"
+      ],
+      hard:[
+        "把线性组合翻译成方程：b=a<sub>1</sub>v<sub>1</sub>+…+a<sub>n</sub>v<sub>n</sub> 等价于关于 a<sub>i</sub> 的线性方程组。",
+        "本课的向量空间取通俗定义：全体 n 元向量 + 加法与数乘运算，不必背公理化十条。"
+      ],
+      pit:[
+        "行向量与列向量要分清，本课程默认列向量。",
+        "R<sup>n</sup> 中的 n 是分量个数（维数），不是向量个数。",
+        "分配律 a(v+w)=av+aw 是把 a 分配给两个向量，别写成 a+av。"
+      ],
+      qs:[
+        {t:"single", q:"关于向量运算，下列说法正确的是（　）。",
+         o:["两个向量只要数值相同就能相加，与维数无关","任意两个 2 维向量都能张成整个平面","本课程默认向量指列向量，除非特别说明","数乘只需乘第一个分量即可"], a:2,
+         e:"PPT 明确本课程中 vector 默认指 column vector。加法要求同维；任意两个 2 维向量不一定张成平面（成比例时只张成直线）。"},
+        {t:"single", q:"v<sub>1</sub>=(1,3)<sup>T</sup>，v<sub>2</sub>=(3,1)<sup>T</sup>，b=(2,8)<sup>T</sup>，且 b=a<sub>1</sub>v<sub>1</sub>+a<sub>2</sub>v<sub>2</sub>，则 (a<sub>1</sub>,a<sub>2</sub>)=（　）。",
+         o:["(11/4, −1/4)","(−1/4, 11/4)","(2, −1)","(3, −2)"], a:0,
+         e:"由 a<sub>1</sub>+3a<sub>2</sub>=2、3a<sub>1</sub>+a<sub>2</sub>=8 解得 a<sub>2</sub>=−1/4、a<sub>1</sub>=11/4。"}
+      ]
+    },
+    {
+      id:"g2", no:"02", zh:"点积 · 长度 · 夹角", en:"Dot Product · Length · Angle · Inequalities",
+      defs:[
+        "<b>点积</b>：v·w=v<sub>1</sub>w<sub>1</sub>+…+v<sub>n</sub>w<sub>n</sub>，结果是一个标量，且 v·w=w·v。",
+        "<b>长度（范数）</b>：||v||<sup>2</sup>=v·v=v<sub>1</sub><sup>2</sup>+…+v<sub>n</sub><sup>2</sup>，即 ||v||=√(v<sub>1</sub><sup>2</sup>+…+v<sub>n</sub><sup>2</sup>)。",
+        "<b>单位向量</b>：长度 ||u||=1；若 v≠0，则 u=v/||v|| 是与 v 同方向的单位向量。",
+        "<b>夹角公式</b>：v,w 非零时，cosθ=(v·w)/(||v||·||w||)。",
+        "<b>垂直判定</b>：两个非零向量垂直 ⇔ v·w=0。",
+        "<b>两个不等式</b>：Schwarz 不等式 |v·w|≤||v||·||w||；三角不等式 ||v+w||≤||v||+||w||。"
+      ],
+      ex:[
+        {p:"求 v=(1,2)<sup>T</sup> 与 w=(1,2,3)<sup>T</sup> 的长度。",
+         s:"||v||=√(1²+2²)=√5；||w||=√(1²+2²+3²)=√14（即 E.g.2、E.g.3）。"},
+        {p:"求 v=(1,1)<sup>T</sup> 与 w=(1,0)<sup>T</sup> 的夹角 θ；并判断 (1,1)<sup>T</sup> 与 (1,−1)<sup>T</sup> 是否垂直。",
+         s:"v·w=1，||v||=√2，||w||=1 ⇒ cosθ=1/√2=√2/2 ⇒ θ=45°。又 (1,1)·(1,−1)=1−1=0，所以两向量垂直。"},
+        {p:"单位圆上 u=(cosθ,sinθ)<sup>T</sup>、v=(cosα,sinα)<sup>T</sup>，u·v 表达了什么？",
+         s:"u·v=cosθcosα+sinθsinα=cos(θ−α)：点积直接给出两个单位向量夹角的余弦（幻灯片 Angles of Unit Vectors）。"}
+      ],
+      focus:[
+        "核心公式 cosθ=(v·w)/(||v||·||w||) 与 垂直 ⇔ 点积为 0。",
+        "单位化：u=v/||v||；且 ||v||<sup>2</sup>=v·v。",
+        "Schwarz 与三角不等式常用来估计长度、点积的范围。"
+      ],
+      hard:[
+        "夹角公式可由余弦定理推出：令 p=w−v，由 ||p||<sup>2</sup>=||w||<sup>2</sup>+||v||<sup>2</sup>−2||w||||v||cosθ 化简得到。",
+        "把点积理解为投影×长度：垂直就意味着投影为 0。"
+      ],
+      pit:[
+        "点积的结果是标量，不是向量。",
+        "v·w=0 只说明两向量垂直；若其中有零向量则不能谈夹角。",
+        "用 cosθ 的符号判断角：正为锐角、零为直角、负为钝角。"
+      ],
+      qs:[
+        {t:"single", q:"向量 v=(1,2,2)<sup>T</sup> 的长度 ||v||=（　）。",
+         o:["√5","3","9","5"], a:1,
+         e:"||v||=√(1+4+4)=√9=3。"},
+        {t:"judge", q:"若 v·w=0，则 v 与 w 中至少有一个是零向量。",
+         o:["正确","错误"], a:1,
+         e:"错误。非零向量也能垂直：v=(1,1)<sup>T</sup>、w=(1,−1)<sup>T</sup> 时 v·w=0，但两者都不是零向量。"}
+      ]
+    },    {
+      id:"g3", no:"03", zh:"矩阵与矩阵运算", en:"Matrices · Special Matrices · Matrix Operations",
+      defs:[
+        "<b>矩阵</b>：按行、列排列的矩形数表，m 行 n 列记作 A<sub>m×n</sub>；第 i 行第 j 列的元素称 (i,j)-entry，记 a<sub>ij</sub>。把列向量排在一起 A=[v<sub>1</sub> v<sub>2</sub> … v<sub>n</sub>]；一个 n 元向量也可看成 n×1 矩阵。",
+        "<b>方阵的特殊类型</b>：对角矩阵（主对角线之外全为 0）；单位矩阵 I（主对角线全 1、其余全 0）；下三角矩阵（主对角线上方全为 0）；上三角矩阵（主对角线下方全为 0）；对称矩阵（对一切 i,j 有 a<sub>ij</sub>=a<sub>ji</sub>）；零矩阵 0（元素全为 0）。",
+        "<b>加法与数乘</b>：只有同尺寸（行列数都相同）的矩阵才能相加、相减，逐元素运算 (A±B)<sub>ij</sub>=a<sub>ij</sub>±b<sub>ij</sub>；数乘逐元素 (cA)<sub>ij</sub>=c·a<sub>ij</sub>。",
+        "<b>运算性质</b>（A,B,C 同尺寸，k,l 为标量）：A+B=B+A；(A+B)+C=A+(B+C)；(kl)A=k(lA)；(k+l)A=kA+lA；k(A+B)=kA+kB。"
+      ],
+      ex:[
+        {p:"A=(1 4;2 5;3 6) 与 B=(6 9;8 0;9 2) 都是 3×2 矩阵，求 2B、A+2B、2B−A。",
+         s:"2B=(12 18;16 0;18 4)；A+2B=(13 22;18 5;21 10)；2B−A=(11 14;14 −5;15 −2)。全部按元素做加减法与数乘即可（即 E.g.5）。"},
+        {p:"识别类型：diag(−2,4,8)、I<sub>3</sub>、(2 0 0;1 4 0;−3 7 5)、(2 1 −3;0 4 7;0 0 5)、(2 1 −3;1 4 7;−3 7 5)。",
+         s:"依次是：对角矩阵；单位矩阵；下三角矩阵（主对角线上方全 0）；上三角矩阵（主对角线下方全 0）；对称矩阵（满足 a<sub>ij</sub>=a<sub>ji</sub>）。"}
+      ],
+      focus:[
+        "(i,j)-entry = 第 i 行第 j 列的元素，行号在前，别颠倒。",
+        "加减法与数乘都逐元素操作，且只有同尺寸才能相加。",
+        "五种特殊类型要能一眼辨认：对角、单位、上三角、下三角、对称。"
+      ],
+      hard:[
+        "下三角指主对角线上方为 0、上三角指主对角线下方为 0，容易与直觉相反，画主对角线辅助记忆。",
+        "对称矩阵隐含是方阵，图形上关于主对角线镜像相等。"
+      ],
+      pit:[
+        "本讲只涉及加法与数乘，还没有矩阵乘法，切勿擅自套用矩阵相乘的规则。",
+        "单位矩阵是对角矩阵的特例，但对角矩阵不一定是单位矩阵。",
+        "A=(1 2;3 4) 中 a<sub>11</sub>=1、a<sub>12</sub>=2、a<sub>21</sub>=3、a<sub>22</sub>=4。"
+      ],
+      qs:[
+        {t:"single", q:"矩阵 (2 0 0;1 4 0;−3 7 5) 属于（　）。",
+         o:["上三角矩阵","下三角矩阵","对角矩阵","单位矩阵"], a:1,
+         e:"主对角线上方的元素全为 0，且不满足其它特殊类型的条件，所以是下三角矩阵。"},
+        {t:"single", q:"设 A=(1 2;3 4)，B=(0 1;1 0)，则 A+2B=（　）。",
+         o:["(1 4;5 4)","(2 4;3 4)","(1 2;3 4)","(0 2;2 0)"], a:0,
+         e:"2B=(0 2;2 0)，逐元素相加得 A+2B=(1 4;5 4)。"}
+      ]
+    },
+    {
+      id:"g4", no:"04", zh:"转置", en:"Transpose and Its Properties",
+      defs:[
+        "<b>转置</b>：把矩阵沿主对角线翻折。A<sub>m×n</sub> 的转置记 A<sup>T</sup>（或 A′），是 n×m 矩阵，A 的 (i,j) 元素等于 A<sup>T</sup> 的 (j,i) 元素。",
+        "<b>性质</b>：(A<sup>T</sup>)<sup>T</sup>=A；(cA)<sup>T</sup>=cA<sup>T</sup>；(A+B)<sup>T</sup>=A<sup>T</sup>+B<sup>T</sup>（A、B 同尺寸，c 为标量）。"
+      ],
+      ex:[
+        {p:"A=(1 2;3 4)，B=(5 6;0 1)。写出 A<sup>T</sup>、B<sup>T</sup>，并验证 (2A)<sup>T</sup>=2A<sup>T</sup> 与 (A+B)<sup>T</sup>=A<sup>T</sup>+B<sup>T</sup>。",
+         s:"A<sup>T</sup>=(1 3;2 4)，B<sup>T</sup>=(5 0;6 1)。2A=(2 4;6 8)，转置得 (2 6;4 8)，而 2A<sup>T</sup>=(2 6;4 8) ✓。又 A+B=(6 8;3 5)，(A+B)<sup>T</sup>=(6 3;8 5)，而 A<sup>T</sup>+B<sup>T</sup>=(6 3;8 5) ✓（幻灯片 36 的例子）。"}
+      ],
+      focus:[
+        "转置交换行列：第 i 行变成第 i 列；尺寸由 m×n 变为 n×m。",
+        "三条性质：转置两次还原、(cA)<sup>T</sup>=cA<sup>T</sup>、(A+B)<sup>T</sup>=A<sup>T</sup>+B<sup>T</sup>。"
+      ],
+      hard:[
+        "最快的写法：把 A 的每一行抄成一列（或每一列抄成一行）。",
+        "(A+B)<sup>T</sup>=A<sup>T</sup>+B<sup>T</sup> 成立的关键是：逐元素运算与交换行列可以互换顺序。"
+      ],
+      pit:[
+        "转置后下标反转：A 的 (i,j) 对应 A<sup>T</sup> 的 (j,i)。",
+        "数乘取转置时标量留在外面，不要写成 (cA)<sup>T</sup>=c<sup>T</sup>A<sup>T</sup>。"
+      ],
+      qs:[
+        {t:"single", q:"设 A=(1 2;3 4)，B=(0 1;1 0)，则 (A+B)<sup>T</sup>=（　）。",
+         o:["(1 4;3 4)","(1 3;4 4)","(4 3;1 4)","(1 4;4 3)"], a:0,
+         e:"A+B=(1 3;4 4)，取转置（行与列互换）得 (1 4;3 4)。"},
+        {t:"judge", q:"若 A 是 m×n 矩阵，则 A<sup>T</sup> 是 n×m 矩阵。",
+         o:["正确","错误"], a:0,
+         e:"正确。转置把 m 行 n 列变成 n 行 m 列。"}
+      ]
+    },    {
+      id:"g5", no:"05", zh:"列空间 · 线性相关 · 秩", en:"Column Space · Independence · Rank · Basis",
+      defs:[
+        "<b>Ax 的列观点</b>：A=[a<sub>1</sub> … a<sub>n</sub>] 时，Ax=x<sub>1</sub>a<sub>1</sub>+…+x<sub>n</sub>a<sub>n</sub>，即 A 乘 x 就是用 x 的分量对 A 的列做线性组合。",
+        "<b>列空间 C(A)</b>（又称 range）：A 的所有列向量张成的空间，也就是全部可能的 Ax 组成的集合。",
+        "<b>线性无关</b>：只有当 x=0 时才有 Ax=0，则各列线性无关；否则线性相关。相关的那一列必落在前面若干列张成的列空间里。",
+        "<b>秩 r(A)</b>：A 中线性无关列的最大个数，也等于列空间的维数；零化度 Nullity=n−r(A)。",
+        "<b>基（basis）</b>：一组同时满足“线性无关”和“张成该列空间”的向量。",
+        "<b>几何示例</b>：零矩阵的 C(A)={0}（一个点）；diag(1,0,0) 的 C(A) 是 x 轴；diag(1,1,0) 的 C(A) 是 xy 平面；I<sub>3</sub> 的 C(A)=R<sup>3</sup>。列空间维数恰好是 r(A)。"
+      ],
+      ex:[
+        {p:"A=(1 3;3 1)，b=(2,8)<sup>T</sup>，v=(4,−1)<sup>T</sup>。(i) 找一个与 b 垂直的向量；(ii) 比较 span{a<sub>1</sub>,a<sub>2</sub>}、span{a<sub>1</sub>,a<sub>2</sub>,b}、span{a<sub>1</sub>,a<sub>2</sub>,b,v}。",
+         s:"(i) v·b=4×2+(−1)×8=0，故 v=(4,−1)<sup>T</sup> 垂直于 b。(ii) A 的两列不成比例、线性无关，故 C(A)=R<sup>2</sup>、r(A)=2；b 与 v 都已在 R<sup>2</sup> 中，所以三个 span 都等于 R<sup>2</sup>（即 E.g.6）。"},
+        {p:"A=(1 0 0 1;0 1 0 1;0 0 1 1)（3×4）。指出独立列与相关列，求 r(A)、一组基和 nullity。",
+         s:"a<sub>4</sub>=(1,1,1)<sup>T</sup>=a<sub>1</sub>+a<sub>2</sub>+a<sub>3</sub>，故 a<sub>4</sub> 相关，而 a<sub>1</sub>,a<sub>2</sub>,a<sub>3</sub> 线性无关。r(A)=3，基可取 {a<sub>1</sub>,a<sub>2</sub>,a<sub>3</sub>}（也就是 {e<sub>1</sub>,e<sub>2</sub>,e<sub>3</sub>}）；nullity=n−r(A)=4−3=1（即 E.g.7）。"}
+      ],
+      focus:[
+        "Ax=b 有解 ⇔ b 是 A 的列的线性组合 ⇔ b∈C(A)。",
+        "秩=列空间维数=最大线性无关列数；nullity=n−r(A)。",
+        "零向量与任意非零向量线性相关（0=0·v）。"
+      ],
+      hard:[
+        "用几何理解秩：点(0 维) → x 轴(1 维) → xy 平面(2 维) → R<sup>3</sup>(3 维)，维数正是 r(A)。",
+        "判断相关不能只看“两列是否相等”，要看是否存在非零的 x 使 Ax=0。"
+      ],
+      pit:[
+        "rank 是列空间的维数，不是矩阵元素个数；并且 r(A)≤min(m,n)。",
+        "“相关列落在前列张成的空间中”与列的先后顺序有关（如 E.g.7 中 a<sub>4</sub> 由前三列组合）。",
+        "C(A)⊆R<sup>m</sup>（每一列有 m 个分量），不要写成 R<sup>n</sup>。"
+      ],
+      qs:[
+        {t:"single", q:"矩阵 A=(1 0 0 1;0 1 0 1;0 0 1 1) 的秩 r(A)=（　）。",
+         o:["1","2","3","4"], a:2,
+         e:"前 3 列为 e<sub>1</sub>,e<sub>2</sub>,e<sub>3</sub> 线性无关，第 4 列是前三列之和，故 r(A)=3。"},
+        {t:"single", q:"下列哪个矩阵的列空间是整个 R<sup>2</sup>？",
+         o:["(1 0;0 1)","(1 2;2 4)","(1 0;0 0)","(0 0;0 0)"], a:0,
+         e:"I<sub>2</sub> 的两列 e<sub>1</sub>,e<sub>2</sub> 线性无关，张成 R<sup>2</sup>；其余分别只张成一条直线、x 轴、原点。"}
+      ]
+    },
+    {
+      id:"g6", no:"06", zh:"方程组 vs 线性组合 · 解的判定", en:"Ax=b · Solution Counting · Homogeneous Systems",
+      defs:[
+        "<b>核心翻译</b>：A<sub>m×n</sub>x=b 有解 ⇔ b 是 A 的列的线性组合 ⇔ b∈C(A)。",
+        "<b>非齐次 Ax=b（n 个未知数）</b>：无解 ⇔ r(A)&lt;r(A,b)；唯一解 ⇔ r(A)=r(A,b)=n；无穷多解 ⇔ r(A)=r(A,b)&lt;n。",
+        "<b>齐次 Ax=0</b>：只有零解 ⇔ r(A)=n；存在非零解 ⇔ r(A)&lt;n（此时有无穷多解，解空间维数 n−r(A)≥1）。",
+        "<b>补充</b>：零向量与任意非零向量线性相关；[A|b] 比 A 多一列，故 r(A,b) 只可能等于 r(A)，或比它大 1。"
+      ],
+      ex:[
+        {p:"(E.g.8) 3x<sub>1</sub>+6x<sub>2</sub>=3，2x<sub>1</sub>+4x<sub>2</sub>=4 有解吗？",
+         s:"A=(3 6;2 4)，第 2 列=2×第 1 列 ⇒ C(A) 是 1 维直线、r(A)=1。b=(3,4)<sup>T</sup> 不在这条直线 span{(3,2)} 上（若 b=c(3,2)，由 3c=3 得 c=1，但 2c=2≠4），故 r(A,b)=2。由 r(A)=1&lt;r(A,b)=2 得：无解。"},
+        {p:"(E.g.9) 2x<sub>1</sub>+3x<sub>2</sub>=4，3x<sub>1</sub>+x<sub>2</sub>=−1 有几组解？",
+         s:"det(2 3;3 1)=2×1−3×3=−7≠0，两列线性无关，r(A)=r(A,b)=n=2，故有唯一解。解得 x<sub>1</sub>=−1、x<sub>2</sub>=2（验证：2(−1)+3·2=4、3(−1)+2=−1 ✓）。"},
+        {p:"(E.g.10) x<sub>1</sub>+2x<sub>2</sub>=−1，2x<sub>1</sub>+4x<sub>2</sub>=−2 的解如何？",
+         s:"第 2 个方程是第 1 个方程的 2 倍，两方程等价，r(A)=r(A,b)=1&lt;n=2，故有无穷多解。令 x<sub>2</sub>=t，则 x<sub>1</sub>=−1−2t，即 (x<sub>1</sub>,x<sub>2</sub>)=(−1−2t, t)，t∈R。"},
+        {p:"齐次系统 x<sub>1</sub>+2x<sub>2</sub>=0，2x<sub>1</sub>+4x<sub>2</sub>=0 有非零解吗？",
+         s:"两列相关，r(A)=1&lt;n=2，所以存在非零解（且有无穷多）：解空间为 t(−2,1)<sup>T</sup>，t∈R。"}
+      ],
+      focus:[
+        "b∈C(A) ⇔ Ax=b 有解，是本讲最核心的“翻译”。",
+        "背熟判定：r(A)&lt;r(A,b) 无解；三者都等于 n 唯一解；r(A)=r(A,b)&lt;n 无穷多解。",
+        "齐次方程只看 r(A) 与 n 的关系（齐次永远相容，至少有零解）。"
+      ],
+      hard:[
+        "为什么 r(A,b) 可能大于 r(A)？因为把 b 加进来相当于多了一列，当 b 不在 C(A) 中时就多出一个独立方向。",
+        "无穷多解的含义：系统相容但自由变量至少一个（n−r(A)≥1）。"
+      ],
+      pit:[
+        "唯一解要求 r(A)=r(A,b)=n 三个量同时成立；若前两者相等但小于 n，则是无穷多解而不是唯一解。",
+        "齐次方程一定有零解；问“是否存在非零解”取决于 r(A)&lt;n。",
+        "判断无解必须比较 r(A) 与 r(A,b)，不能只看“列是否相关”。"
+      ],
+      qs:[
+        {t:"single", q:"方程组 3x<sub>1</sub>+6x<sub>2</sub>=3、2x<sub>1</sub>+4x<sub>2</sub>=4 解的情况是（　）。",
+         o:["唯一解","无穷多解","无解","恰好两组解"], a:2,
+         e:"两列成比例 r(A)=1，而 b=(3,4) 不在列空间直线 span{(3,2)} 上，r(A,b)=2，故无解（E.g.8）。"},
+        {t:"single", q:"齐次方程组 x<sub>1</sub>+2x<sub>2</sub>=0、2x<sub>1</sub>+4x<sub>2</sub>=0 的解为（　）。",
+         o:["只有零解","t·(−2,1)<sup>T</sup>，t∈R","t·(2,1)<sup>T</sup>，t∈R","无解"], a:1,
+         e:"两方程成比例，r(A)=1&lt;n=2，存在无穷多非零解；由 x<sub>1</sub>=−2x<sub>2</sub> 得解空间 t(−2,1)<sup>T</sup>，t∈R。"}
+      ]
+    }
+  ];
+  function esc(s){ var d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+  function tag(sec){ var c=[];
+    if(sec.focus&&sec.focus.length)c.push('<span class="chip chip-focus">重点</span>');
+    if(sec.hard&&sec.hard.length)c.push('<span class="chip chip-hard">难点</span>');
+    if(sec.pit&&sec.pit.length)c.push('<span class="chip chip-pit">易错点</span>');
+    return '<div class="chips">'+c.join("")+'</div>'; }
+  function ul(a){ return a?"<ul>"+a.map(function(x){ return "<li>"+x+"</li>"; }).join("")+"</ul>":""; }
+  function qT(t){ return t==="judge"?"判断题":"单选题"; }
+  function qOpts(q){ return '<div class="opts">'+q.o.map(function(o,i){
+      return '<button type="button" class="opt" data-i="'+i+'"><span class="ol">'+L[i]+'</span><span class="ot">'+o+'</span></button>'; }).join("")+'</div>'; }
+  function qHTML(sec,i){ var q=sec.qs[i]; var key=sec.id+"q"+i;
+    return '<div class="q" data-key="'+key+'" data-ans="'+q.a+'"><div class="q-meta"><span class="tagq">'+qT(q.t)+
+      '</span><span style="font-size:12px;color:#8a90a3">第 '+sec.no+' 组 · 题 '+(i+1)+'</span></div>'+
+      '<div class="q-text">'+q.q+'</div>'+qOpts(q)+'<div class="fb" data-fb="'+key+'"></div></div>'; }
+  function exHTML(sec){ if(!sec.ex) return ""; var h='<div class="ex"><h3>📘 例题讲解（紧跟定义，帮助理解）</h3>';
+    sec.ex.forEach(function(e,i){ h+='<div class="ex-q"><b>题 '+(i+1)+'：</b>'+e.p+'</div><div class="ex-s"><b>解：</b>'+e.s+'</div>'; });
+    return h+'</div>'; }
+  function secHTML(sec){ var qs=sec.qs.map(function(_,i){ return qHTML(sec,i); }).join("");
+    return '<section class="card" id="'+sec.id+'"><div class="card-head"><div class="no">'+sec.no+'</div>'+
+      '<div class="titles"><h2>'+sec.zh+'</h2><div class="en">'+sec.en+'</div></div>'+tag(sec)+'</div>'+
+      '<div class="body"><div class="blk blk-sum"><h3>📚 定义与知识点</h3>'+ul(sec.defs)+'</div>'+
+      exHTML(sec)+
+      '<div class="igrid"><div class="ig ig-focus"><h3>🎯 重点</h3>'+ul(sec.focus)+'</div>'+
+      '<div class="ig ig-hard"><h3>🧠 难点</h3>'+ul(sec.hard)+'</div>'+
+      '<div class="ig ig-pit"><h3>⚠️ 易错点</h3>'+ul(sec.pit)+'</div></div>'+
+      '<div class="quiz"><h3>✏️ 练习自测</h3><p class="qhint">每个知识点 2 题，共 12 题。点击选项作答，即可看到答案与解析。</p>'+qs+'</div></div></section>'; }
+  function render(){ document.getElementById("map").innerHTML=S.map(function(s){ return '<a href="#'+s.id+'">'+s.no+' '+s.zh+'</a>'; }).join("");
+    document.getElementById("side").innerHTML=S.map(function(s){
+      return '<a class="nav-i" href="#'+s.id+'"><span class="num">'+s.no+'</span><span>'+s.zh+'</span><span class="cnt" id="cnt'+s.id+'">0/2</span></a>'; }).join("");
+    document.getElementById("content").innerHTML=S.map(secHTML).join("");
+    upd(); }
+  function findQ(key){ for(var s=0;s<S.length;s++){ var sec=S[s]; for(var i=0;i<sec.qs.length;i++){ if(sec.id+"q"+i===key) return {sec:sec,i:i,q:sec.qs[i]}; } } return null; }
+  function upd(){ var ansN=0,okN=0,per={};
+    Object.keys(state).forEach(function(k){ var id=k.replace(/q\d+$/,""); per[id]=per[id]||{a:0,o:0}; per[id].a++; if(state[k].ok) per[id].o++; });
+    Object.keys(per).forEach(function(id){ var q=per[id]; ansN+=q.a; okN+=q.o; var el=document.getElementById("cnt"+id);
+      if(el){ el.textContent=q.a+"/2"; el.className="cnt"+(q.a===2?(q.o===2?" good":" mix"):""); } });
+    document.getElementById("stAns").textContent=ansN; document.getElementById("stRight").textContent=okN;
+    document.getElementById("pbar").style.width=(ansN/12*100)+"%";
+    document.getElementById("stState").textContent=(ansN===0?"开始答题吧～":(ansN===12&&okN===12?"🎉 全部答对！":(ansN===12?"已完成 12 题，建议复习红色易错点后再来一次。":"继续加油～"))); }
+  function mark(key){ var st=state[key]; var card=document.querySelector('.q[data-key="'+key+'"]'); if(!card) return;
+    var opts=card.querySelectorAll(".opt"); var ans=parseInt(card.dataset.ans,10);
+    Array.prototype.forEach.call(opts,function(b){ b.disabled=true; var i=parseInt(b.dataset.i,10);
+      if(i===ans) b.classList.add("right"); else if(i===st.sel) b.classList.add("wrong"); }); }
+  function show(key){ var fb=document.querySelector('[data-fb="'+key+'"]'); if(!fb) return; var f=findQ(key); if(!f) return;
+    var card=fb.closest(".q"); var ans=parseInt(card.dataset.ans,10); var ok=state[key].ok;
+    fb.className="fb show "+(ok?"fb-ok":"fb-bad");
+    fb.innerHTML="<b>"+(ok?"✅ 回答正确":"❌ 回答错误")+"</b>　正确答案：<b>"+L[ans]+". "+f.q.o[ans]+"</b><div style='margin-top:3px'>💡 解析："+f.q.e+"</div>"; }
+  function choose(btn){ var card=btn.closest(".q"); var key=card.dataset.key; if(state[key]) return;
+    var sel=parseInt(btn.dataset.i,10); var ans=parseInt(card.dataset.ans,10);
+    state[key]={sel:sel,ok:sel===ans}; mark(key); show(key); upd(); }
+  function bind(){ document.addEventListener("click",function(e){ var b=e.target.closest(".opt"); if(b) choose(b); });
+    document.getElementById("btnReset").addEventListener("click",function(){ state={}; render(); });
+    document.getElementById("btnPrint").addEventListener("click",function(){ window.print(); }); }
+  function spy(){ var links=Array.prototype.slice.call(document.querySelectorAll("#side .nav-i"));
+    var secs=S.map(function(s){ return document.getElementById(s.id); });
+    var ob=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting) links.forEach(function(a){ a.classList.toggle("active",a.getAttribute("href")==="#"+en.target.id); }); }); },{rootMargin:"-15% 0px -70% 0px"});
+    secs.forEach(function(s){ if(s) ob.observe(s); }); }
+  render(); bind(); spy();
+})();
+</script>
+</body>
+</html>
