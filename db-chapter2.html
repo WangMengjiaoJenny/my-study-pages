@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第2章 组织中的数据建模 · 复习</title>
+<style>
+  :root{
+    --bg:#eef1f8; --card:#ffffff; --ink:#1f2430; --mut:#5c6474;
+    --acc:#4f46e5; --acc2:#6366f1;
+    --focus:#e11d48; --focus-bg:#fff1f2;
+    --hard:#7c3aed; --hard-bg:#f5f3ff;
+    --pit:#ea580c; --pit-bg:#fff7ed;
+    --ok:#059669; --ok-bg:#ecfdf5; --bad:#dc2626; --bad-bg:#fef2f2;
+    --line:#e4e7f0; --line2:#d7dbf0;
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:
+    radial-gradient(1000px 500px at 85% -10%, #e4e7ff 0%, transparent 60%),
+    radial-gradient(800px 420px at -10% 10%, #dbeafe 0%, transparent 55%),
+    var(--bg);
+    color:var(--ink);
+    font-family:"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    line-height:1.7}
+  a{color:var(--acc); text-decoration:none}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 20px 60px}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line); box-shadow:0 2px 14px rgba(79,70,229,.06)}
+  .h-in{max-width:1180px; margin:0 auto; padding:14px 20px}
+  .h-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .logo{width:44px;height:44px;border-radius:13px; display:grid;place-items:center; flex:0 0 auto;
+    background:linear-gradient(135deg,var(--acc),var(--acc2)); color:#fff; font-weight:800; font-size:20px}
+  .h-t h1{margin:0; font-size:20px; letter-spacing:.3px}
+  .h-t p{margin:2px 0 0; color:var(--mut); font-size:12.5px}
+  .h-actions{margin-left:auto; display:flex; gap:8px}
+  .btn{border:1px solid var(--line2); background:#fff; color:var(--ink); border-radius:10px; padding:7px 12px;
+    font-size:13px; cursor:pointer; transition:.15s}
+  .btn:hover{border-color:var(--acc); color:var(--acc)}
+  .pwrap{margin-top:10px; height:8px; border-radius:99px; background:#e7e9f4; overflow:hidden}
+  #pbar{height:100%; width:0%; border-radius:99px; background:linear-gradient(90deg,var(--acc),#22d3ee); transition:width .3s}
+  .h-stats{font-size:12.5px; color:var(--mut); margin-top:6px; display:flex; gap:14px; flex-wrap:wrap}
+  .h-stats b{color:var(--acc)}
+
+  .layout{display:flex; gap:26px; align-items:flex-start; margin-top:26px}
+  aside{width:248px; flex:0 0 248px; position:sticky; top:118px; max-height:calc(100vh - 140px); overflow:auto;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px}
+  aside h3{margin:2px 4px 10px; font-size:12px; letter-spacing:2px; color:var(--mut); text-transform:uppercase}
+  .nav-i{display:flex; align-items:center; gap:9px; padding:8px 9px; border-radius:10px; color:var(--ink);
+    font-size:13.5px; margin-bottom:2px; border-left:3px solid transparent}
+  .nav-i:hover{background:#f3f4fd}
+  .nav-i.active{background:#eef0ff; border-left-color:var(--acc); font-weight:700}
+  .nav-i .num{color:var(--mut); font-variant-numeric:tabular-nums}
+  .nav-i .cnt{margin-left:auto; font-size:11.5px; color:var(--mut); background:#eef0f7; border-radius:99px; padding:1px 7px}
+  .nav-i .cnt.good{background:var(--ok-bg); color:var(--ok)}
+  .nav-i .cnt.mix{background:#fffbeb; color:#b45309}
+  aside .tip{font-size:11.5px; color:var(--mut); padding:10px 4px 2px; border-top:1px dashed var(--line); margin-top:8px}
+  .legend{display:flex; flex-direction:column; gap:5px; margin-top:10px; font-size:12px; color:var(--mut)}
+  .legend span::before{content:"●"; margin-right:6px}
+  .lg-f::before{color:var(--focus)} .lg-h::before{color:var(--hard)} .lg-p::before{color:var(--pit)}
+
+  main{flex:1; min-width:0}
+
+  .hero{background:linear-gradient(135deg,#312e81 0%,var(--acc) 60%,#4338ca 100%); color:#fff;
+    border-radius:22px; padding:26px 28px; box-shadow:0 14px 30px rgba(79,70,229,.28)}
+  .hero .kicker{font-size:12px; letter-spacing:3px; opacity:.85; margin:0 0 6px}
+  .hero h1{margin:0; font-size:27px; line-height:1.3}
+  .hero p{margin:8px 0 0; opacity:.92; font-size:13.5px; max-width:760px}
+  .map{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
+  .map a{color:#fff; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3);
+    padding:5px 11px; border-radius:99px; font-size:12.5px}
+  .map a:hover{background:rgba(255,255,255,.3)}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); margin-top:24px;
+    box-shadow:0 4px 18px rgba(30,35,60,.05); scroll-margin-top:120px}
+  .card-head{display:flex; align-items:flex-start; gap:14px; padding:20px 22px 14px}
+  .no{flex:0 0 auto; width:46px; height:46px; border-radius:14px; display:grid; place-items:center;
+    background:#eef0ff; color:var(--acc); font-weight:800; font-size:19px; border:1px solid #dfe2ff}
+  .titles{flex:1; min-width:0}
+  .titles h2{margin:0; font-size:20px}
+  .titles .en{color:var(--mut); font-size:12.5px; margin-top:2px}
+  .chips{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{font-size:11.5px; border-radius:99px; padding:3px 10px; font-weight:600}
+  .chip-focus{background:var(--focus-bg); color:var(--focus); border:1px solid #fecdd3}
+  .chip-hard{background:var(--hard-bg); color:var(--hard); border:1px solid #ddd6fe}
+  .chip-pit{background:var(--pit-bg); color:var(--pit); border:1px solid #fed7aa}
+
+  .body{padding:0 22px 22px}
+  .blk{margin-top:12px}
+  .blk h3{margin:0 0 8px; font-size:15px; display:flex; align-items:center; gap:7px}
+  .blk ul{margin:0; padding:0; list-style:none; display:grid; gap:7px}
+  .blk li{padding-left:22px; position:relative; font-size:14px}
+  .blk-sum li::before{content:"▸"; position:absolute; left:2px; color:var(--acc); font-weight:700}
+  .igrid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px}
+  .ig{border-radius:12px; padding:13px 14px; border:1px solid}
+  .ig ul{display:grid; gap:6px}
+  .ig li{padding-left:20px; font-size:13px}
+  .ig-focus{background:var(--focus-bg); border-color:#fecdd3}
+  .ig-focus h3{color:var(--focus)} .ig-focus li::before{content:"★"; position:absolute; left:0; color:var(--focus)}
+  .ig-hard{background:var(--hard-bg); border-color:#ddd6fe}
+  .ig-hard h3{color:var(--hard)} .ig-hard li::before{content:"▲"; position:absolute; left:0; color:var(--hard)}
+  .ig-pit{background:var(--pit-bg); border-color:#fed7aa}
+  .ig-pit h3{color:var(--pit)} .ig-pit li::before{content:"!"; position:absolute; left:2px; font-weight:800; color:var(--pit)}
+
+  .quiz{border-top:1.5px dashed var(--line2); margin-top:16px; padding-top:6px}
+  .quiz h3{margin:12px 0 4px; font-size:15px}
+  .quiz .qhint{font-size:12px; color:var(--mut); margin:0 0 10px}
+  .q{background:#fafbff; border:1px solid var(--line); border-radius:13px; padding:15px 16px; margin-bottom:14px}
+  .q-text{font-size:14.5px; font-weight:600}
+  .q-meta{display:flex; gap:8px; align-items:center; margin-bottom:8px}
+  .tagq{font-size:11px; border-radius:6px; padding:2px 8px; background:#eef0ff; color:var(--acc); font-weight:600}
+  .q-no{font-size:12px; color:#8a90a3}
+  .opts{display:grid; gap:8px; margin-top:10px}
+  .opt{display:flex; gap:10px; align-items:flex-start; text-align:left; width:100%; border:1.5px solid var(--line);
+    background:#fff; border-radius:10px; padding:9px 12px; font-size:13.5px; color:var(--ink); cursor:pointer; transition:.12s; font-family:inherit}
+  .opt:hover:not(:disabled){border-color:var(--acc2); background:#f5f6ff}
+  .opt:disabled{cursor:default}
+  .ol{flex:0 0 auto; width:22px; height:22px; border-radius:7px; display:grid; place-items:center; font-size:12px; font-weight:700;
+    background:#eef0f7; color:var(--mut); margin-top:1px}
+  .opt.right{border-color:var(--ok); background:var(--ok-bg)}
+  .opt.right .ol{background:var(--ok); color:#fff}
+  .opt.wrong{border-color:var(--bad); background:var(--bad-bg)}
+  .opt.wrong .ol{background:var(--bad); color:#fff}
+  .fb{display:none; margin-top:12px; border-radius:11px; padding:10px 14px; font-size:13.5px; border:1px solid}
+  .fb.show{display:block}
+  .fb-ok{background:var(--ok-bg); border-color:#a7f3d0}
+  .fb-bad{background:var(--bad-bg); border-color:#fecaca}
+  .fb b{font-size:14px}
+  .fb .exp{margin-top:4px; color:var(--ink); opacity:.92}
+
+  footer{color:var(--mut); font-size:12.5px; text-align:center; padding:30px 0 6px}
+  @media (max-width:920px){
+    .layout{display:block}
+    aside{display:none}
+    .h-t h1{font-size:16px}
+    .igrid{grid-template-columns:1fr}
+    .hero h1{font-size:21px}
+    .hero{padding:20px}
+  }
+  @media print{
+    header,aside,.h-actions,.map{display:none}
+    body{background:#fff}
+    .card{break-inside:avoid; box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="h-in">
+    <div class="h-row">
+      <div class="logo">DB</div>
+      <div class="h-t">
+        <h1>第2章 组织中的数据建模 · 复习手册</h1>
+        <p>Modern Database Management（13e Global Edition）Chapter 2 ｜ 中文要点 + 自测练习</p>
+      </div>
+      <div class="h-actions">
+        <button class="btn" id="btnReset" type="button">↺ 重置练习</button>
+        <button class="btn" id="btnPrint" type="button">🖨 打印</button>
+      </div>
+    </div>
+    <div class="pwrap"><div id="pbar"></div></div>
+    <div class="h-stats"><span>已作答 <b id="stAns">0</b> / <span id="stTotal">0</span> 题</span><span>答对 <b id="stRight">0</b> 题</span><span id="stState">开始答题吧～</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside>
+      <h3>知识点导航</h3>
+      <nav id="side"></nav>
+      <div class="tip">点击题目选项即可作答；答完显示正确答案与解析。</div>
+      <div class="legend">
+        <span class="lg-f">重点（核心必记）</span>
+        <span class="lg-h">难点（理解辨析）</span>
+        <span class="lg-p">易错点（考试常踩坑）</span>
+      </div>
+    </aside>
+    <main>
+      <div class="hero">
+        <p class="kicker">REVIEW · CH02</p>
+        <h1>🗂 Modeling Data in the Organization</h1>
+        <p>本页覆盖 PPT 全部知识点：实体与实体类型/实例、ER 模型与 ER 图、业务规则、强实体与弱实体、属性的五类划分（标识符、必填/可选、简单/复合、单值/多值、存储/派生）、联系与联系度、基数与基数约束、关联实体与物料清单（BOM）。每个知识点均标注<b>重点 / 难点 / 易错点</b>，并配 2 道自测题。</p>
+        <div class="map" id="map"></div>
+      </div>
+      <div id="content"></div>
+      <footer>复习资料整理自：Ch02.pptx（Modern Database Management, 13e, Global Edition, Chapter 2: Modeling Data in the Organization）· 仅供个人学习复习使用</footer>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LETTERS = ["A","B","C","D","E"];
+  var state = {};
+
+  var SECTIONS = [
+    {
+      id:"sec-1", no:"01", zh:"实体、实体类型与实体实例", en:"Entity · Entity Type · Entity Instance",
+      summary:[
+        "实体 Entity：用户环境中的一个人、一个地点、一个对象、一个事件或一个概念，组织希望为其保存数据。",
+        "实体类型 Entity type：共享共同属性或特征的实体的集合，通常对应数据库中的一张表。",
+        "实体实例 Entity instance：实体类型的单个出现（a single occurrence），通常对应表中的一行数据。",
+        "教材示例：实体类型 EMPLOYEE 包含 Michelle Brady、David Johnson 等多个实例，每个实例都有 Employee Number、Name、Address、City 等属性的取值。"
+      ],
+      focus:[
+        "“实体类型 = 表（集合），实体实例 = 行（个体）”，这是本章最基础的一组对照。",
+        "属性的数据类型（CHAR、DATE 等）与示例实例值要能对应上：类型描述属性，实例给出具体值。"
+      ],
+      hard:[
+        "ER 图只刻画“类型”这一层（实体类型、联系类型），而真正进入数据库、具体到某个员工的那一行才是实例。"
+      ],
+      pit:[
+        "不要把实体类型当成某个具体的人：EMPLOYEE 是类型，Michelle Brady 这个人才是实例。",
+        "“实例”是整行数据的出现，不是某一个属性值；不要把属性值误称为实例。"
+      ],
+      questions:[
+        {
+          type:"single", q:"关于实体类型（entity type）与实体实例（entity instance），下列说法正确的是（　）。",
+          opts:["实体类型对应表中的一行，实体实例对应一张表","实体类型是共享共同属性或特征的实体集合，实例是其中的单个出现","一个实体类型只能有一个实体实例","实体实例是实体属性的集合"],
+          a:1,
+          exp:"教材定义：实体类型是共享共同属性/特征的实体集合（常对应一张表）；实体实例是实体类型的一次单独出现（常对应表中的一行）。"
+        },
+        {
+          type:"judge", q:"ER 图上画出的是实体类型，而数据库中具体到某一个员工的那一行数据属于实体实例。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。ER 图建模的是实体类型与联系类型这层元数据；具体的实体实例（如 Michelle Brady 这一行）才是数据库中的实际数据。"
+        }
+      ]
+    },
+    {
+      id:"sec-2", no:"02", zh:"ER 模型、联系与 ER 图", en:"E-R Model · Relationship · E-R Diagram",
+      summary:[
+        "实体-联系模型 E-R model：对组织中数据的逻辑表示，用业务环境中的实体、实体之间的联系以及两者的属性来表达。",
+        "联系 Relationship：表示一个或多个实体类型的实例之间交互（interaction）的关联。",
+        "属性 Attributes：实体（或联系）的性质。",
+        "联系类型 vs 联系实例：ER 图中所画的是联系类型；联系实例存在于具体的实体实例之间。",
+        "联系也可以有属性，用来描述实体之间关联的特征（如“完成课程”的日期）。",
+        "两个实体之间可以有不止一种联系（multiple relationships），如员工与部门之间同时有“工作于”与“管理”两种联系。"
+      ],
+      focus:[
+        "ER 模型三要素：实体、联系、属性；常以 E-R 图（实体用矩形、联系用连线）表示。",
+        "同一对实体之间可以存在多种联系，联系本身同样可以带属性。"
+      ],
+      hard:[
+        "ER 图刻画“类型”，联系实例刻画“具体发生的事”：读懂图 2-10 中关系类型与关系实例的区别是关键。"
+      ],
+      pit:[
+        "不要以为只有实体才有属性，联系也可以有属性。",
+        "不要以为员工和部门之间只能画一条联系线（教材图 2-21 就有多条）。"
+      ],
+      questions:[
+        {
+          type:"single", q:"ER 模型的三个基本要素是（　）。",
+          opts:["实体、联系、属性","表、行、列","实体、主键、外键","类、对象、方法"], a:0,
+          exp:"ER 模型用实体、实体之间的联系以及两者的属性来表达组织数据的逻辑结构，并常用 E-R 图表示；主键/外键属于关系实现层面的概念。"
+        },
+        {
+          type:"judge", q:"同一对实体类型之间只能存在一种联系，例如员工与部门之间只能有“工作于”这一种联系。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。教材图 2-21 显示员工与部门之间可同时存在“工作于”（works in）和“管理”（manages）等多种联系，即 multiple relationships。"
+        }
+      ]
+    },
+    {
+      id:"sec-3", no:"03", zh:"业务规则", en:"Business Rules",
+      summary:[
+        "业务规则是定义或约束业务活动某些方面的陈述（statements that define or constrain some aspect of the business）。",
+        "来源于业务政策、流程、事件或职能。",
+        "支配信息系统中数据的创建、更新与删除。",
+        "用最终用户熟悉的术语表达，而不是技术术语。",
+        "集中存放在资料仓库（repository）中，并在全组织范围内共享。"
+      ],
+      focus:[
+        "业务规则是数据库设计的输入：它约束数据，并据此推导出实体、联系与基数。",
+        "五个特征要能复述：定义/约束业务、来自政策流程、管数据增删改、用业务语言表达、集中存储共享。"
+      ],
+      hard:[
+        "并非所有业务规则都会在数据库中实现，数据库分析员需要判断哪些业务规则可以用 E-R 模型表达、哪些不能。"
+      ],
+      pit:[
+        "业务规则用业务人员熟悉的措辞表达，不要写成技术实现细节。",
+        "“所有业务规则都必须在数据库中实现”是错的。"
+      ],
+      questions:[
+        {
+          type:"single", q:"关于业务规则（business rule），下列说法正确的是（　）。",
+          opts:["所有业务规则都必须全部在数据库中实现","业务规则用最终用户熟悉的术语表达，集中存放在资料仓库中并共享","业务规则只约束数据的插入，不涉及更新与删除","业务规则由 DBMS 自动推导，无需人工整理"], a:1,
+          exp:"业务规则定义或约束业务活动的某些方面，用用户熟悉的术语表达，存放在中央资料仓库并全组织共享，支配数据的创建、更新与删除。"
+        },
+        {
+          type:"judge", q:"判断某条业务规则能否用 E-R 模型表达，是数据库分析员的职责之一。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。教材强调并非所有业务规则都在数据库中实现，需要由数据库分析员判断哪些可以通过 E-R 模型表达。"
+        }
+      ]
+    },
+    {
+      id:"sec-4", no:"04", zh:"强实体、弱实体与标识性联系", en:"Strong vs Weak Entity · Identifying Relationship",
+      summary:[
+        "强实体 Strong entity：独立于其他实体类型存在，拥有自己的唯一标识符；标识符在 ER 图中画单下划线。",
+        "弱实体 Weak entity：依赖强实体（identifying owner，识别所有者）而存在，不能独立存在；没有唯一标识符，只有部分标识符（partial identifier）；实体框与部分标识符均用双线。",
+        "标识性联系 Identifying relationship：把强实体与其弱实体连接起来的联系，用双线表示。",
+        "教材示例（图 2-5）：DEPENDENT（家属）是弱实体，其复合标识符为 First-name + Middle-name + Last-name + Employee-ID，其中 Employee-ID 来自强实体 EMPLOYEE。"
+      ],
+      focus:[
+        "弱实体的完整标识 = 自身的部分标识符 + 识别所有者的标识符。",
+        "单线=强实体，双线=弱实体/标识性联系，这是读图时最快的判断依据。"
+      ],
+      hard:[
+        "弱实体并不是“没有属性”，而是“没有属于自己的唯一标识”，必须借助所有者才能唯一确定一个实例。"
+      ],
+      pit:[
+        "弱实体的标识一定是复合标识符，并且其中包含强实体的标识符。",
+        "不要把“弱”理解成“不重要”或“可以为空”，它描述的是存在依赖性。"
+      ],
+      questions:[
+        {
+          type:"single", q:"关于弱实体（weak entity），下列说法正确的是（　）。",
+          opts:["弱实体拥有自己的唯一标识符","弱实体依赖强实体存在，只有部分标识符","弱实体不能拥有任何属性","弱实体的实体框在 ER 图中用单线绘制"], a:1,
+          exp:"弱实体依赖强实体（identifying owner）而不能独立存在，没有唯一标识符、只有部分标识符，实体框与部分标识符都用双线绘制。"
+        },
+        {
+          type:"single", q:"教材中 DEPENDENT 的复合标识符由 First-name + Middle-name + Last-name + Employee-ID 组成，这说明（　）。",
+          opts:["弱实体的标识完全来自自身的属性","弱实体的完整标识＝自身部分标识符＋强实体的标识符","Employee-ID 在该实体中是可选属性","DEPENDENT 应被建模为强实体"], a:1,
+          exp:"弱实体只有部分标识符，必须结合识别所有者的标识符（Employee-ID 来自强实体 EMPLOYEE）才能唯一标识每个实例。"
+        }
+      ]
+    },
+    {
+      id:"sec-5", no:"05", zh:"属性的分类总览", en:"Classifications of Attributes",
+      summary:[
+        "属性 Attribute：实体或联系类型的性质或特征。",
+        "教材把属性划分为五组：① 标识符 Identifier；② 必填与可选 Required vs Optional；③ 简单与复合 Simple vs Composite；④ 单值与多值 Single-Valued vs Multivalued；⑤ 存储与派生 Stored vs Derived。",
+        "这五组是不同维度、彼此独立，一个属性可以同时落在多个分类里。"
+      ],
+      focus:[
+        "五组分类的名称与英文术语要能默写，是本章与后续章节反复使用的基础词汇。"
+      ],
+      hard:[
+        "五组分类不是“五选一”的互斥选项，而是可以叠加的多个视角。"
+      ],
+      pit:[
+        "“主键/外键”属于关系数据库实现层面的说法，不在本章列出的属性分类中。",
+        "不要因为某个属性是“派生的”就认为它不是属性；它仍是属性，只是值由计算得到。"
+      ],
+      questions:[
+        {
+          type:"single", q:"下列哪一项不属于教材第 2 章列出的属性分类（　）。",
+          opts:["标识符 Identifier","必填与可选 Required vs Optional","简单与复合 Simple vs Composite","主键与外键 Primary vs Foreign Key"], a:3,
+          exp:"教材列出的分类为 Identifier、Required vs Optional、Simple vs Composite、Single-Valued vs Multivalued、Stored vs Derived；主键/外键是关系实现层面的概念。"
+        },
+        {
+          type:"judge", q:"一个属性可以同时是复合属性又是多值属性。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。这些分类属于不同维度、互不排斥：属性可以既是复合的、又是多值的，甚至同时是派生的。"
+        }
+      ]
+    },
+    {
+      id:"sec-6", no:"06", zh:"标识符（键）", en:"Identifiers · Simple vs Composite",
+      summary:[
+        "标识符 Identifier（键）：能够唯一标识实体类型中每个实例的一个属性或一组属性。",
+        "简单标识符 Simple identifier：只由单个属性构成，如 Employee ID、Student ID。",
+        "复合标识符 Composite identifier：由多个属性共同构成，如 Flight ID。",
+        "ER 图中标识符加下划线；必填属性通常加粗，因此标识符必然是加粗的。",
+        "若标识符是复合的，则它的所有组成部分都是必填（required）的。"
+      ],
+      focus:[
+        "每个实体类型都应当有标识符，且同一实体类型中任意两个实例的标识符值不能相同。",
+        "复合标识符 = 多个属性“合起来”唯一，缺一不可。"
+      ],
+      hard:[
+        "判断一个属性能否充当标识符，看它是否对所有实例都绝对唯一；姓名这类会重复的属性不行。"
+      ],
+      pit:[
+        "不要用姓名做标识符（可能重名），应使用 Employee ID、学号等唯一值。",
+        "复合标识符的所有组成属性都是必填的，不能有一部分可选。"
+      ],
+      questions:[
+        {
+          type:"single", q:"只由单个属性构成的标识符称为（　）。",
+          opts:["复合标识符 Composite identifier","简单标识符 Simple identifier","部分标识符 Partial identifier","外部标识符 Foreign identifier"], a:1,
+          exp:"Simple identifier 只由单个属性构成（如 Employee ID、Student ID）；Composite identifier 由多个属性共同构成（如 Flight ID）。"
+        },
+        {
+          type:"judge", q:"如果标识符是复合标识符，那么它的每个组成部分都是必填属性。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。复合标识符的组成部分必须全部存在才能唯一标识实例，因此它们都是 required。"
+        }
+      ]
+    },
+    {
+      id:"sec-7", no:"07", zh:"必填属性与可选属性", en:"Required vs Optional Attributes",
+      summary:[
+        "必填属性 Required：每个实体（或联系）实例都必须有值。",
+        "可选属性 Optional：并非每个实例都有值，可能为空。",
+        "教材示例：STUDENT 实体中 Student ID、Student Name、Home Address 等为必填；Major（专业）为可选，因为学生可能尚未确定专业。",
+        "标识符永远是必填的。"
+      ],
+      focus:[
+        "判断依据是“是否每个实例都有值”，而不是“现实生活中是否常见”。",
+        "必填属性在 ER 图中通常加粗显示。"
+      ],
+      hard:[
+        "标识符一定必填：若允许为空，就无法唯一标识实例，标识作用失效。"
+      ],
+      pit:[
+        "Optional 不等于“值为 0 或空字符串”，而是表示该属性可以不取值（可为 null）。",
+        "不要因为某个属性多数情况下都有值就判定为必填。"
+      ],
+      questions:[
+        {
+          type:"single", q:"学生实体的 Major（专业）属性允许为空，因为它属于（　）。",
+          opts:["必填属性 Required","可选属性 Optional","派生属性 Derived","多值属性 Multivalued"], a:1,
+          exp:"Optional 属性不要求每个实例都有值（学生尚未确定专业时 Major 为空）；Required 属性则必须每个实例都有值。"
+        },
+        {
+          type:"judge", q:"标识符属性也允许为空。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。标识符永远都是必填的，否则无法唯一标识每个实例。"
+        }
+      ]
+    },
+    {
+      id:"sec-8", no:"08", zh:"简单属性与复合属性", en:"Simple vs Composite Attributes",
+      summary:[
+        "简单属性 Simple：不能再分解为更小组成部分的属性。",
+        "复合属性 Composite：具有有意义的组成部分（子属性）的属性。",
+        "教材示例：地址可以拆分为街道、城市、州、邮政编码；既可把 Address 当作整体使用，也可下钻到各子属性。",
+        "ER 图中用括号把复合属性的各个组成部分括起来。"
+      ],
+      focus:[
+        "复合属性提供“宏观／微观”两种描述粒度，便于按需要展开或合并。"
+      ],
+      hard:[
+        "判断是否为复合属性的标准是“组成部分是否有意义”，而不是“字符长度是否长”。"
+      ],
+      pit:[
+        "复合属性 ≠ 多值属性：Address 是复合（由多个部分构成），Skill 是多值（同一实例可取多个值）。",
+        "简单属性不能再分，别把“可拼接的字符串”直接当成复合属性。"
+      ],
+      questions:[
+        {
+          type:"single", q:"Address 由街道、城市、州、邮政编码组成，这类属性称为（　）。",
+          opts:["简单属性 Simple","复合属性 Composite","多值属性 Multivalued","派生属性 Derived"], a:1,
+          exp:"Composite attribute 具有有意义的组成部分（子属性），在 ER 图中用括号把组成部分括起来；Simple attribute 则不能再分解。"
+        },
+        {
+          type:"judge", q:"复合属性与多值属性是同一回事，只是叫法不同。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。复合属性强调“由多个组成部分构成”，多值属性强调“同一实例可以取多个值”，两者是不同维度，也可以同时成立。"
+        }
+      ]
+    },
+    {
+      id:"sec-9", no:"09", zh:"单值属性与多值属性", en:"Single-Valued vs Multivalued Attributes",
+      summary:[
+        "单值属性 Single-valued：对给定实例只有一个取值。",
+        "多值属性 Multivalued：对给定实体（或联系）实例可以取多个值。",
+        "教材示例：一名员工可以掌握多项技能（an employee can have more than one skill）。",
+        "ER 图中多值属性用双线椭圆表示。"
+      ],
+      focus:[
+        "多值属性的判断标准是“同一实例能否同时拥有多个值”，技能、电话、爱好都是典型例子。"
+      ],
+      hard:[
+        "多值属性与复合属性容易混淆：前者是“值的个数多”，后者是“属性的组成部分多”。"
+      ],
+      pit:[
+        "属性可以同时既是复合的又是多值的，也可能是派生的——这些分类并不互斥。",
+        "把多值属性当成多个独立属性会丢失语义，也会带来重复存储问题。"
+      ],
+      questions:[
+        {
+          type:"single", q:"一名员工可以掌握多项技能（skills），这一属性属于（　）。",
+          opts:["单值属性 Single-valued","多值属性 Multivalued","简单属性 Simple","派生属性 Derived"], a:1,
+          exp:"Multivalued attribute 允许同一个实体实例取多个值。注意它与 composite 不同：composite 强调“由多个部分构成”，multivalued 强调“可以取多个值”。"
+        },
+        {
+          type:"single", q:"下列哪一项最可能是多值属性（　）。",
+          opts:["员工的出生日期","员工的员工编号","员工掌握的多项技能","员工的在职年限"], a:2,
+          exp:"技能对同一员工可以有多个取值，属于多值属性；出生日期、员工编号为单值；在职年限是由入职日期等计算得到的派生属性。"
+        }
+      ]
+    },
+    {
+      id:"sec-10", no:"10", zh:"存储属性与派生属性", en:"Stored vs Derived Attributes",
+      summary:[
+        "存储属性 Stored：其值已经实际存储在数据库中的属性。",
+        "派生属性 Derived：其值可由其他相关属性的值计算得到，并不物理存储在数据库中。",
+        "教材示例：在职年限（Years employed）由入职日期与当前日期计算；年龄可由出生日期计算。",
+        "ER 图中派生属性通常用虚线椭圆表示。"
+      ],
+      focus:[
+        "派生属性不存储、但可随时算出来，从而避免数据冗余与不一致。"
+      ],
+      hard:[
+        "判断依据是“能否由其他属性推导”：能推导 → 派生；必须直接记录 → 存储。"
+      ],
+      pit:[
+        "派生属性不物理存储，但仍需在模型中标识出来，不能因为“不存储”就忽略它。",
+        "年龄、在职年限这类会随时间变化的属性是典型派生属性，不要当作存储属性。"
+      ],
+      questions:[
+        {
+          type:"single", q:"由入职日期与当前日期计算得到的“在职年限”（Years employed）属于（　）。",
+          opts:["存储属性 Stored","派生属性 Derived","复合属性 Composite","标识符 Identifier"], a:1,
+          exp:"Derived attribute 的值可由其他相关属性的值计算得到，不物理存储在数据库中；Stored attribute 的值则已实际存储。"
+        },
+        {
+          type:"judge", q:"派生属性不物理存储在数据库中，因此在数据模型里可以不标注它。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。派生属性虽然不存储，但需要在需要时由其他属性计算得出，因此在数据模型中仍要标识出来（如年龄、在职年限）。"
+        }
+      ]
+    },
+    {
+      id:"sec-11", no:"11", zh:"联系的度：一元、二元与三元", en:"Degree of Relationships: Unary · Binary · Ternary",
+      summary:[
+        "联系的度 Degree：参与该联系的实体类型的个数。",
+        "一元联系 Unary：同一实体类型内部各实体之间的关联，如员工之间的“主管-下属”关系（也是一种层次结构）。",
+        "二元联系 Binary：一个实体类型与另一个实体类型之间的关联，如员工“工作于”部门。",
+        "三元联系 Ternary：三个不同实体类型参与同一联系，如供应商向仓库供应零件（产品-供应商-仓库）。",
+        "超过三个实体类型的联系统称为 n-ary 联系。"
+      ],
+      focus:[
+        "绝大多数联系是二元联系；“一元／二元／三元”的依据是实体类型的个数，不是实例的个数。",
+        "一元联系既可以是一对一、一对多，也可以是多对多（如 Person 的 friend 联系）。"
+      ],
+      hard:[
+        "三元联系的基数是“多对多对多”，其联系属性（如运输方式、单价）属于该三元组的每个实例。"
+      ],
+      pit:[
+        "度（degree）数的是“实体类型的个数”，不要误当成“每端可以关联的实例个数”（那是基数）。",
+        "别以为一元联系只能是一对一或一对多，教材图 2-12a 只是示例，并未排除多对多。"
+      ],
+      questions:[
+        {
+          type:"single", q:"某一联系同时涉及产品、供应商、仓库三个不同的实体类型，该联系的度为（　）。",
+          opts:["一元 Unary","二元 Binary","三元 Ternary","四元 Quaternary"], a:2,
+          exp:"联系的度是参与该联系的实体类型的个数；三个不同实体类型参与同一联系即三元联系（教材例：供应商向仓库供应产品）。"
+        },
+        {
+          type:"judge", q:"一元联系只能是一对一或一对多，不可能出现多对多。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。一元联系同样可以有多对多，例如 Person 实体上的 friend 联系：一个人可以有多个朋友，每个朋友又可以有其他朋友。"
+        }
+      ]
+    },
+    {
+      id:"sec-12", no:"12", zh:"基数：一对一、一对多与多对多", en:"Cardinality: 1:1 · 1:M · M:N",
+      summary:[
+        "一对一 1:1：联系双方的每个实体都恰好有一个相关实体。",
+        "一对多 1:M：一端的一个实体可以有多个相关实体，另一端的一个实体最多只有一个相关实体。",
+        "多对多 M:N：双方的实体都可以有多个相关实体。",
+        "教材示例：员工与部门（一个部门有多名员工，一名员工只属于一个部门）是 1:M；项目与员工（一名员工可参与多个项目）是 M:N。"
+      ],
+      focus:[
+        "判断基数要分别看两端：“一端最多一个” + “另一端可以有多个” 即为 1:M。"
+      ],
+      hard:[
+        "同一对实体之间的不同联系可以有不同基数，如员工-部门的“工作于”是 1:M，而“管理”是 1:1（每个部门恰好一名管理者）。"
+      ],
+      pit:[
+        "基数描述的是“最多可以关联多少个”，与“最少/是否必须”不同，后者由最小基数决定。",
+        "1:M 与 M:1 是同一联系从两端看的说法，不要当成两种不同的联系。"
+      ],
+      questions:[
+        {
+          type:"single", q:"关于多对多（M:N）联系，下列说法正确的是（　）。",
+          opts:["联系两端的实体都只能有一个相关实例","联系两端的实体都可以有多个相关实例","只有一端可以有多个相关实例","多对多联系无法在 ER 图中表示"], a:1,
+          exp:"M:N 表示联系双方的实体都可以有多个相关实例；1:1 是双方各恰好一个；1:M 则是一端可有多个、另一端最多一个。"
+        },
+        {
+          type:"single", q:"表示“一个实体的实例最多可以关联多少另一端实例”的约束，称为（　）。",
+          opts:["最小基数 Minimum cardinality","最大基数 Maximum cardinality","联系的度 Degree","标识符 Identifier"], a:1,
+          exp:"最大基数（maximum cardinality）刻画最多可关联的实例数；最小基数则决定该端是可选（0）还是强制（≥1）。"
+        }
+      ]
+    },
+    {
+      id:"sec-13", no:"13", zh:"基数约束：最小与最大、可选与强制", en:"Cardinality Constraints",
+      summary:[
+        "基数约束 Cardinality constraints：一个实体的实例可以或必须与另一个实体的多少个实例相关联。",
+        "最小基数 Minimum cardinality：为 0 表示可选（optional）；为 1 或更多表示强制（mandatory）。",
+        "最大基数 Maximum cardinality：一个实体的实例最多可以关联的另一端实例数。",
+        "四种组合：可选一（Optional One）、可选多（Optional Many）、强制一（Mandatory One）、强制多（Mandatory Many）。",
+        "鸦爪表示法（crow's foot notation）：多端画三叉“鸦爪”，是教材使用的 ER 图记法之一。",
+        "教材示例：每个项目必须有至少一名员工参与，而员工可以不参与任何项目（一 mandatory、一 optional）；“婚姻”是一元一对一的可选联系。"
+      ],
+      focus:[
+        "区分“最小基数（是否必须有）”与“最大基数（最多有几个）”，两者共同决定四种约束类型。",
+        "读图时要同时看两端的约束，才能完整描述一个联系。"
+      ],
+      hard:[
+        "最小基数为 0 才是可选；只要最小基数 ≥1 就是强制，与另一端是“一”还是“多”无关。"
+      ],
+      pit:[
+        "鸦爪只表示“多”这一端（最大基数 many），不要只看鸦爪就断定强制/可选，还要看另一端的最少个数。",
+        "“可选”不等于“不存在”，只表示允许没有关联实例。"
+      ],
+      questions:[
+        {
+          type:"single", q:"若某个联系端的最小基数为 0，则该端的约束属于（　）。",
+          opts:["强制 Mandatory","可选 Optional","一对多 1:M","多对多 M:N"], a:1,
+          exp:"最小基数为 0 表示可选（optional）；最小基数为 1 或更多表示强制（mandatory）。再结合最大基数即得 Optional One / Optional Many / Mandatory One / Mandatory Many。"
+        },
+        {
+          type:"single", q:"教材中一元“婚姻”联系规定一个人可与 0 个或 1 个人结婚，从而排除了多配偶；若要允许多配偶，应把该联系改为（　）。",
+          opts:["一对一 1:1","一对多 1:M","多对多 M:N","三元联系 Ternary"], a:2,
+          exp:"教材思考题答案：把 married-to 改为一元多对多（M:N），即可允许多配偶情形。"
+        }
+      ]
+    },
+    {
+      id:"sec-14", no:"14", zh:"关联实体与物料清单结构", en:"Associative Entities · Bill-of-Materials",
+      summary:[
+        "关联实体 Associative entity：用来关联两个处于多对多关系中的表的表；它既是实体（拥有属性、最好有唯一标识符），也代表原有的联系。",
+        "何时把“带属性的联系”改建为关联实体：① 参与联系的所有实体类型之间都是“多”联系；② 关联实体可以独立于其他实体而具有含义；③ 关联实体最好有唯一标识符，并且还应具有其他属性；④ 三元联系通常也要转换为关联实体。",
+        "转换后：一个多对多联系被替换为两个一对多联系，关联实体总位于它所连接关系的“多”端。",
+        "物料清单 BOM（bill-of-materials）：ITEM（物料）上的一元多对多“由……组成”联系，被转换为 ITEM 与 BOM STRUCTURE 关联实体之间的两个一对多联系。",
+        "在 BOM STRUCTURE 中，Effective Date（生效日期）只是部分标识符，说明 BOM STRUCTURE 相对于 ITEM 是弱实体。"
+      ],
+      focus:[
+        "关联实体的四条判断依据要能复述，并能说明“M:N → 两个 1:M”这一转换结果。",
+        "一元联系（尤其 1:M 与 M:N）常用来刻画层次结构：物料清单是物料的层次，主管联系是员工的层次。"
+      ],
+      hard:[
+        "关联实体具有双重身份：从“关联两个表”的角度看它像联系，从“有属性、有标识”的角度看它是实体。"
+      ],
+      pit:[
+        "转换后不再保留原来的多对多联系，而是变成两个一对多联系，别把基数写错。",
+        "关联实体不是可有可无的“中间表”，它常常是业务中真正有意义的对象（如证书、BOM 结构）。"
+      ],
+      questions:[
+        {
+          type:"single", q:"关于关联实体（associative entity），下列说法正确的是（　）。",
+          opts:["关联实体不是实体，只是一个联系","关联实体把多对多联系拆成两个一对多联系，并拥有自己的属性","关联实体必须位于一对一关系的一端","关联实体不能拥有唯一标识符"], a:1,
+          exp:"关联实体是一个用于关联多对多双方的表：它既是实体（有自己的属性，最好有唯一标识符），又代表原联系；转换后一个 M:N 变为两个 1:M，关联实体总在“多”端。"
+        },
+        {
+          type:"single", q:"下列哪一项不是“把带属性的联系改为关联实体”的判断依据（　）。",
+          opts:["参与联系的实体类型之间都是“多”联系","关联实体可以独立于其他实体而具有含义","关联实体最好拥有唯一标识符并具有其他属性","联系两端的实体都只能有一个实例"], a:3,
+          exp:"教材给出的依据是：所有参与联系均为 many；关联实体可以独立有含义；最好有唯一标识符并另有其他属性；三元联系通常也转为关联实体。“两端都只有一个实例”与多对多的前提相矛盾。"
+        }
+      ]
+    }
+  ];
+
+  var TOTAL = SECTIONS.reduce(function(n, s){ return n + s.questions.length; }, 0);
+
+  function qTypeText(t){ return t === "judge" ? "判断题" : "单选题"; }
+
+  function renderOptions(q, key){
+    return '<div class="opts">' + q.opts.map(function(o,i){
+      return '<button type="button" class="opt" data-i="'+i+'" aria-label="选项 '+LETTERS[i]+'">'+
+        '<span class="ol">'+LETTERS[i]+'</span><span class="ot">'+o+'</span></button>';
+    }).join("") + '</div>';
+  }
+
+  function renderQuestion(sec, qi){
+    var q = sec.questions[qi];
+    var key = sec.id + "-q" + (qi+1);
+    return '<div class="q" data-key="'+key+'" data-answer="'+q.a+'">'+
+      '<div class="q-meta"><span class="tagq">'+qTypeText(q.type)+'</span><span class="q-no">第 '+sec.no+' 组 · 第 '+(qi+1)+' 题</span></div>'+
+      '<div class="q-text">'+q.q+'</div>'+
+      renderOptions(q, key)+
+      '<div class="fb" data-fb="'+key+'"></div>'+
+    '</div>';
+  }
+
+  function chips(sec){
+    var out = [];
+    if (sec.focus && sec.focus.length) out.push('<span class="chip chip-focus">重点</span>');
+    if (sec.hard && sec.hard.length) out.push('<span class="chip chip-hard">难点</span>');
+    if (sec.pit && sec.pit.length) out.push('<span class="chip chip-pit">易错点</span>');
+    return '<div class="chips">'+out.join("")+'</div>';
+  }
+
+  function ulOf(arr){
+    if (!arr) return "";
+    return '<ul>'+arr.map(function(x){ return "<li>"+x+"</li>"; }).join("")+'</ul>';
+  }
+
+  function renderSection(sec){
+    var qs = sec.questions.map(function(_, i){ return renderQuestion(sec, i); }).join("");
+    return '<section class="card" id="'+sec.id+'">'+
+      '<div class="card-head"><div class="no">'+sec.no+'</div>'+
+      '<div class="titles"><h2>'+sec.zh+'</h2><div class="en">'+sec.en+'</div></div>'+
+      chips(sec)+'</div>'+
+      '<div class="body">'+
+        '<div class="blk blk-sum"><h3>📚 知识点</h3>'+ulOf(sec.summary)+'</div>'+
+        '<div class="igrid">'+
+          '<div class="blk ig ig-focus"><h3>🎯 重点</h3>'+ulOf(sec.focus)+'</div>'+
+          '<div class="blk ig ig-hard"><h3>🧠 难点</h3>'+ulOf(sec.hard)+'</div>'+
+          '<div class="blk ig ig-pit"><h3>⚠️ 易错点</h3>'+ulOf(sec.pit)+'</div>'+
+        '</div>'+
+        '<div class="quiz"><h3>✏️ 练习自测</h3><p class="qhint">每个知识点 2 题，共 '+TOTAL+' 题。点击选项作答，系统会给出正误判断与解析。</p>'+qs+'</div>'+
+      '</div>'+
+    '</section>';
+  }
+
+  function renderAll(){
+    document.getElementById("stTotal").textContent = TOTAL;
+    document.getElementById("map").innerHTML = SECTIONS.map(function(s){
+      return '<a href="#'+s.id+'">'+s.no+' '+s.zh+'</a>';
+    }).join("");
+    document.getElementById("side").innerHTML = SECTIONS.map(function(s){
+      return '<a class="nav-i" href="#'+s.id+'"><span class="num">'+s.no+'</span><span>'+s.zh+'</span><span class="cnt" id="cnt-'+s.id+'">0/'+s.questions.length+'</span></a>';
+    }).join("");
+    document.getElementById("content").innerHTML = SECTIONS.map(renderSection).join("");
+  }
+
+  function updateProgress(){
+    var answered = 0, right = 0, per = {};
+    Object.keys(state).forEach(function(k){
+      var part = k.split("-q")[0];
+      per[part] = per[part] || {a:0,r:0};
+      per[part].a++;
+      if (state[k].correct) per[part].r++;
+    });
+    SECTIONS.forEach(function(sec){
+      var st = per[sec.id];
+      var cnt = document.getElementById("cnt-"+sec.id);
+      if (!cnt) return;
+      var a = st ? st.a : 0, r = st ? st.r : 0;
+      answered += a; right += r;
+      cnt.textContent = a + "/" + sec.questions.length;
+      cnt.className = "cnt" + (a === sec.questions.length ? (r === sec.questions.length ? " good" : " mix") : "");
+    });
+    document.getElementById("stAns").textContent = answered;
+    document.getElementById("stRight").textContent = right;
+    document.getElementById("pbar").style.width = (answered / TOTAL * 100) + "%";
+    var st = document.getElementById("stState");
+    if (answered === 0) st.textContent = "开始答题吧～";
+    else if (answered === TOTAL && right === TOTAL) st.textContent = "🎉 全部答对，太棒了！";
+    else if (answered === TOTAL) st.textContent = "已完成全部 " + TOTAL + " 题，建议复习橙色（易错点）标注后再来一次。";
+    else st.textContent = "继续加油！完成全部题目即可看到总评。";
+  }
+
+  function findQuestion(key){
+    var found = null;
+    SECTIONS.some(function(sec){
+      for (var i=0;i<sec.questions.length;i++){
+        if (sec.id + "-q" + (i+1) === key){ found = sec.questions[i]; return true; }
+      }
+      return false;
+    });
+    return found;
+  }
+
+  function showFeedback(key){
+    var fb = document.querySelector('[data-fb="'+key+'"]');
+    if (!fb) return;
+    var s = state[key];
+    var card = fb.closest(".q");
+    var ansIdx = parseInt(card.dataset.answer, 10);
+    var q = findQuestion(key);
+    if (!q) return;
+    fb.className = "fb show " + (s.correct ? "fb-ok" : "fb-bad");
+    fb.innerHTML = '<b>'+(s.correct ? "✅ 回答正确" : "❌ 回答错误")+'</b>　正确答案：'+LETTERS[ansIdx]+'. '+q.opts[ansIdx]+
+      '<div class="exp">💡 解析：'+q.exp+'</div>';
+  }
+
+  function applyMark(key){
+    var s = state[key];
+    var card = document.querySelector('.q[data-key="'+key+'"]');
+    if (!card) return;
+    var ansIdx = parseInt(card.dataset.answer,10);
+    Array.prototype.forEach.call(card.querySelectorAll(".opt"), function(btn){
+      btn.disabled = true;
+      var i = parseInt(btn.dataset.i,10);
+      if (i === ansIdx) btn.classList.add("right");
+      else if (i === s.sel) btn.classList.add("wrong");
+    });
+  }
+
+  function choose(btn){
+    var card = btn.closest(".q");
+    if (!card) return;
+    var key = card.dataset.key;
+    if (state[key]) return;
+    var sel = parseInt(btn.dataset.i,10);
+    var ans = parseInt(card.dataset.answer,10);
+    state[key] = {sel: sel, correct: sel === ans};
+    applyMark(key);
+    showFeedback(key);
+    updateProgress();
+  }
+
+  function bindEvents(){
+    document.addEventListener("click", function(e){
+      var btn = e.target.closest ? e.target.closest(".opt") : null;
+      if (btn) choose(btn);
+    });
+    document.getElementById("btnReset").addEventListener("click", function(){
+      state = {};
+      document.getElementById("content").innerHTML = "";
+      renderAll();
+      updateProgress();
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+    document.getElementById("btnPrint").addEventListener("click", function(){ window.print(); });
+  }
+
+  function scrollSpy(){
+    var links = Array.prototype.slice.call(document.querySelectorAll("#side .nav-i"));
+    var secs = SECTIONS.map(function(s){ return document.getElementById(s.id); });
+    if (!("IntersectionObserver" in window)) return;
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){
+          links.forEach(function(a){
+            a.classList.toggle("active", a.getAttribute("href") === "#" + en.target.id);
+          });
+        }
+      });
+    }, {rootMargin:"-15% 0px -70% 0px"});
+    secs.forEach(function(s){ if (s) obs.observe(s); });
+  }
+
+  renderAll();
+  bindEvents();
+  updateProgress();
+  scrollSpy();
+})();
+</script>
+</body>
+</html>
