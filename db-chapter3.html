@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第3章 增强型 E-R 模型 · 复习</title>
+<style>
+  :root{
+    --bg:#eef1f8; --card:#ffffff; --ink:#1f2430; --mut:#5c6474;
+    --acc:#4f46e5; --acc2:#6366f1;
+    --focus:#e11d48; --focus-bg:#fff1f2;
+    --hard:#7c3aed; --hard-bg:#f5f3ff;
+    --pit:#ea580c; --pit-bg:#fff7ed;
+    --ok:#059669; --ok-bg:#ecfdf5; --bad:#dc2626; --bad-bg:#fef2f2;
+    --line:#e4e7f0; --line2:#d7dbf0;
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:
+    radial-gradient(1000px 500px at 85% -10%, #e4e7ff 0%, transparent 60%),
+    radial-gradient(800px 420px at -10% 10%, #dbeafe 0%, transparent 55%),
+    var(--bg);
+    color:var(--ink);
+    font-family:"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    line-height:1.7}
+  a{color:var(--acc); text-decoration:none}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 20px 60px}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line); box-shadow:0 2px 14px rgba(79,70,229,.06)}
+  .h-in{max-width:1180px; margin:0 auto; padding:14px 20px}
+  .h-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .logo{width:44px;height:44px;border-radius:13px; display:grid;place-items:center; flex:0 0 auto;
+    background:linear-gradient(135deg,var(--acc),var(--acc2)); color:#fff; font-weight:800; font-size:20px}
+  .h-t h1{margin:0; font-size:20px; letter-spacing:.3px}
+  .h-t p{margin:2px 0 0; color:var(--mut); font-size:12.5px}
+  .h-actions{margin-left:auto; display:flex; gap:8px}
+  .btn{border:1px solid var(--line2); background:#fff; color:var(--ink); border-radius:10px; padding:7px 12px;
+    font-size:13px; cursor:pointer; transition:.15s}
+  .btn:hover{border-color:var(--acc); color:var(--acc)}
+  .pwrap{margin-top:10px; height:8px; border-radius:99px; background:#e7e9f4; overflow:hidden}
+  #pbar{height:100%; width:0%; border-radius:99px; background:linear-gradient(90deg,var(--acc),#22d3ee); transition:width .3s}
+  .h-stats{font-size:12.5px; color:var(--mut); margin-top:6px; display:flex; gap:14px; flex-wrap:wrap}
+  .h-stats b{color:var(--acc)}
+
+  .layout{display:flex; gap:26px; align-items:flex-start; margin-top:26px}
+  aside{width:248px; flex:0 0 248px; position:sticky; top:118px; max-height:calc(100vh - 140px); overflow:auto;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px}
+  aside h3{margin:2px 4px 10px; font-size:12px; letter-spacing:2px; color:var(--mut); text-transform:uppercase}
+  .nav-i{display:flex; align-items:center; gap:9px; padding:8px 9px; border-radius:10px; color:var(--ink);
+    font-size:13.5px; margin-bottom:2px; border-left:3px solid transparent}
+  .nav-i:hover{background:#f3f4fd}
+  .nav-i.active{background:#eef0ff; border-left-color:var(--acc); font-weight:700}
+  .nav-i .num{color:var(--mut); font-variant-numeric:tabular-nums}
+  .nav-i .cnt{margin-left:auto; font-size:11.5px; color:var(--mut); background:#eef0f7; border-radius:99px; padding:1px 7px}
+  .nav-i .cnt.good{background:var(--ok-bg); color:var(--ok)}
+  .nav-i .cnt.mix{background:#fffbeb; color:#b45309}
+  aside .tip{font-size:11.5px; color:var(--mut); padding:10px 4px 2px; border-top:1px dashed var(--line); margin-top:8px}
+  .legend{display:flex; flex-direction:column; gap:5px; margin-top:10px; font-size:12px; color:var(--mut)}
+  .legend span::before{content:"●"; margin-right:6px}
+  .lg-f::before{color:var(--focus)} .lg-h::before{color:var(--hard)} .lg-p::before{color:var(--pit)}
+
+  main{flex:1; min-width:0}
+
+  .hero{background:linear-gradient(135deg,#312e81 0%,var(--acc) 60%,#4338ca 100%); color:#fff;
+    border-radius:22px; padding:26px 28px; box-shadow:0 14px 30px rgba(79,70,229,.28)}
+  .hero .kicker{font-size:12px; letter-spacing:3px; opacity:.85; margin:0 0 6px}
+  .hero h1{margin:0; font-size:27px; line-height:1.3}
+  .hero p{margin:8px 0 0; opacity:.92; font-size:13.5px; max-width:760px}
+  .map{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
+  .map a{color:#fff; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3);
+    padding:5px 11px; border-radius:99px; font-size:12.5px}
+  .map a:hover{background:rgba(255,255,255,.3)}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); margin-top:24px;
+    box-shadow:0 4px 18px rgba(30,35,60,.05); scroll-margin-top:120px}
+  .card-head{display:flex; align-items:flex-start; gap:14px; padding:20px 22px 14px}
+  .no{flex:0 0 auto; width:46px; height:46px; border-radius:14px; display:grid; place-items:center;
+    background:#eef0ff; color:var(--acc); font-weight:800; font-size:19px; border:1px solid #dfe2ff}
+  .titles{flex:1; min-width:0}
+  .titles h2{margin:0; font-size:20px}
+  .titles .en{color:var(--mut); font-size:12.5px; margin-top:2px}
+  .chips{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{font-size:11.5px; border-radius:99px; padding:3px 10px; font-weight:600}
+  .chip-focus{background:var(--focus-bg); color:var(--focus); border:1px solid #fecdd3}
+  .chip-hard{background:var(--hard-bg); color:var(--hard); border:1px solid #ddd6fe}
+  .chip-pit{background:var(--pit-bg); color:var(--pit); border:1px solid #fed7aa}
+
+  .body{padding:0 22px 22px}
+  .blk{margin-top:12px}
+  .blk h3{margin:0 0 8px; font-size:15px; display:flex; align-items:center; gap:7px}
+  .blk ul{margin:0; padding:0; list-style:none; display:grid; gap:7px}
+  .blk li{padding-left:22px; position:relative; font-size:14px}
+  .blk-sum li::before{content:"▸"; position:absolute; left:2px; color:var(--acc); font-weight:700}
+  .igrid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px}
+  .ig{border-radius:12px; padding:13px 14px; border:1px solid}
+  .ig ul{display:grid; gap:6px}
+  .ig li{padding-left:20px; font-size:13px}
+  .ig-focus{background:var(--focus-bg); border-color:#fecdd3}
+  .ig-focus h3{color:var(--focus)} .ig-focus li::before{content:"★"; position:absolute; left:0; color:var(--focus)}
+  .ig-hard{background:var(--hard-bg); border-color:#ddd6fe}
+  .ig-hard h3{color:var(--hard)} .ig-hard li::before{content:"▲"; position:absolute; left:0; color:var(--hard)}
+  .ig-pit{background:var(--pit-bg); border-color:#fed7aa}
+  .ig-pit h3{color:var(--pit)} .ig-pit li::before{content:"!"; position:absolute; left:2px; font-weight:800; color:var(--pit)}
+
+  .quiz{border-top:1.5px dashed var(--line2); margin-top:16px; padding-top:6px}
+  .quiz h3{margin:12px 0 4px; font-size:15px}
+  .quiz .qhint{font-size:12px; color:var(--mut); margin:0 0 10px}
+  .q{background:#fafbff; border:1px solid var(--line); border-radius:13px; padding:15px 16px; margin-bottom:14px}
+  .q-text{font-size:14.5px; font-weight:600}
+  .q-meta{display:flex; gap:8px; align-items:center; margin-bottom:8px}
+  .tagq{font-size:11px; border-radius:6px; padding:2px 8px; background:#eef0ff; color:var(--acc); font-weight:600}
+  .q-no{font-size:12px; color:#8a90a3}
+  .opts{display:grid; gap:8px; margin-top:10px}
+  .opt{display:flex; gap:10px; align-items:flex-start; text-align:left; width:100%; border:1.5px solid var(--line);
+    background:#fff; border-radius:10px; padding:9px 12px; font-size:13.5px; color:var(--ink); cursor:pointer; transition:.12s; font-family:inherit}
+  .opt:hover:not(:disabled){border-color:var(--acc2); background:#f5f6ff}
+  .opt:disabled{cursor:default}
+  .ol{flex:0 0 auto; width:22px; height:22px; border-radius:7px; display:grid; place-items:center; font-size:12px; font-weight:700;
+    background:#eef0f7; color:var(--mut); margin-top:1px}
+  .opt.right{border-color:var(--ok); background:var(--ok-bg)}
+  .opt.right .ol{background:var(--ok); color:#fff}
+  .opt.wrong{border-color:var(--bad); background:var(--bad-bg)}
+  .opt.wrong .ol{background:var(--bad); color:#fff}
+  .fb{display:none; margin-top:12px; border-radius:11px; padding:10px 14px; font-size:13.5px; border:1px solid}
+  .fb.show{display:block}
+  .fb-ok{background:var(--ok-bg); border-color:#a7f3d0}
+  .fb-bad{background:var(--bad-bg); border-color:#fecaca}
+  .fb b{font-size:14px}
+  .fb .exp{margin-top:4px; color:var(--ink); opacity:.92}
+
+  footer{color:var(--mut); font-size:12.5px; text-align:center; padding:30px 0 6px}
+  @media (max-width:920px){
+    .layout{display:block}
+    aside{display:none}
+    .h-t h1{font-size:16px}
+    .igrid{grid-template-columns:1fr}
+    .hero h1{font-size:21px}
+    .hero{padding:20px}
+  }
+  @media print{
+    header,aside,.h-actions,.map{display:none}
+    body{background:#fff}
+    .card{break-inside:avoid; box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="h-in">
+    <div class="h-row">
+      <div class="logo">DB</div>
+      <div class="h-t">
+        <h1>第3章 增强型 E-R 模型（EER）· 复习手册</h1>
+        <p>Modern Database Management（13e Global Edition）Chapter 3 ｜ 中文要点 + 自测练习</p>
+      </div>
+      <div class="h-actions">
+        <button class="btn" id="btnReset" type="button">↺ 重置练习</button>
+        <button class="btn" id="btnPrint" type="button">🖨 打印</button>
+      </div>
+    </div>
+    <div class="pwrap"><div id="pbar"></div></div>
+    <div class="h-stats"><span>已作答 <b id="stAns">0</b> / <span id="stTotal">0</span> 题</span><span>答对 <b id="stRight">0</b> 题</span><span id="stState">开始答题吧～</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside>
+      <h3>知识点导航</h3>
+      <nav id="side"></nav>
+      <div class="tip">点击题目选项即可作答；答完显示正确答案与解析。</div>
+      <div class="legend">
+        <span class="lg-f">重点（核心必记）</span>
+        <span class="lg-h">难点（理解辨析）</span>
+        <span class="lg-p">易错点（考试常踩坑）</span>
+      </div>
+    </aside>
+    <main>
+      <div class="hero">
+        <p class="kicker">REVIEW · CH03</p>
+        <h1>🧩 The Enhanced E-R Model</h1>
+        <p>本页覆盖 PPT 全部知识点：EER 模型与超类／子类、属性继承、联系与子类层级、泛化（自底向上）与特化（自顶向下）、PART 与关联实体、完整性约束（全部／部分特化）、不相交约束（disjoint／overlap）、四类约束组合，以及子类判别属性。每个知识点均标注<b>重点 / 难点 / 易错点</b>，并配 2 道自测题。</p>
+        <div class="map" id="map"></div>
+      </div>
+      <div id="content"></div>
+      <footer>复习资料整理自：ch03.pptx（Modern Database Management, 13e, Global Edition, Chapter 3: The Enhanced E-R Model）· 仅供个人学习复习使用</footer>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LETTERS = ["A","B","C","D","E"];
+  var state = {};
+
+  var SECTIONS = [
+    {
+      id:"sec-1", no:"01", zh:"EER 模型、超类与子类", en:"EER Model · Supertype · Subtype",
+      summary:[
+        "增强型 E-R 模型（EER）：在原有 E-R 模型基础上扩展出新的建模构件（超类／子类、特化／泛化、约束等）。",
+        "超类 Supertype：一个通用的（generic）实体类型，它与一个或多个子类之间存在联系。",
+        "子类 Subtype：实体类型中的一个子分组，其属性与其他子分组的属性不同。",
+        "教材图 3-1 给出超类／子类的 EER 记法（另有 Visio 等相似但不同的记法）。"
+      ],
+      focus:[
+        "超类＝通用集合，子类＝其中具有独有属性的子集，二者是“is-a”关系。",
+        "模型中出现“部分实例有、部分实例没有”的属性或联系时，就要考虑引入超类／子类。"
+      ],
+      hard:[
+        "EER 是 ER 的“扩展”而非替代：实体、联系、属性等基本概念仍然通用，只是增加了分层的表达能力。"
+      ],
+      pit:[
+        "子类不是与超类并列的独立实体类型，而是同一个实体类型内部的子分组，必须通过超类／子类联系连接。",
+        "一个超类可以有多个（不止一个）子类。"
+      ],
+      questions:[
+        {
+          type:"single", q:"关于 EER 模型的超类（supertype）与子类（subtype），下列说法正确的是（　）。",
+          opts:["超类是一个通用实体类型，与一个或多个子类存在联系","子类是与超类完全无关的独立实体类型","一个超类只能有一个子类","EER 模型会取代 ER 模型，不再使用实体与联系"],
+          a:0,
+          exp:"超类是与一个或多个子类有联系的通用实体类型；子类是同一实体类型内部属性不同的子分组，并非独立于超类的新类型。"
+        },
+        {
+          type:"judge", q:"EER 模型是在原有 ER 模型基础上增加新的建模构件，而不是取代原有的 ER 概念。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。教材把 EER 定义为 extends the original E-R model with new modeling constructs，实体、联系、属性等基本概念继续沿用。"
+        }
+      ]
+    },
+    {
+      id:"sec-2", no:"02", zh:"属性继承", en:"Attribute Inheritance",
+      summary:[
+        "属性继承 Attribute inheritance：子类实例继承其超类所有属性的取值，以及超类层次上的全部联系。",
+        "教材例（图 3-2）：所有员工子类都拥有 employee number、name、address、date hired。",
+        "在此基础之上，每个子类还可以拥有自己特有的属性。"
+      ],
+      focus:[
+        "公共属性只在超类定义一次，子类通过继承获得，这是超类／子类建模减少数据重复的核心价值。"
+      ],
+      hard:[
+        "被继承的不只是属性，还包括超类层次上的联系——子类实例自动参与这些联系。"
+      ],
+      pit:[
+        "子类的完整属性集＝继承自超类的属性＋子类特有的属性，不要以为子类只有自己特有的那几个属性。",
+        "公共属性不需要在子类里重复定义。"
+      ],
+      questions:[
+        {
+          type:"single", q:"在 EER 模型中，子类的实例（　）。",
+          opts:["只拥有子类自己特有的属性","继承超类所有属性的取值与联系，并可拥有子类特有属性","与超类没有任何共同属性","只继承属性，不继承联系"], a:1,
+          exp:"属性继承的含义是：子类实例继承超类全部属性的取值，以及超类层次上的联系，同时还可以拥有只属于该子类的属性。"
+        },
+        {
+          type:"judge", q:"把公共属性上移到超类之后，各子类仍然需要重复定义这些公共属性。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。公共属性只需在超类定义一次，子类通过属性继承获得，这正是超类／子类建模减少冗余的意义。"
+        }
+      ]
+    },
+    {
+      id:"sec-3", no:"03", zh:"员工超类与三个子类", en:"EMPLOYEE Supertype with Three Subtypes",
+      summary:[
+        "教材图 3-2：EMPLOYEE 为超类，三个子类为小时工（hourly employee）、受薪员工（salaried employee）与顾问（consultant）。",
+        "全体共有属性：employee number、name、address、date hired。",
+        "子类特有属性：小时工有 hourly rate；受薪员工有 salary 与 stock options；顾问有 contract number 与 billing rate。",
+        "建模依据：某些属性或联系只适用于整个实体类型中的一个子集，而另一些为全体共享。"
+      ],
+      focus:[
+        "“共有属性放超类、专有属性放子类”，能避免把只适用于少数实例的属性强加给全体。"
+      ],
+      hard:[
+        "若只用一个 EMPLOYEE 实体而不分层，则 hourly rate、contract number 等专用属性对大多数员工都无意义（只能留空）。"
+      ],
+      pit:[
+        "不要把 hourly rate 或 contract number 写成全体员工都有的属性——它们分别只属于特定子类。",
+        "判断能否分层，看的是“属性／联系是否只覆盖子集”，而不是实体数量的多少。"
+      ],
+      questions:[
+        {
+          type:"single", q:"在教材的 EMPLOYEE 例子中，只有小时工（hourly employee）才具有的属性是（　）。",
+          opts:["Employee Number","Hourly Rate","Salary","Date Hired"], a:1,
+          exp:"小时工有 hourly rate；受薪员工有 salary 与 stock options；顾问有 contract number 与 billing rate；而 employee number、name、address、date hired 为全体共有。"
+        },
+        {
+          type:"single", q:"下列哪种情况适合为实体类型建立超类／子类（　）。",
+          opts:["所有属性都被全部实例共享","某些属性或联系只适用于部分实例，而另一些为全体共享","该实体类型只有一个实例","各子分组之间没有任何属性差异"], a:1,
+          exp:"教材指出：当某些属性或联系只适用于整个实体类型的一个子集，而其他属性为全体共享时，建立超类／子类才有意义。"
+        }
+      ]
+    },
+    {
+      id:"sec-4", no:"04", zh:"联系与子类的层级", en:"Relationships and Subtypes",
+      summary:[
+        "画在超类层次上的联系，表示所有子类都会参与该联系。",
+        "某个子类所特有的联系，画在该子类层次上，表示只有该子类的实例参与。"
+      ],
+      focus:[
+        "联系的“摆放位置”决定参与范围：超类层＝全体子类，子类层＝仅该子类。"
+      ],
+      hard:[
+        "同一实体层次中可能同时存在超类层联系与子类层联系，读图时要分别判断参与范围。"
+      ],
+      pit:[
+        "把只属于某个子类的联系画到超类层，等于错误地要求所有子类都参与该联系。"
+      ],
+      questions:[
+        {
+          type:"single", q:"若某联系画在超类层次上，则该联系表示（　）。",
+          opts:["只有第一个子类参与","所有子类都参与该联系","该联系与超类、子类都无关","只有超类自身参与，子类都不参与"], a:1,
+          exp:"教材：超类层次的联系表示所有子类都会参与；只有某个子类特有的联系，才画在该子类层次上。"
+        },
+        {
+          type:"judge", q:"某个子类特有的联系应画在该子类层次上，而不是超类层次上。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。子类特有的联系画在子类层，表示只有该子类的实例参与；若画在超类层会被理解为所有子类都参与。"
+        }
+      ]
+    },
+    {
+      id:"sec-5", no:"05", zh:"泛化：自底向上", en:"Generalization (Bottom-Up)",
+      summary:[
+        "泛化 Generalization：从一组更专门的实体类型中定义出一个更一般的实体类型，是自底向上（BOTTOM-UP）的过程。",
+        "教材图 3-4：先有 CAR、TRUCK、MOTORCYCLE 三种实体类型，它们共享价格、发动机排量、厂牌与型号等共同属性。",
+        "把共同属性放入新建立的 VEHICLE 超类，把各自特有的属性放入子类。",
+        "图 3-4(b) 中没有为 MOTORCYCLE 建立子类，因为摩托车没有独有的属性（仍可用子类判别属性标注它确实是摩托车）。"
+      ],
+      focus:[
+        "泛化的方向是自底向上：先识别出多个专门类型，再归纳出共同属性形成超类。"
+      ],
+      hard:[
+        "没有独有属性的实体类型不一定要建成子类，但可能需要用子类判别属性保留“它是哪一类”的信息。"
+      ],
+      pit:[
+        "泛化（bottom-up）与特化（top-down）方向相反，最容易记反。",
+        "共同属性属于超类，不要留在各个子类里重复出现。"
+      ],
+      questions:[
+        {
+          type:"single", q:"泛化（generalization）的过程方向是（　）。",
+          opts:["自顶向下，从超类拆分出子类","自底向上，从多个更专门的实体类型归纳出更一般的实体类型","在同一实体内横向拆分","与特化完全相同"], a:1,
+          exp:"泛化是 BOTTOM-UP：由一组更专门的实体类型归纳出更一般的实体类型；特化则是 TOP-DOWN。"
+        },
+        {
+          type:"single", q:"图 3-4 中 CAR、TRUCK、MOTORCYCLE 泛化为 VEHICLE 时，未为摩托车建立子类，原因是（　）。",
+          opts:["摩托车不属于车辆","摩托车没有独有属性，共同属性已放入超类","摩托车只有一个实例","摩托车必须作为超类"], a:1,
+          exp:"泛化时共同属性被放入超类，而摩托车没有独有属性，因此无需专门的子类；教材同时指出仍可用子类判别属性保留“是摩托车”这一信息。"
+        }
+      ]
+    },
+    {
+      id:"sec-6", no:"06", zh:"特化：自顶向下", en:"Specialization (Top-Down)",
+      summary:[
+        "特化 Specialization：为一个超类定义多个子类并建立超类／子类联系，是自顶向下（TOP-DOWN）的过程。",
+        "教材图 3-5(a)：实体类型 PART 中，Routing Number 只在零件为自制（in-house manufactured）时适用；Supplier 只在零件为外购时适用。",
+        "图 3-5(b)：特化为 MANUFACTURED PART 与 PURCHASED PART。所有零件都有 part number、description、location、quantity；只有自制件有 routing number，只有外购件有 supplier。"
+      ],
+      focus:[
+        "特化的触发条件同样是“某些属性或联系只覆盖实例的一个子集”。"
+      ],
+      hard:[
+        "先判断属性／联系的适用范围，再决定它应放在超类还是某个子类，这是 EER 建模的关键动作。"
+      ],
+      pit:[
+        "特化（top-down）与泛化（bottom-up）不要记反。",
+        "不要把只在子集上成立的属性留在超类中。"
+      ],
+      questions:[
+        {
+          type:"single", q:"特化（specialization）是指（　）。",
+          opts:["从多个专门实体类型归纳出更一般的实体类型","为一个超类定义多个子类并建立超类／子类联系","把一张表拆成多张互不相关的表","删除不需要的属性"], a:1,
+          exp:"特化是自顶向下（TOP-DOWN）：为超类定义多个子类并与超类形成超类／子类关系；泛化才是自底向上。"
+        },
+        {
+          type:"single", q:"在 PART 例子中，Routing Number 只属于 MANUFACTURED PART，这说明（　）。",
+          opts:["该属性适用于所有零件","该属性只适用于外购件","该属性的适用范围只覆盖自制件，因此应放在自制件子类","该属性与零件类型无关"], a:2,
+          exp:"教材图 3-5(a) 指出 Routing Number 只在零件为自制件时适用，特化后归入 MANUFACTURED PART 子类；Supplier 则只属于 PURCHASED PART。"
+        }
+      ]
+    },
+    {
+      id:"sec-7", no:"07", zh:"PART 特化与关联实体", en:"Specialization · Associative Entity · M:N Cardinality",
+      summary:[
+        "图 3-5(b)：原来的多值复合属性 supplier 被改为独立实体 SUPPLIER，并通过关联实体 SUPPLIES 表示 PURCHASED PART 与 SUPPLIER 之间的多对多联系，unit price 是关联实体的属性。",
+        "教材要点：多值属性并不能明确说明联系是 M:N 还是 1:N；把 supplier 建模为独立实体后，可以显式给出联系的基数。",
+        "对比第 2 章图 2-19 的价格历史：一个产品可以有多个价格历史项，但每个价格历史项只属于一个产品，属于 1:N。",
+        "教材示例表：Supplier(SupplierID, SupplierName)、Part(PartID, Description, Location, QTY_On_Hand)、Order Line(OrderID, PartID, SupplierID, UnitPrice, OrderedQuantity)。"
+      ],
+      focus:[
+        "把多值复合属性替换为“独立实体＋关联实体”，可以显式表达基数，并把 unit price 这类属性挂到联系上。"
+      ],
+      hard:[
+        "多值属性的语义是模糊的：它既可能对应 M:N，也可能对应 1:N，只有显式建模才能确定。"
+      ],
+      pit:[
+        "不要认为多值属性已经表达了多对多关系——它并没有说明基数。",
+        "关联实体总在它所连接关系的“多”端，转换后一个 M:N 会变成两个 1:M。"
+      ],
+      questions:[
+        {
+          type:"single", q:"把 PART 中的 supplier 由多值复合属性改为独立实体后，带来的直接好处是（　）。",
+          opts:["不再需要主键","可以显式表达 PURCHASED PART 与 SUPPLIER 之间的基数，并让 unit price 成为联系的属性","可以减少子类的数量","可以取消超类"], a:1,
+          exp:"多值属性无法明确说明是 M:N 还是 1:N；把供应商建成独立实体、用关联实体（SUPPLIES）连接后，就能显式给出基数，并把 unit price 作为该关联实体的属性。"
+        },
+        {
+          type:"judge", q:"一个多值属性本身就能明确表达出联系是 M:N 还是 1:N。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。教材明确指出多值属性不显式描述 M:N 关系，它也可能表达 1:N（如第 2 章图 2-19 的价格历史：每个价格历史项只属于一个产品）。"
+        }
+      ]
+    },
+    {
+      id:"sec-8", no:"08", zh:"完整性约束：全部特化与部分特化", en:"Completeness Constraints",
+      summary:[
+        "完整性约束 Completeness constraint：判断超类的一个实例是否至少必须属于它的某个子类。",
+        "全部特化规则 Total specialization rule：每个超类实例都必须属于该关系中的某个子类，用双线表示。",
+        "部分特化规则 Partial specialization rule：允许超类实例不属于任何子类，用单线表示。",
+        "例（图 3-6a）：患者必须是住院病人（resident）或门诊病人（outpatient）之一，属于全部特化。",
+        "例（图 3-6b）：VEHICLE 属于部分特化，因为部分车辆是摩托车，而图中并未把摩托车建模为子类。",
+        "PART 分为自制件／外购件：教材认为很可能是全部特化（要么自制、要么外购）。"
+      ],
+      focus:[
+        "记住两条线：双线＝全部特化（必须属于某个子类），单线＝部分特化（可以都不属于）。"
+      ],
+      hard:[
+        "判断完整性约束要先问“这个实例有没有可能是图里没画的第三类”，若有则通常是部分特化。"
+      ],
+      pit:[
+        "双线与单线最容易记反：双线是更严格的“必须归类”，不是“更宽松”。",
+        "部分特化不等于“每个子类都是可选的属性”，它说的是实例可以不属于任何子类。"
+      ],
+      questions:[
+        {
+          type:"single", q:"用双线表示的超类／子类约束是（　）。",
+          opts:["部分特化 Partial specialization","全部特化 Total specialization","不相交 Disjoint","重叠 Overlap"], a:1,
+          exp:"教材：全部特化规则用双线表示，要求每个超类实例必须至少属于一个子类；部分特化规则用单线表示，允许实例不属于任何子类。"
+        },
+        {
+          type:"single", q:"图 3-6(b) 中 VEHICLE 属于部分特化，原因是（　）。",
+          opts:["所有车辆都必须属于某个子类","部分车辆是摩托车，但没有被显式建模为子类","车辆没有共同属性","车辆没有任何子类"], a:1,
+          exp:"部分特化允许超类实例不属于任何子类；教材指出部分车辆是摩托车且图中没有摩托车子类，因此是部分特化。"
+        }
+      ]
+    },
+    {
+      id:"sec-9", no:"09", zh:"不相交约束：不相交与重叠", en:"Disjointness Constraints",
+      summary:[
+        "不相交约束 Disjointness constraint：判断超类的一个实例是否可以同时属于两个或更多子类。",
+        "不相交规则 Disjoint rule：实例不可以同时属于两个或更多子类。",
+        "重叠规则 Overlap rule：实例可以同时属于两个或更多子类。",
+        "例（图 3-7a）：同一时刻患者不能既是住院病人又是门诊病人（可以先后转换），属于不相交。",
+        "例（图 3-7b）：某些零件既自制又外购，属于重叠（该例同时是全部特化）。"
+      ],
+      focus:[
+        "不相交／重叠回答的是“能否同时属于多个子类”，与完整性回答的“是否必须属于某个子类”是两个独立问题。"
+      ],
+      hard:[
+        "同一实例“先后变化”与“同时属于”不同：患者今天住院、明天门诊仍是 disjoint 约束。"
+      ],
+      pit:[
+        "不要把不相交约束与完整性约束混为一谈，它们可以任意组合。",
+        "重叠规则并不等于“必须属于多个子类”，它只是允许同时属于多个。"
+      ],
+      questions:[
+        {
+          type:"single", q:"关于不相交（disjoint）与重叠（overlap）规则，下列说法正确的是（　）。",
+          opts:["不相交规则允许实例同时属于多个子类","重叠规则允许实例同时属于两个或多个子类","两者都规定实例必须属于某个子类","两者都与子类划分无关"], a:1,
+          exp:"不相交规则不允许实例同时属于两个及以上子类；重叠规则允许。它们回答“能否同时属于多个子类”，与完整性约束（是否必须属于某一个）不同。"
+        },
+        {
+          type:"single", q:"教材图 3-7(a) 中患者的例子属于不相交规则，理由是（　）。",
+          opts:["患者必须同时是住院病人和门诊病人","患者不能同时既是住院病人又是门诊病人","患者可以不属于任何子类","患者没有子类"], a:1,
+          exp:"教材说明同一时刻患者不能既是住院病人又是门诊病人（虽然可以先后转换），因此采用不相交规则。"
+        }
+      ]
+    },
+    {
+      id:"sec-10", no:"10", zh:"四类约束组合", en:"Four Combinations of Constraints",
+      summary:[
+        "完整性约束（全部特化／部分特化）与不相交约束（不相交／重叠）相互独立，可组合为四种情形：全部特化＋不相交、全部特化＋重叠、部分特化＋不相交、部分特化＋重叠。",
+        "例：患者的住院／门诊是全部特化＋不相交。",
+        "例：PART 的自制／外购是全部特化＋重叠（有些零件既可自制又可外购）。",
+        "判断顺序：先看是否必须属于某个子类（双线／单线），再看能否同时属于多个子类（不相交／重叠）。"
+      ],
+      focus:[
+        "两类约束要分别判断，再组合起来描述一个超类／子类结构。"
+      ],
+      hard:[
+        "“全部特化”只约束完整性，不对应任何不相交结论；重叠情形同样可以是全部特化。"
+      ],
+      pit:[
+        "不要由一条约束推出另一条：既存在全部特化＋重叠，也存在部分特化＋重叠。",
+        "四种组合要能举出教材中的对应例子。"
+      ],
+      questions:[
+        {
+          type:"single", q:"完整性约束与不相交约束一共可以组合成（　）。",
+          opts:["两种","三种","四种","六种"], a:2,
+          exp:"完整性（全部特化／部分特化）× 不相交（不相交／重叠）＝ 四种组合：全部-不相交、全部-重叠、部分-不相交、部分-重叠。"
+        },
+        {
+          type:"judge", q:"全部特化一定意味着各子类之间不相交。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。两类约束相互独立：全部特化既可以是 disjoint，也可以是 overlap，例如 PART 的自制／外购既是全部特化，又允许同一零件同时属于两个子类。"
+        }
+      ]
+    },
+    {
+      id:"sec-11", no:"11", zh:"子类判别属性：不相交规则", en:"Subtype Discriminator (Disjoint)",
+      summary:[
+        "子类判别属性 Subtype discriminator：超类的一个属性，其取值决定实例属于哪一个（些）子类。",
+        "在不相交规则下，判别属性是一个简单属性，取若干互斥的候选值来指示可能的子类。",
+        "教材例（图 3-8）：EMPLOYEE 用 Employee Type 作为判别属性，它的取值分别指向三个子类之一（小时工／受薪员工／顾问）。"
+      ],
+      focus:[
+        "判别属性写在超类上，是“路由开关”：取什么值，实例就进入哪个子类。"
+      ],
+      hard:[
+        "判别属性的取值集合必须与子类的划分一致；不相交时取值互斥，因此是一个简单属性。"
+      ],
+      pit:[
+        "判别属性属于超类，不是某个子类特有的属性。",
+        "不相交规则用“一个属性多个互斥取值”，不要与重叠规则的布尔组合混淆。"
+      ],
+      questions:[
+        {
+          type:"single", q:"在不相交规则下，子类判别属性通常是（　）。",
+          opts:["一个复合属性，各子部分取布尔值","一个简单属性，取若干互斥的候选值以指示可能的子类","子类自己特有的属性","一个联系类型"], a:1,
+          exp:"不相交规则使用简单（simple）判别属性，各取值分别对应不同子类，如 Employee Type 取三个值之一；重叠规则才使用复合的布尔子属性。"
+        },
+        {
+          type:"judge", q:"子类判别属性是超类的一个属性。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。教材把 subtype discriminator 定义为“超类的一个属性，其取值决定目标子类”，因此它属于超类。"
+        }
+      ]
+    },
+    {
+      id:"sec-12", no:"12", zh:"子类判别属性：重叠规则", en:"Subtype Discriminator (Overlap)",
+      summary:[
+        "在重叠规则下，判别属性是一个复合属性，其各个子部分分别对应不同的子类，每个子部分取布尔值（如 “Y”／“N”）来表示该实例是否属于相应子类。",
+        "教材图 3-9 示例：“Type of Part｜Manufactured?｜Purchased?”，共三种可能组合——仅自制（Y／N）、仅外购（N／Y）、既自制又外购（Y／Y）。",
+        "Manufactured = “N” 且 Purchased = “N” 不可能出现，因为受（全部）特化规则约束，至少有一个必须为 “Y”。"
+      ],
+      focus:[
+        "重叠时的判别属性由多个布尔子属性组成，每个子属性单独回答“是否属于这个子类”。"
+      ],
+      hard:[
+        "要理解“不可能出现 N／N”的原因是全部特化，而不是重叠规则本身——两条约束在这里共同起作用。"
+      ],
+      pit:[
+        "重叠规则不要写成“取一个值从多个子类中选一个”，那是 disjoint 的写法。",
+        "不要遗漏组合数的判断：两个布尔子属性理论上有四种取值，但受完整性约束只剩三种。"
+      ],
+      questions:[
+        {
+          type:"single", q:"在重叠规则下，子类判别属性应设计为（　）。",
+          opts:["一个简单属性，只能取一个值","一个复合属性，各子部分取布尔值，分别指示是否属于相应子类","超类的主键","一条联系"], a:1,
+          exp:"重叠时一个实例可能同时属于多个子类，因此采用复合判别属性，每个子部分是一个布尔值（如 Manufactured?、Purchased?），分别指示是否属于对应子类。"
+        },
+        {
+          type:"single", q:"图 3-9 中 Manufactured = “N” 且 Purchased = “N” 不可能出现，原因是（　）。",
+          opts:["这样的零件不存在于现实世界","受（全部）特化规则约束，零件必须至少属于一个子类","重叠规则禁止同时自制与外购","判别属性必须是复合属性"], a:1,
+          exp:"该例同时适用全部特化规则：每个零件至少是自制件或外购件之一，因此两个布尔值不可能同时为 “N”。"
+        }
+      ]
+    }
+  ];
+
+  var TOTAL = SECTIONS.reduce(function(n, s){ return n + s.questions.length; }, 0);
+
+  function qTypeText(t){ return t === "judge" ? "判断题" : "单选题"; }
+
+  function renderOptions(q){
+    return '<div class="opts">' + q.opts.map(function(o,i){
+      return '<button type="button" class="opt" data-i="'+i+'" aria-label="选项 '+LETTERS[i]+'">'+
+        '<span class="ol">'+LETTERS[i]+'</span><span class="ot">'+o+'</span></button>';
+    }).join("") + '</div>';
+  }
+
+  function renderQuestion(sec, qi){
+    var q = sec.questions[qi];
+    var key = sec.id + "-q" + (qi+1);
+    return '<div class="q" data-key="'+key+'" data-answer="'+q.a+'">'+
+      '<div class="q-meta"><span class="tagq">'+qTypeText(q.type)+'</span><span class="q-no">第 '+sec.no+' 组 · 第 '+(qi+1)+' 题</span></div>'+
+      '<div class="q-text">'+q.q+'</div>'+
+      renderOptions(q)+
+      '<div class="fb" data-fb="'+key+'"></div>'+
+    '</div>';
+  }
+
+  function chips(sec){
+    var out = [];
+    if (sec.focus && sec.focus.length) out.push('<span class="chip chip-focus">重点</span>');
+    if (sec.hard && sec.hard.length) out.push('<span class="chip chip-hard">难点</span>');
+    if (sec.pit && sec.pit.length) out.push('<span class="chip chip-pit">易错点</span>');
+    return '<div class="chips">'+out.join("")+'</div>';
+  }
+
+  function ulOf(arr){
+    if (!arr) return "";
+    return '<ul>'+arr.map(function(x){ return "<li>"+x+"</li>"; }).join("")+'</ul>';
+  }
+
+  function renderSection(sec){
+    var qs = sec.questions.map(function(_, i){ return renderQuestion(sec, i); }).join("");
+    return '<section class="card" id="'+sec.id+'">'+
+      '<div class="card-head"><div class="no">'+sec.no+'</div>'+
+      '<div class="titles"><h2>'+sec.zh+'</h2><div class="en">'+sec.en+'</div></div>'+
+      chips(sec)+'</div>'+
+      '<div class="body">'+
+        '<div class="blk blk-sum"><h3>📚 知识点</h3>'+ulOf(sec.summary)+'</div>'+
+        '<div class="igrid">'+
+          '<div class="blk ig ig-focus"><h3>🎯 重点</h3>'+ulOf(sec.focus)+'</div>'+
+          '<div class="blk ig ig-hard"><h3>🧠 难点</h3>'+ulOf(sec.hard)+'</div>'+
+          '<div class="blk ig ig-pit"><h3>⚠️ 易错点</h3>'+ulOf(sec.pit)+'</div>'+
+        '</div>'+
+        '<div class="quiz"><h3>✏️ 练习自测</h3><p class="qhint">每个知识点 2 题，共 '+TOTAL+' 题。点击选项作答，系统会给出正误判断与解析。</p>'+qs+'</div>'+
+      '</div>'+
+    '</section>';
+  }
+
+  function renderAll(){
+    document.getElementById("stTotal").textContent = TOTAL;
+    document.getElementById("map").innerHTML = SECTIONS.map(function(s){
+      return '<a href="#'+s.id+'">'+s.no+' '+s.zh+'</a>';
+    }).join("");
+    document.getElementById("side").innerHTML = SECTIONS.map(function(s){
+      return '<a class="nav-i" href="#'+s.id+'"><span class="num">'+s.no+'</span><span>'+s.zh+'</span><span class="cnt" id="cnt-'+s.id+'">0/'+s.questions.length+'</span></a>';
+    }).join("");
+    document.getElementById("content").innerHTML = SECTIONS.map(renderSection).join("");
+  }
+
+  function updateProgress(){
+    var answered = 0, right = 0, per = {};
+    Object.keys(state).forEach(function(k){
+      var part = k.split("-q")[0];
+      per[part] = per[part] || {a:0,r:0};
+      per[part].a++;
+      if (state[k].correct) per[part].r++;
+    });
+    SECTIONS.forEach(function(sec){
+      var st = per[sec.id];
+      var cnt = document.getElementById("cnt-"+sec.id);
+      if (!cnt) return;
+      var a = st ? st.a : 0, r = st ? st.r : 0;
+      answered += a; right += r;
+      cnt.textContent = a + "/" + sec.questions.length;
+      cnt.className = "cnt" + (a === sec.questions.length ? (r === sec.questions.length ? " good" : " mix") : "");
+    });
+    document.getElementById("stAns").textContent = answered;
+    document.getElementById("stRight").textContent = right;
+    document.getElementById("pbar").style.width = (answered / TOTAL * 100) + "%";
+    var st = document.getElementById("stState");
+    if (answered === 0) st.textContent = "开始答题吧～";
+    else if (answered === TOTAL && right === TOTAL) st.textContent = "🎉 全部答对，太棒了！";
+    else if (answered === TOTAL) st.textContent = "已完成全部 " + TOTAL + " 题，建议复习橙色（易错点）标注后再来一次。";
+    else st.textContent = "继续加油！完成全部题目即可看到总评。";
+  }
+
+  function findQuestion(key){
+    var found = null;
+    SECTIONS.some(function(sec){
+      for (var i=0;i<sec.questions.length;i++){
+        if (sec.id + "-q" + (i+1) === key){ found = sec.questions[i]; return true; }
+      }
+      return false;
+    });
+    return found;
+  }
+
+  function showFeedback(key){
+    var fb = document.querySelector('[data-fb="'+key+'"]');
+    if (!fb) return;
+    var s = state[key];
+    var card = fb.closest(".q");
+    var ansIdx = parseInt(card.dataset.answer, 10);
+    var q = findQuestion(key);
+    if (!q) return;
+    fb.className = "fb show " + (s.correct ? "fb-ok" : "fb-bad");
+    fb.innerHTML = '<b>'+(s.correct ? "✅ 回答正确" : "❌ 回答错误")+'</b>　正确答案：'+LETTERS[ansIdx]+'. '+q.opts[ansIdx]+
+      '<div class="exp">💡 解析：'+q.exp+'</div>';
+  }
+
+  function applyMark(key){
+    var s = state[key];
+    var card = document.querySelector('.q[data-key="'+key+'"]');
+    if (!card) return;
+    var ansIdx = parseInt(card.dataset.answer,10);
+    Array.prototype.forEach.call(card.querySelectorAll(".opt"), function(btn){
+      btn.disabled = true;
+      var i = parseInt(btn.dataset.i,10);
+      if (i === ansIdx) btn.classList.add("right");
+      else if (i === s.sel) btn.classList.add("wrong");
+    });
+  }
+
+  function choose(btn){
+    var card = btn.closest(".q");
+    if (!card) return;
+    var key = card.dataset.key;
+    if (state[key]) return;
+    var sel = parseInt(btn.dataset.i,10);
+    var ans = parseInt(card.dataset.answer,10);
+    state[key] = {sel: sel, correct: sel === ans};
+    applyMark(key);
+    showFeedback(key);
+    updateProgress();
+  }
+
+  function bindEvents(){
+    document.addEventListener("click", function(e){
+      var btn = e.target.closest ? e.target.closest(".opt") : null;
+      if (btn) choose(btn);
+    });
+    document.getElementById("btnReset").addEventListener("click", function(){
+      state = {};
+      document.getElementById("content").innerHTML = "";
+      renderAll();
+      updateProgress();
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+    document.getElementById("btnPrint").addEventListener("click", function(){ window.print(); });
+  }
+
+  function scrollSpy(){
+    var links = Array.prototype.slice.call(document.querySelectorAll("#side .nav-i"));
+    var secs = SECTIONS.map(function(s){ return document.getElementById(s.id); });
+    if (!("IntersectionObserver" in window)) return;
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){
+          links.forEach(function(a){
+            a.classList.toggle("active", a.getAttribute("href") === "#" + en.target.id);
+          });
+        }
+      });
+    }, {rootMargin:"-15% 0px -70% 0px"});
+    secs.forEach(function(s){ if (s) obs.observe(s); });
+  }
+
+  renderAll();
+  bindEvents();
+  updateProgress();
+  scrollSpy();
+})();
+</script>
+</body>
+</html>
