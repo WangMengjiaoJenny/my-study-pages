@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISOM2007 Lecture 1 编程导论 · 复习</title>
+<style>
+  :root{
+    --bg:#eef1f8; --card:#ffffff; --ink:#1f2430; --mut:#5c6474;
+    --acc:#0e7490; --acc2:#0891b2;
+    --focus:#e11d48; --focus-bg:#fff1f2;
+    --hard:#7c3aed; --hard-bg:#f5f3ff;
+    --pit:#ea580c; --pit-bg:#fff7ed;
+    --ok:#059669; --ok-bg:#ecfdf5; --bad:#dc2626; --bad-bg:#fef2f2;
+    --line:#e2e8f0; --line2:#cbd5e1;
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:
+    radial-gradient(1000px 500px at 85% -10%, #dcf1f8 0%, transparent 60%),
+    radial-gradient(800px 420px at -10% 10%, #e0e7ff 0%, transparent 55%),
+    var(--bg);
+    color:var(--ink);
+    font-family:"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    line-height:1.7}
+  a{color:var(--acc); text-decoration:none}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 20px 60px}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line); box-shadow:0 2px 14px rgba(14,116,144,.08)}
+  .h-in{max-width:1180px; margin:0 auto; padding:14px 20px}
+  .h-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .logo{width:44px;height:44px;border-radius:13px; display:grid;place-items:center; flex:0 0 auto;
+    background:linear-gradient(135deg,var(--acc),var(--acc2)); color:#fff; font-weight:800; font-size:19px}
+  .h-t h1{margin:0; font-size:20px; letter-spacing:.3px}
+  .h-t p{margin:2px 0 0; color:var(--mut); font-size:12.5px}
+  .h-actions{margin-left:auto; display:flex; gap:8px}
+  .btn{border:1px solid var(--line2); background:#fff; color:var(--ink); border-radius:10px; padding:7px 12px;
+    font-size:13px; cursor:pointer; transition:.15s}
+  .btn:hover{border-color:var(--acc); color:var(--acc)}
+  .pwrap{margin-top:10px; height:8px; border-radius:99px; background:#e5eaf1; overflow:hidden}
+  #pbar{height:100%; width:0%; border-radius:99px; background:linear-gradient(90deg,var(--acc),#22d3ee); transition:width .3s}
+  .h-stats{font-size:12.5px; color:var(--mut); margin-top:6px; display:flex; gap:14px; flex-wrap:wrap}
+  .h-stats b{color:var(--acc)}
+
+  .layout{display:flex; gap:26px; align-items:flex-start; margin-top:26px}
+  aside{width:248px; flex:0 0 248px; position:sticky; top:118px; max-height:calc(100vh - 140px); overflow:auto;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px}
+  aside h3{margin:2px 4px 10px; font-size:12px; letter-spacing:2px; color:var(--mut); text-transform:uppercase}
+  .nav-i{display:flex; align-items:center; gap:9px; padding:8px 9px; border-radius:10px; color:var(--ink);
+    font-size:13.5px; margin-bottom:2px; border-left:3px solid transparent}
+  .nav-i:hover{background:#f1f5f9}
+  .nav-i.active{background:#e6f6fb; border-left-color:var(--acc); font-weight:700}
+  .nav-i .num{color:var(--mut); font-variant-numeric:tabular-nums}
+  .nav-i .cnt{margin-left:auto; font-size:11.5px; color:var(--mut); background:#eef0f7; border-radius:99px; padding:1px 7px}
+  .nav-i .cnt.good{background:var(--ok-bg); color:var(--ok)}
+  .nav-i .cnt.mix{background:#fffbeb; color:#b45309}
+  aside .tip{font-size:11.5px; color:var(--mut); padding:10px 4px 2px; border-top:1px dashed var(--line); margin-top:8px}
+  .legend{display:flex; flex-direction:column; gap:5px; margin-top:10px; font-size:12px; color:var(--mut)}
+  .legend span::before{content:"●"; margin-right:6px}
+  .lg-f::before{color:var(--focus)} .lg-h::before{color:var(--hard)} .lg-p::before{color:var(--pit)}
+
+  main{flex:1; min-width:0}
+
+  .hero{background:linear-gradient(135deg,#164e63 0%,var(--acc) 60%,#0e7490 100%); color:#fff;
+    border-radius:22px; padding:26px 28px; box-shadow:0 14px 30px rgba(14,116,144,.28)}
+  .hero .kicker{font-size:12px; letter-spacing:3px; opacity:.85; margin:0 0 6px}
+  .hero h1{margin:0; font-size:27px; line-height:1.3}
+  .hero p{margin:8px 0 0; opacity:.92; font-size:13.5px; max-width:760px}
+  .map{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
+  .map a{color:#fff; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3);
+    padding:5px 11px; border-radius:99px; font-size:12.5px}
+  .map a:hover{background:rgba(255,255,255,.3)}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); margin-top:24px;
+    box-shadow:0 4px 18px rgba(30,35,60,.05); scroll-margin-top:120px}
+  .card-head{display:flex; align-items:flex-start; gap:14px; padding:20px 22px 14px}
+  .no{flex:0 0 auto; width:46px; height:46px; border-radius:14px; display:grid; place-items:center;
+    background:#e6f6fb; color:var(--acc); font-weight:800; font-size:19px; border:1px solid #bae6fd}
+  .titles{flex:1; min-width:0}
+  .titles h2{margin:0; font-size:20px}
+  .titles .en{color:var(--mut); font-size:12.5px; margin-top:2px}
+  .chips{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{font-size:11.5px; border-radius:99px; padding:3px 10px; font-weight:600}
+  .chip-focus{background:var(--focus-bg); color:var(--focus); border:1px solid #fecdd3}
+  .chip-hard{background:var(--hard-bg); color:var(--hard); border:1px solid #ddd6fe}
+  .chip-pit{background:var(--pit-bg); color:var(--pit); border:1px solid #fed7aa}
+
+  .body{padding:0 22px 22px}
+  .blk{margin-top:12px}
+  .blk h3{margin:0 0 8px; font-size:15px; display:flex; align-items:center; gap:7px}
+  .blk ul{margin:0; padding:0; list-style:none; display:grid; gap:7px}
+  .blk li{padding-left:22px; position:relative; font-size:14px}
+  .blk-sum li::before{content:"▸"; position:absolute; left:2px; color:var(--acc); font-weight:700}
+  .igrid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px}
+  .ig{border-radius:12px; padding:13px 14px; border:1px solid}
+  .ig ul{display:grid; gap:6px}
+  .ig li{padding-left:20px; font-size:13px}
+  .ig-focus{background:var(--focus-bg); border-color:#fecdd3}
+  .ig-focus h3{color:var(--focus)} .ig-focus li::before{content:"★"; position:absolute; left:0; color:var(--focus)}
+  .ig-hard{background:var(--hard-bg); border-color:#ddd6fe}
+  .ig-hard h3{color:var(--hard)} .ig-hard li::before{content:"▲"; position:absolute; left:0; color:var(--hard)}
+  .ig-pit{background:var(--pit-bg); border-color:#fed7aa}
+  .ig-pit h3{color:var(--pit)} .ig-pit li::before{content:"!"; position:absolute; left:2px; font-weight:800; color:var(--pit)}
+
+  .quiz{border-top:1.5px dashed var(--line2); margin-top:16px; padding-top:6px}
+  .quiz h3{margin:12px 0 4px; font-size:15px}
+  .quiz .qhint{font-size:12px; color:var(--mut); margin:0 0 10px}
+  .q{background:#f8fbfd; border:1px solid var(--line); border-radius:13px; padding:15px 16px; margin-bottom:14px}
+  .q-text{font-size:14.5px; font-weight:600}
+  .q-meta{display:flex; gap:8px; align-items:center; margin-bottom:8px}
+  .tagq{font-size:11px; border-radius:6px; padding:2px 8px; background:#e6f6fb; color:var(--acc); font-weight:600}
+  .q-no{font-size:12px; color:#8a90a3}
+  .opts{display:grid; gap:8px; margin-top:10px}
+  .opt{display:flex; gap:10px; align-items:flex-start; text-align:left; width:100%; border:1.5px solid var(--line);
+    background:#fff; border-radius:10px; padding:9px 12px; font-size:13.5px; color:var(--ink); cursor:pointer; transition:.12s; font-family:inherit}
+  .opt:hover:not(:disabled){border-color:var(--acc2); background:#f0fbfe}
+  .opt:disabled{cursor:default}
+  .ol{flex:0 0 auto; width:22px; height:22px; border-radius:7px; display:grid; place-items:center; font-size:12px; font-weight:700;
+    background:#eef0f7; color:var(--mut); margin-top:1px}
+  .opt.right{border-color:var(--ok); background:var(--ok-bg)}
+  .opt.right .ol{background:var(--ok); color:#fff}
+  .opt.wrong{border-color:var(--bad); background:var(--bad-bg)}
+  .opt.wrong .ol{background:var(--bad); color:#fff}
+  .fb{display:none; margin-top:12px; border-radius:11px; padding:10px 14px; font-size:13.5px; border:1px solid}
+  .fb.show{display:block}
+  .fb-ok{background:var(--ok-bg); border-color:#a7f3d0}
+  .fb-bad{background:var(--bad-bg); border-color:#fecaca}
+  .fb b{font-size:14px}
+  .fb .exp{margin-top:4px; color:var(--ink); opacity:.92}
+  code{background:#eef2f7; border-radius:5px; padding:1px 5px; font-family:Consolas,"Courier New",monospace; font-size:13px}
+
+  footer{color:var(--mut); font-size:12.5px; text-align:center; padding:30px 0 6px}
+  @media (max-width:920px){
+    .layout{display:block}
+    aside{display:none}
+    .h-t h1{font-size:16px}
+    .igrid{grid-template-columns:1fr}
+    .hero h1{font-size:21px}
+    .hero{padding:20px}
+  }
+  @media print{
+    header,aside,.h-actions,.map{display:none}
+    body{background:#fff}
+    .card{break-inside:avoid; box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="h-in">
+    <div class="h-row">
+      <div class="logo">PY</div>
+      <div class="h-t">
+        <h1>Lecture 1 编程导论 · 复习手册</h1>
+        <p>ISOM2007 Programming for Business Analytics ｜ 中文要点 + 自测练习</p>
+      </div>
+      <div class="h-actions">
+        <button class="btn" id="btnReset" type="button">↺ 重置练习</button>
+        <button class="btn" id="btnPrint" type="button">🖨 打印</button>
+      </div>
+    </div>
+    <div class="pwrap"><div id="pbar"></div></div>
+    <div class="h-stats"><span>已作答 <b id="stAns">0</b> / <span id="stTotal">0</span> 题</span><span>答对 <b id="stRight">0</b> 题</span><span id="stState">开始答题吧～</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside>
+      <h3>知识点导航</h3>
+      <nav id="side"></nav>
+      <div class="tip">点击题目选项即可作答；答完显示正确答案与解析。</div>
+      <div class="legend">
+        <span class="lg-f">重点（核心必记）</span>
+        <span class="lg-h">难点（理解辨析）</span>
+        <span class="lg-p">易错点（考试常踩坑）</span>
+      </div>
+    </aside>
+    <main>
+      <div class="hero">
+        <p class="kicker">REVIEW · LECTURE 1</p>
+        <h1>🖥 Introduction to Programming</h1>
+        <p>本页覆盖 Lecture 1 全部知识点：硬件与软件、CPU 与存储器、内存单位与程序执行、问题求解过程、算法（定义与形式化要求）、逐步求精、伪代码与流程图、算法设计实例、自顶向下设计与模块化、文档与防御性编程、三类错误与警告、避免 Bug 与代码风格。每个知识点均标注<b>重点 / 难点 / 易错点</b>，并配 2 道自测题。</p>
+        <div class="map" id="map"></div>
+      </div>
+      <div id="content"></div>
+      <footer>复习资料整理自：ISOM2007-IntroToProgramming.pptx（Lecture 1 Introduction to Programming）· 仅供个人学习复习使用</footer>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LETTERS = ["A","B","C","D","E"];
+  var state = {};
+
+  var SECTIONS = [
+    {
+      id:"sec-1", no:"01", zh:"硬件、软件、程序与编程", en:"Hardware · Software · Program · Programming",
+      summary:[
+        "硬件 Hardware：计算机系统中的物理部件，如显示器、鼠标、键盘、外接存储等。",
+        "CPU 负责程序控制与数据处理；存储设备包括内存（RAM）与辅助存储（硬盘、闪存盘、CD/DVD）；输入输出设备让用户与计算机交互。",
+        "软件 Software：用某种语言实现的指令与决策序列，并被翻译成可在计算机上执行的形式，通常以应用程序的形式出现（Word、游戏、操作系统、设备驱动都是软件）。",
+        "程序 Program：告诉计算机完成某一特定任务所需步骤的序列，由大量原始（简单）指令组成。",
+        "编程 Programming：设计、实现与测试计算机程序的活动。"
+      ],
+      focus:[
+        "四个术语要能分开：硬件（物理部件）、软件（指令与决策的序列）、程序（完成特定任务的步骤）、编程（设计+实现+测试的活动）。",
+        "CPU 的职责是两个词：程序控制 + 数据处理。"
+      ],
+      hard:[
+        "程序由“大量简单指令”组成，复杂任务靠把基本指令组合起来实现——这是理解后续“模块化”的基础。"
+      ],
+      pit:[
+        "操作系统与设备驱动也算软件，不要以为“软件”只指应用软件。",
+        "计算机只能执行被明确指令的动作，不会做你“期望”但没写的事。"
+      ],
+      questions:[
+        {
+          type:"single", q:"下列哪一项不属于计算机硬件（hardware）？（　）",
+          opts:["显示器","鼠标","操作系统","键盘"], a:2,
+          exp:"硬件指计算机系统中的物理部件。操作系统属于软件（software）——教材明确把操作系统与设备驱动都归入软件。"
+        },
+        {
+          type:"judge", q:"一个程序由大量简单的原始指令组成，通过组合这些基本指令来完成复杂任务。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。教材指出程序由非常多的原始（简单）指令组成，计算机把基本指令分组组合，从而执行复杂任务。"
+        }
+      ]
+    },
+    {
+      id:"sec-2", no:"02", zh:"CPU 与存储器：控制单元、ALU、主存与辅存", en:"CPU · Control Unit · ALU · Primary vs Secondary Storage",
+      summary:[
+        "CPU 由两部分组成：控制单元（control unit）与算术逻辑单元（ALU）。",
+        "控制单元：指挥处理器运作；管理所有计算机资源；控制输入输出设备之间的通信与协调；读取并解释指令、决定数据处理顺序；提供时序与控制信号。",
+        "算术逻辑单元：包含执行计算与比较的电路；是计算机的“工作主力”，其工作就是精确执行控制单元要求它做的事。",
+        "主存 Primary storage：由内存芯片构成，只要有电就能保存数据。",
+        "辅存 Secondary storage：更慢、更便宜，但具有持久性——断电后数据仍然保留。",
+        "数据与程序都存放在辅存，程序执行时被载入内存。"
+      ],
+      focus:[
+        "CPU 两大部分的职责分工：控制单元负责指挥、时序、顺序；ALU 负责计算与比较。",
+        "主存 vs 辅存：速度、价格、断电是否保留，三个维度对比。"
+      ],
+      hard:[
+        "ALU 只是“执行者”，决定做什么、按什么顺序做的是控制单元——读题时要看清主语。"
+      ],
+      pit:[
+        "程序与数据平时存放在辅存，运行时才载入内存，不要理解成“程序只存在于内存中”。",
+        "主存之所以能保存数据的前提是通电，断电即丢失。"
+      ],
+      questions:[
+        {
+          type:"single", q:"在 CPU 中，负责指挥处理器运作、管理计算机资源、读取并解释指令、提供时序与控制信号的是（　）。",
+          opts:["算术逻辑单元 ALU","控制单元 Control unit","主存 Primary storage","辅存 Secondary storage"], a:1,
+          exp:"控制单元负责处理器运作的指挥、资源管理、I/O 通信协调、指令读取解释与顺序决定，并提供时序与控制信号；ALU 只负责计算与比较。"
+        },
+        {
+          type:"single", q:"断电后仍能持久保存数据的存储是（　）。",
+          opts:["主存 Primary storage","辅存 Secondary storage","内存芯片","CPU 内部的寄存器"], a:1,
+          exp:"辅存是更慢、更便宜、可持久保留的存储：数据在没有电力的情况下依然保留；主存由内存芯片构成，仅在通电时保存数据。"
+        }
+      ]
+    },
+    {
+      id:"sec-3", no:"03", zh:"内存单位与程序执行过程", en:"Memory Units · Executing a Program",
+      summary:[
+        "可以把主存想象为大小相同（1 字节）的单元格组成的表格，每个单元格有唯一地址，地址从 0 开始编号。",
+        "典型计算机的主存容量为 4 GB 到 32 GB。",
+        "容量单位：1 字节 = 8 位；1 KB = 2¹⁰ = 1024 字节；1 MB = 2²⁰ = 1,048,576 字节；1 GB = 2³⁰ = 1,073,741,824 字节；再往上依次为 TB、PB、EB、ZB、YB。",
+        "执行程序：指令与数据以数字形式存储；程序启动时被载入内存供 CPU 读取；CPU 一次执行一条指令；程序可以对用户输入作出反应；CPU 读入数据（含用户输入），修改后写回内存、屏幕或辅存。"
+      ],
+      focus:[
+        "1 字节 = 8 位；KB / MB / GB 是 2 的幂而不是 1000 的幂（1024 / 1,048,576 / 1,073,741,824）。",
+        "“CPU 一次执行一条指令”是理解程序执行方式的基本前提。"
+      ],
+      hard:[
+        "内存单元“地址唯一且从 0 开始”的模型，是后面理解字符串索引从 0 开始这类约定的背景。"
+      ],
+      pit:[
+        "不要记成 1 KB = 1000 字节：教材给的是 2¹⁰ = 1024。",
+        "CPU 不会一次执行多条指令。"
+      ],
+      questions:[
+        {
+          type:"single", q:"按照教材给出的定义，1 KB 等于（　）。",
+          opts:["1000 字节","1024 字节","1,048,576 字节","1,073,741,824 字节"], a:1,
+          exp:"1 KB = 2¹⁰ = 1024 字节；1 MB = 2²⁰ = 1,048,576 字节；1 GB = 2³⁰ = 1,073,741,824 字节。"
+        },
+        {
+          type:"judge", q:"CPU 运行程序时可以一次执行多条指令。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。教材说明 CPU 运行程序时一次只执行一条指令（one instruction at a time）。"
+        }
+      ]
+    },
+    {
+      id:"sec-4", no:"04", zh:"问题求解过程与编程流程", en:"Problem Solving Process",
+      summary:[
+        "问题求解过程：定义、理解并分析问题 → 制定解决方案 → 详细写出解决步骤 → 测试并在必要时修订 → 编写文档并维护。",
+        "编程作为问题求解过程：定义并分析问题 → 画出流程图或设计算法 → 用特定编程语言把算法翻译成程序 → 编译、测试并调试 → 编写文档并维护。",
+        "这个过程是循环的：未达成目标时要回到设计/构建阶段继续调整。"
+      ],
+      focus:[
+        "两套五步流程的最后一步都是“文档与维护”，最容易被忽略但确实是流程的一部分。"
+      ],
+      hard:[
+        "“定义与分析问题”永远是第一步：问题没搞清楚就写代码，后面所有步骤都会返工。"
+      ],
+      pit:[
+        "测试与调试不是终点，后面还有文档与维护。",
+        "过程并非直线：未达成目标时要回到前面的步骤。"
+      ],
+      questions:[
+        {
+          type:"single", q:"在教材给出的问题求解（编程）五步流程中，最后一步是（　）。",
+          opts:["编译、测试与调试","用编程语言把算法翻译成程序","文档化并维护解决方案","制定解决方案"], a:2,
+          exp:"流程为：定义分析问题 → 设计算法/流程图 → 翻译成程序 → 编译测试调试 → 文档化与维护，因此最后一步是文档与维护。"
+        },
+        {
+          type:"judge", q:"编程解题过程是严格线性的，一旦进入编码阶段就不会再回到前面的步骤。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。教材的流程图显示该过程是循环的：只有在达成目标时才结束，否则要回到设计、构建、修改等阶段重新调整。"
+        }
+      ]
+    },
+    {
+      id:"sec-5", no:"05", zh:"算法：定义、特征与日常类比", en:"Algorithms",
+      summary:[
+        "算法 Algorithm：解决问题的逐步描述，是完成给定任务的有序动作序列（顺序重要）。",
+        "算法像食谱：按顺序写出的、用于达成目标的一组指令。",
+        "算法并非计算机科学独有：织毛衣的“编织图”、烤蛋糕的“食谱”、做衣服的“纸样”，本质上都是算法。",
+        "当执行者是计算机时，算法必须以“程序”的形式表达；用编程语言表达算法的活动就叫编程；算法中的每一步在程序里由一条指令（语句）表达。",
+        "算法的重要性在于它独立于两件事：表达它所用的语言、以及执行它的计算机。"
+      ],
+      focus:[
+        "算法的两个关键词：有序（顺序会影响结果）与步骤化（step by step）。",
+        "算法独立于语言与机器——这是算法比程序更本质的地方。"
+      ],
+      hard:[
+        "区分“算法”与“程序”：算法是思路与步骤，程序是它在某门语言中的表达；同一个算法可以用不同语言实现。"
+      ],
+      pit:[
+        "算法不是程序，程序也不是算法本身。",
+        "算法不只是计算机概念，日常流程（食谱、纸样）也符合算法定义。"
+      ],
+      questions:[
+        {
+          type:"single", q:"关于算法（algorithm），下列说法正确的是（　）。",
+          opts:["算法必须用某种编程语言书写才有意义","算法是解决问题的有序步骤，独立于编程语言和计算机","算法等同于程序","算法只有计算机科学才会用到"], a:1,
+          exp:"教材强调算法的重要性在于它们独立于表达所用的语言，也独立于执行它的计算机；食谱、编织图、纸样等都是算法的例子。"
+        },
+        {
+          type:"judge", q:"烤蛋糕的食谱与织毛衣的编织图，本质上都是算法的例子。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。教材用表格把“织毛衣—编织图—knit one; purl one”“烤蛋糕—食谱—take 3 eggs; beat until smooth”列为算法的日常例子。"
+        }
+      ]
+    },
+    {
+      id:"sec-6", no:"06", zh:"算法的形式化要求", en:"Unambiguous · Executable · Terminating",
+      summary:[
+        "教材给出的算法形式化定义：算法描述一个有如下特征的步骤序列——",
+        "无歧义 Unambiguous：执行算法不需要任何“假设”，使用的指令是精确的。",
+        "可执行 Executable：算法在实践中可以被真正执行。",
+        "可终止 Terminating：算法最终会结束（halt）。"
+      ],
+      focus:[
+        "三条要求要能默写：无歧义、可执行、可终止。"
+      ],
+      hard:[
+        "“无歧义”指的是执行者不需要额外假设或猜测，而不是“写得简洁”。"
+      ],
+      pit:[
+        "永不结束的过程不满足算法定义——可终止是必要条件。",
+        "算法与具体编程语言无关，因此“必须用 Python 编写”不是算法的特征。"
+      ],
+      questions:[
+        {
+          type:"single", q:"下列哪一项不属于教材给出的算法必备特征（　）。",
+          opts:["无歧义 Unambiguous","可执行 Executable","可终止 Terminating","必须用 Python 编写"], a:3,
+          exp:"教材列出的三条特征是 Unambiguous、Executable、Terminating；算法独立于语言，因此“必须用某种语言编写”不是其特征。"
+        },
+        {
+          type:"judge", q:"一个永不结束的过程也属于算法。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。可终止（Terminating）是算法的必要特征：算法最终会结束或停止。"
+        }
+      ]
+    },
+    {
+      id:"sec-7", no:"07", zh:"逐步求精 Stepwise Refinement", en:"Stepwise Refinement",
+      summary:[
+        "思想：把要执行的整个过程拆成若干步骤，使每一步都能用一个比整体更小、更简单的算法来描述。",
+        "好处：子算法更简单，设计者更有把握构造它；也能比一次性处理整个算法时更详细地刻画各个部分。",
+        "例（机器人冲速溶咖啡）初版：1.0 烧水 / 2.0 放咖啡 / 3.0 加水；对机器人来说粒度太粗，需要继续细化。",
+        "细化示例：“1.0 烧水” → 1.1 装水入壶、1.2 打开开关、1.3 等到水开、1.4 关掉开关；“2.0 放咖啡” → 2.1 打开咖啡罐 …… 2.4 盖回罐子。",
+        "停止条件：如果执行者能解释每个子算法中的全部步骤，求精即可停止；若某些步骤仍然太复杂，就继续细化。",
+        "由子算法组合的方案中，可以用“调用”（Call）来复用子算法。"
+      ],
+      focus:[
+        "逐步求精＝由粗到细、不断分解，直到每一步都可被直接执行为止。",
+        "分解出的子算法可以命名并被“调用”，这就是后面模块化与函数的思想源头。"
+      ],
+      hard:[
+        "判断“细化到什么程度才算够”，标准是执行者能否直接解释或执行每一步，而不是步骤数量的多少。"
+      ],
+      pit:[
+        "逐步求精不是一次到位，而是“能解释就停、不能解释就继续分”。",
+        "细化后原步骤被替换为若干子步骤，编号上体现层级（1.0 → 1.1~1.4）。"
+      ],
+      questions:[
+        {
+          type:"single", q:"逐步求精（stepwise refinement）的核心做法是（　）。",
+          opts:["尽量用最少的步骤描述整个过程","把整体过程拆成更小更简单的算法，并逐步细化到可执行的粒度","先写程序再反推算法","把所有细节都放在一步里写清楚"], a:1,
+          exp:"教材指出，逐步求精把过程拆成若干步骤，每一步都可以用一个比整体更小、更简单的算法描述；若某步仍太复杂就继续细化。"
+        },
+        {
+          type:"single", q:"在冲咖啡的例子中，把“1.0 烧水”细化为 1.1~1.4 四个步骤，说明（　）。",
+          opts:["高层步骤对执行者来说太粗略，需要细化到可以直接执行的粒度","原算法是错误的","细化后步骤变多因此效率更低","烧水这一步其实可以省略"], a:0,
+          exp:"教材说明初版算法对机器人来说还不够详细，因此必须把每一步细化为更简单、更具体的步骤；当执行者能解释所有步骤时，求精即可停止。"
+        }
+      ]
+    },
+    {
+      id:"sec-8", no:"08", zh:"伪代码与流程图", en:"Pseudocode · Flowcharts",
+      summary:[
+        "伪代码 Pseudocode：对解题步骤序列的非正式描述；用类似日常英语的文本表示算法；不会在计算机上真正执行；帮助我们在写程序之前“想清楚”；容易转换成对应的计算机程序；只由可执行语句组成；可以先把它写进源码作为注释，再填入真实代码。",
+        "流程图 Flowchart：算法的图形表示，由特殊符号与箭头（流线）连接而成。",
+        "矩形（动作符号）：表示任何类型的动作。",
+        "椭圆：表示程序或代码段的开始／结束。",
+        "菱形（判断符号）：表示需要作出判断，内含可判真假的表达式，根据结果走不同路径。"
+      ],
+      focus:[
+        "三种流程图符号要能对上：矩形＝动作、椭圆＝起止、菱形＝判断。",
+        "伪代码是纯文本、不可执行，用于在编码前理清思路。"
+      ],
+      hard:[
+        "伪代码“只由可执行语句组成”意味着不能写空泛的愿望，而要写出可转化为代码的动作。"
+      ],
+      pit:[
+        "伪代码不会在计算机上真实执行。",
+        "流程图是图形化表示算法，不要与代码混淆。"
+      ],
+      questions:[
+        {
+          type:"single", q:"在流程图中，用来表示“判断”（decision）的符号是（　）。",
+          opts:["矩形 Rectangle","椭圆 Oval","菱形 Diamond","圆形 Circle"], a:2,
+          exp:"矩形是动作符号，椭圆表示开始／结束，菱形是判断符号——其中含有可判真假的表达式，并根据结果选择不同路径。"
+        },
+        {
+          type:"judge", q:"伪代码是可以被计算机直接执行的程序。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。教材明确指出伪代码不会在计算机上真正执行，它只是用类似日常英语的文本描述算法。"
+        }
+      ]
+    },
+    {
+      id:"sec-9", no:"09", zh:"算法设计实例：选车与银行账户", en:"Examples: Choosing a Car · Bank Account",
+      summary:[
+        "橙汁例子：一种有效算法是“取杯子 → 取橙汁 → 打开 → 倒入 → 放回 → 喝”；教材提示这是多种可行算法之一，有些算法更高效。",
+        "选车问题：输入为两车的购买价格与油耗、每加仑油价（4.00 美元）、年行驶里程（15,000）、使用年限（10 年）；需要计算每辆车的年耗油量、年油费、运营成本与总成本，最后选总成本更低的那辆。",
+        "选车伪代码：年耗油量 ＝ 年里程 ÷ 油耗；年油费 ＝ 每加仑价格 × 年耗油量；运营成本 ＝ 年限 × 年油费；总成本 ＝ 购买价格 ＋ 运营成本；若总成本1 小于 总成本2 则选车1，否则选车2。",
+        "银行账户问题：10,000 美元以年利率 5% 计息，多少年余额翻倍？步骤：年份取 0、余额取 10000；当余额小于 20000 时：年份加 1，余额乘以 1.05；最后报告年份值作为答案。"
+      ],
+      focus:[
+        "解题第一步永远是“确定输入与输出”，再按依赖关系把任务拆成子任务（如先算运营成本，再算总成本）。",
+        "银行账户例子是“循环 ＋ 条件判断”的经典原型，很容易直接翻译成 Python 的 while 循环。"
+      ],
+      hard:[
+        "选车问题中各量之间存在依赖链：年耗油量 → 年油费 → 运营成本 → 总成本，顺序不能颠倒。"
+      ],
+      pit:[
+        "同一个问题可以有多个正确算法，效率并不相同，不要以为只有唯一解。",
+        "总成本不只是购买价格，必须把运营成本算进去。"
+      ],
+      questions:[
+        {
+          type:"single", q:"在选车的伪代码中，每辆车的“总成本”是如何得到的（　）。",
+          opts:["只等于购买价格","等于购买价格加上运营成本，而运营成本＝使用年限×年油费","等于年油费乘以 10","等于年耗油量乘以油价"], a:1,
+          exp:"伪代码为：年耗油量＝年里程/油耗；年油费＝每加仑价格×年耗油量；运营成本＝年限×年油费；总成本＝购买价格＋运营成本。"
+        },
+        {
+          type:"single", q:"银行账户问题中，伪代码里的循环会一直执行到（　）。",
+          opts:["年份等于 10","余额不小于 20000（即达到或超过原始金额的两倍）","余额大于 10000","用户手动停止程序"], a:1,
+          exp:"算法为：年份取 0、余额取 10000；当余额小于 20000 时重复“年份加 1、余额乘 1.05”；循环结束时报告年份值。"
+        }
+      ]
+    },
+    {
+      id:"sec-10", no:"10", zh:"程序开发策略：自顶向下设计与模块化", en:"Top-Down Design · Modularization",
+      summary:[
+        "自顶向下设计 Top-down design：大型问题难以整体解决，于是把它分解为更小的部分；子问题实现为程序模块（类、函数、过程），再集成为完整解决方案。",
+        "模块化 Modularization：把问题划分成更小的子问题（模块）；每个模块通常只完成一个特定任务，以便移植与灵活；所有子问题解决后原问题即被解决；这就是“分而治之”（divide-and-conquer）。",
+        "模块化的收益：让程序更易读、更易管理、更健壮（robust）、可重用（reusable）。",
+        "教材列出的四种程序开发策略：自顶向下设计、模块化、文档、防御性编程实践。"
+      ],
+      focus:[
+        "自顶向下设计＝先分解再集成；模块化＝分而治之，一个模块一个任务。",
+        "模块化的四个收益（可读、可管理、健壮、可重用）是常考的列举题。"
+      ],
+      hard:[
+        "自顶向下设计强调的是“先把大问题拆小、再组合回去”的顺序，而不是简单地“先写完再拆文件”。"
+      ],
+      pit:[
+        "模块化不等于“把代码拆成多个文件”，核心是每个模块只承担单一职责。",
+        "被分解出的子问题（模块）可以对应类、函数或过程，不止一种形式。"
+      ],
+      questions:[
+        {
+          type:"single", q:"“把问题划分为更小的子问题，每个模块通常只完成一个特定任务，所有子问题解决后原问题即被解决”描述的是（　）。",
+          opts:["自顶向下设计","模块化（分而治之）","文档化","防御性编程"], a:1,
+          exp:"这正是模块化（modularization），教材也称其为分而治之；每个模块通常只完成一个特定任务，以便移植与灵活。"
+        },
+        {
+          type:"single", q:"下列哪一项不是教材列出的模块化带来的好处（　）。",
+          opts:["更易读 More readable","更健壮 More robust","可重用 Reusable","程序运行速度必然更快"], a:3,
+          exp:"教材列出的好处是更易读、更易管理、更健壮、可重用；运行速度更快并不在其中。"
+        }
+      ]
+    },
+    {
+      id:"sec-11", no:"11", zh:"文档与防御性编程实践", en:"Documentation · Defensive Programming",
+      summary:[
+        "文档 Documentation 涉及：需求规格、设计规格、详细设计规格、程序文档、单元测试规格、集成测试、系统测试规格。",
+        "防御性编程实践 Defensive programming practices：确保错误的输入不会让程序崩溃；让输入易于准备、输出自解释；用合适的标记结束输入，而不是按数量结束；确保程序能优雅终止；确保程序给出有意义的错误信息；用边界值测试程序；不要比较浮点小数是否相等；有意义且经常地使用注释；为变量与常量使用有意义的命名；用缩进体现程序的逻辑结构。"
+      ],
+      focus:[
+        "防御性编程的核心：防住坏输入、失败也要优雅、报错信息要有用、测试要覆盖边界值。"
+      ],
+      hard:[
+        "“用边界值测试”比“随便测几个典型值”更严格，因为错误往往出现在边界条件上。"
+      ],
+      pit:[
+        "不要比较浮点小数是否相等——浮点表示不精确，这是教材反复强调的一条。",
+        "输入用“合适的结束标记”终止，而不是靠事先知道有多少条数据。"
+      ],
+      questions:[
+        {
+          type:"single", q:"下列哪一项属于教材列出的防御性编程实践（　）。",
+          opts:["用边界值测试程序","只测试最典型的输入即可","出错时尽量不给用户提示以免困惑","用浮点数比较是否相等来判断结果"], a:0,
+          exp:"教材的清单包含：防坏输入崩溃、输入易准备输出自解释、用标记结束输入、优雅终止、有意义的错误信息、用边界值测试、不比较浮点相等、善用注释、有意义的命名、用缩进体现逻辑结构。"
+        },
+        {
+          type:"judge", q:"教材认为比较两个浮点小数是否相等是日常可用的做法。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。防御性编程实践明确写着不要比较浮点小数是否相等（浮点数的表示并不精确）。"
+        }
+      ]
+    },
+    {
+      id:"sec-12", no:"12", zh:"三类错误与警告", en:"Compile-time · Semantic/Logic · Runtime Errors",
+      summary:[
+        "编译期错误 Compile-time error（即语法错误）：违反编程语言规则、由编译器发现；会阻止生成可执行程序；例如拼写、大小写、标点错误（漏冒号、变量名拼错）、语句顺序、括号与引号不匹配。修好列出的第一个错误后重新编译，重复直到全部修完。",
+        "警告 Warnings：很可能是运行时错误的来源；不会阻止生成可执行程序；例如声明了未使用的变量、使用了尚未初始化的变量。",
+        "语义／逻辑错误 Semantic / logic error：程序逻辑无效，运行时产生错误结果；程序能编译、能运行且不报错，但做的事不对（如分数不低于 50 却打印 fail）。",
+        "运行时错误 Runtime error：致命 Bug（崩溃）如除以零；非致命 Bug（合法但不期望的操作），如数学错误、在 if 中用 = 代替 ==。"
+      ],
+      focus:[
+        "三类错误的判别标准：编译期（过不了编译）、逻辑（能跑但结果错）、运行时（运行中崩溃或异常行为）。",
+        "警告不是错误，但教材的态度是：绝大多数警告其实是 bug，代码应当在没有任何警告的情况下编译通过。"
+      ],
+      hard:[
+        "逻辑错误最隐蔽：没有任何报错信息，只能靠对照预期结果、注释与测试来发现。"
+      ],
+      pit:[
+        "“能编译、能运行、没报错”不代表程序正确。",
+        "在 if 中用 = 代替 == 属于典型的运行时非致命 bug。"
+      ],
+      questions:[
+        {
+          type:"single", q:"“程序能够编译、能够运行、也没有任何报错信息，但结果不正确”，这类问题属于（　）。",
+          opts:["编译期错误（语法错误）","警告 Warning","语义／逻辑错误","致命运行时错误"], a:2,
+          exp:"教材把语义／逻辑错误定义为：程序能编译、能运行且没有错误信息，但没有做正确的事。"
+        },
+        {
+          type:"single", q:"执行 print(1/0) 会引发哪一类问题（　）。",
+          opts:["编译期语法错误","警告","逻辑错误","致命的运行时错误（崩溃）"], a:3,
+          exp:"除以零属于致命 bug（崩溃）：非法操作导致程序提前结束，是运行时错误的典型例子。"
+        }
+      ]
+    },
+    {
+      id:"sec-13", no:"13", zh:"避免 Bug 与代码风格", en:"Avoiding Bugs · Elements of Style",
+      summary:[
+        "不要忽略编译器警告：大多数警告都是 bug，代码应当在无警告的情况下编译通过。",
+        "不要一次写完所有代码：写几行就编译测试一次，这样当发现 bug 时，它一定来自上次测试之后写下的代码。",
+        "使用好的编程风格：组织好代码以便快速定位 bug、用注释说明代码意图、给变量起能描述用途的名字。",
+        "风格三要素：注释（描述“应该发生什么”，与代码对照来找 bug）；命名约定（不要用单字母变量、用有意义的命名、命名方式保持一致）；空白（编译器忽略空格、回车与制表符；用回车分隔目的不同的代码；用缩进体现控制流）。",
+        "教材以 if / else 的多个缩进写法作为示例，说明缩进用于体现程序的逻辑结构。"
+      ],
+      focus:[
+        "“小步编译测试”是最实用的除错习惯：把 bug 的范围锁定在最近写的几行里。",
+        "注释写“意图”而不是复述代码，才能在出 bug 时用“注释与代码的差异”来定位问题。"
+      ],
+      hard:[
+        "命名约定与一致性属于可维护性问题：程序越长、合作者越多，命名与注释的价值越大。"
+      ],
+      pit:[
+        "“编译器忽略空白”不等于可以随意排版：教材强调用缩进体现控制流。",
+        "不要用 a、x 这类单字母变量名，除非它确实只是一次性的临时量。"
+      ],
+      questions:[
+        {
+          type:"single", q:"按照教材“避免 Bug”的建议，正确的做法是（　）。",
+          opts:["一次把完整程序写完再统一测试","写几行代码就编译并测试一次","忽略编译器警告，只要程序能跑就行","用单字母变量名减少输入量"], a:1,
+          exp:"教材建议不要一次写完所有代码，而是写几行就编译测试；这样发现 bug 时，它必定来自上次测试之后写下的代码。同时不要忽略警告、要用有意义的命名。"
+        },
+        {
+          type:"judge", q:"教材建议不要使用单字母变量名，而应使用能说明用途的有意义命名。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。教材在风格要素的命名约定中写明不要使用单字母变量名，要使用能描述用途、并且前后一致的有意义命名。"
+        }
+      ]
+    }
+  ];
+
+  var TOTAL = SECTIONS.reduce(function(n, s){ return n + s.questions.length; }, 0);
+
+  function qTypeText(t){ return t === "judge" ? "判断题" : "单选题"; }
+
+  function renderOptions(q){
+    return '<div class="opts">' + q.opts.map(function(o,i){
+      return '<button type="button" class="opt" data-i="'+i+'" aria-label="选项 '+LETTERS[i]+'">'+
+        '<span class="ol">'+LETTERS[i]+'</span><span class="ot">'+o+'</span></button>';
+    }).join("") + '</div>';
+  }
+
+  function renderQuestion(sec, qi){
+    var q = sec.questions[qi];
+    var key = sec.id + "-q" + (qi+1);
+    return '<div class="q" data-key="'+key+'" data-answer="'+q.a+'">'+
+      '<div class="q-meta"><span class="tagq">'+qTypeText(q.type)+'</span><span class="q-no">第 '+sec.no+' 组 · 第 '+(qi+1)+' 题</span></div>'+
+      '<div class="q-text">'+q.q+'</div>'+
+      renderOptions(q)+
+      '<div class="fb" data-fb="'+key+'"></div>'+
+    '</div>';
+  }
+
+  function chips(sec){
+    var out = [];
+    if (sec.focus && sec.focus.length) out.push('<span class="chip chip-focus">重点</span>');
+    if (sec.hard && sec.hard.length) out.push('<span class="chip chip-hard">难点</span>');
+    if (sec.pit && sec.pit.length) out.push('<span class="chip chip-pit">易错点</span>');
+    return '<div class="chips">'+out.join("")+'</div>';
+  }
+
+  function ulOf(arr){
+    if (!arr) return "";
+    return '<ul>'+arr.map(function(x){ return "<li>"+x+"</li>"; }).join("")+'</ul>';
+  }
+
+  function renderSection(sec){
+    var qs = sec.questions.map(function(_, i){ return renderQuestion(sec, i); }).join("");
+    return '<section class="card" id="'+sec.id+'">'+
+      '<div class="card-head"><div class="no">'+sec.no+'</div>'+
+      '<div class="titles"><h2>'+sec.zh+'</h2><div class="en">'+sec.en+'</div></div>'+
+      chips(sec)+'</div>'+
+      '<div class="body">'+
+        '<div class="blk blk-sum"><h3>📚 知识点</h3>'+ulOf(sec.summary)+'</div>'+
+        '<div class="igrid">'+
+          '<div class="blk ig ig-focus"><h3>🎯 重点</h3>'+ulOf(sec.focus)+'</div>'+
+          '<div class="blk ig ig-hard"><h3>🧠 难点</h3>'+ulOf(sec.hard)+'</div>'+
+          '<div class="blk ig ig-pit"><h3>⚠️ 易错点</h3>'+ulOf(sec.pit)+'</div>'+
+        '</div>'+
+        '<div class="quiz"><h3>✏️ 练习自测</h3><p class="qhint">每个知识点 2 题，共 '+TOTAL+' 题。点击选项作答，系统会给出正误判断与解析。</p>'+qs+'</div>'+
+      '</div>'+
+    '</section>';
+  }
+
+  function renderAll(){
+    document.getElementById("stTotal").textContent = TOTAL;
+    document.getElementById("map").innerHTML = SECTIONS.map(function(s){
+      return '<a href="#'+s.id+'">'+s.no+' '+s.zh+'</a>';
+    }).join("");
+    document.getElementById("side").innerHTML = SECTIONS.map(function(s){
+      return '<a class="nav-i" href="#'+s.id+'"><span class="num">'+s.no+'</span><span>'+s.zh+'</span><span class="cnt" id="cnt-'+s.id+'">0/'+s.questions.length+'</span></a>';
+    }).join("");
+    document.getElementById("content").innerHTML = SECTIONS.map(renderSection).join("");
+  }
+
+  function updateProgress(){
+    var answered = 0, right = 0, per = {};
+    Object.keys(state).forEach(function(k){
+      var part = k.split("-q")[0];
+      per[part] = per[part] || {a:0,r:0};
+      per[part].a++;
+      if (state[k].correct) per[part].r++;
+    });
+    SECTIONS.forEach(function(sec){
+      var st = per[sec.id];
+      var cnt = document.getElementById("cnt-"+sec.id);
+      if (!cnt) return;
+      var a = st ? st.a : 0, r = st ? st.r : 0;
+      answered += a; right += r;
+      cnt.textContent = a + "/" + sec.questions.length;
+      cnt.className = "cnt" + (a === sec.questions.length ? (r === sec.questions.length ? " good" : " mix") : "");
+    });
+    document.getElementById("stAns").textContent = answered;
+    document.getElementById("stRight").textContent = right;
+    document.getElementById("pbar").style.width = (answered / TOTAL * 100) + "%";
+    var st = document.getElementById("stState");
+    if (answered === 0) st.textContent = "开始答题吧～";
+    else if (answered === TOTAL && right === TOTAL) st.textContent = "🎉 全部答对，太棒了！";
+    else if (answered === TOTAL) st.textContent = "已完成全部 " + TOTAL + " 题，建议复习橙色（易错点）标注后再来一次。";
+    else st.textContent = "继续加油！完成全部题目即可看到总评。";
+  }
+
+  function findQuestion(key){
+    var found = null;
+    SECTIONS.some(function(sec){
+      for (var i=0;i<sec.questions.length;i++){
+        if (sec.id + "-q" + (i+1) === key){ found = sec.questions[i]; return true; }
+      }
+      return false;
+    });
+    return found;
+  }
+
+  function showFeedback(key){
+    var fb = document.querySelector('[data-fb="'+key+'"]');
+    if (!fb) return;
+    var s = state[key];
+    var card = fb.closest(".q");
+    var ansIdx = parseInt(card.dataset.answer, 10);
+    var q = findQuestion(key);
+    if (!q) return;
+    fb.className = "fb show " + (s.correct ? "fb-ok" : "fb-bad");
+    fb.innerHTML = '<b>'+(s.correct ? "✅ 回答正确" : "❌ 回答错误")+'</b>　正确答案：'+LETTERS[ansIdx]+'. '+q.opts[ansIdx]+
+      '<div class="exp">💡 解析：'+q.exp+'</div>';
+  }
+
+  function applyMark(key){
+    var s = state[key];
+    var card = document.querySelector('.q[data-key="'+key+'"]');
+    if (!card) return;
+    var ansIdx = parseInt(card.dataset.answer,10);
+    Array.prototype.forEach.call(card.querySelectorAll(".opt"), function(btn){
+      btn.disabled = true;
+      var i = parseInt(btn.dataset.i,10);
+      if (i === ansIdx) btn.classList.add("right");
+      else if (i === s.sel) btn.classList.add("wrong");
+    });
+  }
+
+  function choose(btn){
+    var card = btn.closest(".q");
+    if (!card) return;
+    var key = card.dataset.key;
+    if (state[key]) return;
+    var sel = parseInt(btn.dataset.i,10);
+    var ans = parseInt(card.dataset.answer,10);
+    state[key] = {sel: sel, correct: sel === ans};
+    applyMark(key);
+    showFeedback(key);
+    updateProgress();
+  }
+
+  function bindEvents(){
+    document.addEventListener("click", function(e){
+      var btn = e.target.closest ? e.target.closest(".opt") : null;
+      if (btn) choose(btn);
+    });
+    document.getElementById("btnReset").addEventListener("click", function(){
+      state = {};
+      document.getElementById("content").innerHTML = "";
+      renderAll();
+      updateProgress();
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+    document.getElementById("btnPrint").addEventListener("click", function(){ window.print(); });
+  }
+
+  function scrollSpy(){
+    var links = Array.prototype.slice.call(document.querySelectorAll("#side .nav-i"));
+    var secs = SECTIONS.map(function(s){ return document.getElementById(s.id); });
+    if (!("IntersectionObserver" in window)) return;
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){
+          links.forEach(function(a){
+            a.classList.toggle("active", a.getAttribute("href") === "#" + en.target.id);
+          });
+        }
+      });
+    }, {rootMargin:"-15% 0px -70% 0px"});
+    secs.forEach(function(s){ if (s) obs.observe(s); });
+  }
+
+  renderAll();
+  bindEvents();
+  updateProgress();
+  scrollSpy();
+})();
+</script>
+</body>
+</html>

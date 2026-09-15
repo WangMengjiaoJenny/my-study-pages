@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISOM2007 Lecture 2 Python 基础 · 复习</title>
+<style>
+  :root{
+    --bg:#eef4f1; --card:#ffffff; --ink:#1f2430; --mut:#5c6474;
+    --acc:#047857; --acc2:#10b981;
+    --focus:#e11d48; --focus-bg:#fff1f2;
+    --hard:#7c3aed; --hard-bg:#f5f3ff;
+    --pit:#ea580c; --pit-bg:#fff7ed;
+    --ok:#059669; --ok-bg:#ecfdf5; --bad:#dc2626; --bad-bg:#fef2f2;
+    --line:#e2e8f0; --line2:#cbd5e1;
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:
+    radial-gradient(1000px 500px at 85% -10%, #d7f3e6 0%, transparent 60%),
+    radial-gradient(800px 420px at -10% 10%, #dbeafe 0%, transparent 55%),
+    var(--bg);
+    color:var(--ink);
+    font-family:"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    line-height:1.7}
+  a{color:var(--acc); text-decoration:none}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 20px 60px}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line); box-shadow:0 2px 14px rgba(4,120,87,.08)}
+  .h-in{max-width:1180px; margin:0 auto; padding:14px 20px}
+  .h-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .logo{width:44px;height:44px;border-radius:13px; display:grid; place-items:center; flex:0 0 auto;
+    background:linear-gradient(135deg,var(--acc),var(--acc2)); color:#fff; font-weight:800; font-size:19px}
+  .h-t h1{margin:0; font-size:20px; letter-spacing:.3px}
+  .h-t p{margin:2px 0 0; color:var(--mut); font-size:12.5px}
+  .h-actions{margin-left:auto; display:flex; gap:8px}
+  .btn{border:1px solid var(--line2); background:#fff; color:var(--ink); border-radius:10px; padding:7px 12px;
+    font-size:13px; cursor:pointer; transition:.15s}
+  .btn:hover{border-color:var(--acc); color:var(--acc)}
+  .pwrap{margin-top:10px; height:8px; border-radius:99px; background:#e2ece8; overflow:hidden}
+  #pbar{height:100%; width:0%; border-radius:99px; background:linear-gradient(90deg,var(--acc),#34d399); transition:width .3s}
+  .h-stats{font-size:12.5px; color:var(--mut); margin-top:6px; display:flex; gap:14px; flex-wrap:wrap}
+  .h-stats b{color:var(--acc)}
+
+  .layout{display:flex; gap:26px; align-items:flex-start; margin-top:26px}
+  aside{width:248px; flex:0 0 248px; position:sticky; top:118px; max-height:calc(100vh - 140px); overflow:auto;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px}
+  aside h3{margin:2px 4px 10px; font-size:12px; letter-spacing:2px; color:var(--mut); text-transform:uppercase}
+  .nav-i{display:flex; align-items:center; gap:9px; padding:8px 9px; border-radius:10px; color:var(--ink);
+    font-size:13.5px; margin-bottom:2px; border-left:3px solid transparent}
+  .nav-i:hover{background:#f1f5f9}
+  .nav-i.active{background:#e7f7f0; border-left-color:var(--acc); font-weight:700}
+  .nav-i .num{color:var(--mut); font-variant-numeric:tabular-nums}
+  .nav-i .cnt{margin-left:auto; font-size:11.5px; color:var(--mut); background:#eef0f7; border-radius:99px; padding:1px 7px}
+  .nav-i .cnt.good{background:var(--ok-bg); color:var(--ok)}
+  .nav-i .cnt.mix{background:#fffbeb; color:#b45309}
+  aside .tip{font-size:11.5px; color:var(--mut); padding:10px 4px 2px; border-top:1px dashed var(--line); margin-top:8px}
+  .legend{display:flex; flex-direction:column; gap:5px; margin-top:10px; font-size:12px; color:var(--mut)}
+  .legend span::before{content:"●"; margin-right:6px}
+  .lg-f::before{color:var(--focus)} .lg-h::before{color:var(--hard)} .lg-p::before{color:var(--pit)}
+
+  main{flex:1; min-width:0}
+
+  .hero{background:linear-gradient(135deg,#064e3b 0%,var(--acc) 60%,#059669 100%); color:#fff;
+    border-radius:22px; padding:26px 28px; box-shadow:0 14px 30px rgba(4,120,87,.28)}
+  .hero .kicker{font-size:12px; letter-spacing:3px; opacity:.85; margin:0 0 6px}
+  .hero h1{margin:0; font-size:27px; line-height:1.3}
+  .hero p{margin:8px 0 0; opacity:.92; font-size:13.5px; max-width:760px}
+  .map{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
+  .map a{color:#fff; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3);
+    padding:5px 11px; border-radius:99px; font-size:12.5px}
+  .map a:hover{background:rgba(255,255,255,.3)}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); margin-top:24px;
+    box-shadow:0 4px 18px rgba(30,35,60,.05); scroll-margin-top:120px}
+  .card-head{display:flex; align-items:flex-start; gap:14px; padding:20px 22px 14px}
+  .no{flex:0 0 auto; width:46px; height:46px; border-radius:14px; display:grid; place-items:center;
+    background:#e7f7f0; color:var(--acc); font-weight:800; font-size:19px; border:1px solid #a7f3d0}
+  .titles{flex:1; min-width:0}
+  .titles h2{margin:0; font-size:20px}
+  .titles .en{color:var(--mut); font-size:12.5px; margin-top:2px}
+  .chips{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{font-size:11.5px; border-radius:99px; padding:3px 10px; font-weight:600}
+  .chip-focus{background:var(--focus-bg); color:var(--focus); border:1px solid #fecdd3}
+  .chip-hard{background:var(--hard-bg); color:var(--hard); border:1px solid #ddd6fe}
+  .chip-pit{background:var(--pit-bg); color:var(--pit); border:1px solid #fed7aa}
+
+  .body{padding:0 22px 22px}
+  .blk{margin-top:12px}
+  .blk h3{margin:0 0 8px; font-size:15px; display:flex; align-items:center; gap:7px}
+  .blk ul{margin:0; padding:0; list-style:none; display:grid; gap:7px}
+  .blk li{padding-left:22px; position:relative; font-size:14px}
+  .blk-sum li::before{content:"▸"; position:absolute; left:2px; color:var(--acc); font-weight:700}
+  .igrid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px}
+  .ig{border-radius:12px; padding:13px 14px; border:1px solid}
+  .ig ul{display:grid; gap:6px}
+  .ig li{padding-left:20px; font-size:13px}
+  .ig-focus{background:var(--focus-bg); border-color:#fecdd3}
+  .ig-focus h3{color:var(--focus)} .ig-focus li::before{content:"★"; position:absolute; left:0; color:var(--focus)}
+  .ig-hard{background:var(--hard-bg); border-color:#ddd6fe}
+  .ig-hard h3{color:var(--hard)} .ig-hard li::before{content:"▲"; position:absolute; left:0; color:var(--hard)}
+  .ig-pit{background:var(--pit-bg); border-color:#fed7aa}
+  .ig-pit h3{color:var(--pit)} .ig-pit li::before{content:"!"; position:absolute; left:2px; font-weight:800; color:var(--pit)}
+
+  .quiz{border-top:1.5px dashed var(--line2); margin-top:16px; padding-top:6px}
+  .quiz h3{margin:12px 0 4px; font-size:15px}
+  .quiz .qhint{font-size:12px; color:var(--mut); margin:0 0 10px}
+  .q{background:#f7fbf9; border:1px solid var(--line); border-radius:13px; padding:15px 16px; margin-bottom:14px}
+  .q-text{font-size:14.5px; font-weight:600}
+  .q-meta{display:flex; gap:8px; align-items:center; margin-bottom:8px}
+  .tagq{font-size:11px; border-radius:6px; padding:2px 8px; background:#e7f7f0; color:var(--acc); font-weight:600}
+  .q-no{font-size:12px; color:#8a90a3}
+  .opts{display:grid; gap:8px; margin-top:10px}
+  .opt{display:flex; gap:10px; align-items:flex-start; text-align:left; width:100%; border:1.5px solid var(--line);
+    background:#fff; border-radius:10px; padding:9px 12px; font-size:13.5px; color:var(--ink); cursor:pointer; transition:.12s; font-family:inherit}
+  .opt:hover:not(:disabled){border-color:var(--acc2); background:#f0fdf7}
+  .opt:disabled{cursor:default}
+  .ol{flex:0 0 auto; width:22px; height:22px; border-radius:7px; display:grid; place-items:center; font-size:12px; font-weight:700;
+    background:#eef0f7; color:var(--mut); margin-top:1px}
+  .opt.right{border-color:var(--ok); background:var(--ok-bg)}
+  .opt.right .ol{background:var(--ok); color:#fff}
+  .opt.wrong{border-color:var(--bad); background:var(--bad-bg)}
+  .opt.wrong .ol{background:var(--bad); color:#fff}
+  .fb{display:none; margin-top:12px; border-radius:11px; padding:10px 14px; font-size:13.5px; border:1px solid}
+  .fb.show{display:block}
+  .fb-ok{background:var(--ok-bg); border-color:#a7f3d0}
+  .fb-bad{background:var(--bad-bg); border-color:#fecaca}
+  .fb b{font-size:14px}
+  .fb .exp{margin-top:4px; color:var(--ink); opacity:.92}
+  code{background:#eef2f7; border-radius:5px; padding:1px 5px; font-family:Consolas,"Courier New",monospace; font-size:13px}
+
+  footer{color:var(--mut); font-size:12.5px; text-align:center; padding:30px 0 6px}
+  @media (max-width:920px){
+    .layout{display:block}
+    aside{display:none}
+    .h-t h1{font-size:16px}
+    .igrid{grid-template-columns:1fr}
+    .hero h1{font-size:21px}
+    .hero{padding:20px}
+  }
+  @media print{
+    header,aside,.h-actions,.map{display:none}
+    body{background:#fff}
+    .card{break-inside:avoid; box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="h-in">
+    <div class="h-row">
+      <div class="logo">PY</div>
+      <div class="h-t">
+        <h1>Lecture 2 Python 基础 · 复习手册</h1>
+        <p>ISOM2007 Programming for Business Analytics ｜ 中文要点 + 自测练习</p>
+      </div>
+      <div class="h-actions">
+        <button class="btn" id="btnReset" type="button">↺ 重置练习</button>
+        <button class="btn" id="btnPrint" type="button">🖨 打印</button>
+      </div>
+    </div>
+    <div class="pwrap"><div id="pbar"></div></div>
+    <div class="h-stats"><span>已作答 <b id="stAns">0</b> / <span id="stTotal">0</span> 题</span><span>答对 <b id="stRight">0</b> 题</span><span id="stState">开始答题吧～</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside>
+      <h3>知识点导航</h3>
+      <nav id="side"></nav>
+      <div class="tip">点击题目选项即可作答；答完显示正确答案与解析。</div>
+      <div class="legend">
+        <span class="lg-f">重点（核心必记）</span>
+        <span class="lg-h">难点（理解辨析）</span>
+        <span class="lg-p">易错点（考试常踩坑）</span>
+      </div>
+    </aside>
+    <main>
+      <div class="hero">
+        <p class="kicker">REVIEW · LECTURE 2</p>
+        <h1>🐍 Fundamentals of Python</h1>
+        <p>本页覆盖 Lecture 2 全部知识点：编程语言层次、编译器与解释器、Python 简介与 IDE、语句类型、数据类型、变量与命名规则、赋值与常量、算术运算与优先级、函数与内置函数、模块与 import、类型转换与浮点误差、字符串与方法、转义字符、布尔与逻辑运算（含德摩根定律）、输入输出与格式化输出、代码风格。每个知识点均标注<b>重点 / 难点 / 易错点</b>，并配 2 道自测题。</p>
+        <div class="map" id="map"></div>
+      </div>
+      <div id="content"></div>
+      <footer>复习资料整理自：ISOM2007-FundamentalsOfPython.pptx（Lecture 2 Fundamentals Of Python）· 仅供个人学习复习使用</footer>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LETTERS = ["A","B","C","D","E"];
+  var state = {};
+
+  var SECTIONS = [
+    {
+      id:"sec-1", no:"01", zh:"编程语言的三个层次", en:"Machine · Assembly · High-Level Language",
+      summary:[
+        "机器语言 Machine language：每台计算机内置的原始指令集合，指令以二进制代码形式出现；必须输入二进制码；用机器语言编程是冗长乏味的过程，而且极难阅读与修改（例：两个数相加 1101101010011010）。",
+        "汇编语言 Assembly language：为使编程更容易而发展出来；计算机无法理解汇编语言，因此需要一种叫汇编器（assembler）的程序把汇编程序转换成机器码（例：ADDF3 R1, R2, R3）。",
+        "高级语言 High-level language：让人能在更友好的编程环境中开发程序，且一般与计算机硬件架构无关；高级语言类似英语，易学易写（例：area = 5 * 5 * 3.1415;）。",
+        "常见高级语言：Python、COBOL、FORTRAN、BASIC、Pascal、Ada、C、Visual Basic、Delphi、C++、Java、C#。"
+      ],
+      focus:[
+        "三级语言的转换链：汇编语言经汇编器转成机器码；高级语言经编译器或解释器转成机器能执行的形式。"
+      ],
+      hard:[
+        "“计算机不能理解汇编语言”是理解汇编器存在意义的关键：汇编只是更方便人书写，机器仍只认机器码。"
+      ],
+      pit:[
+        "汇编语言不能被计算机直接理解，必须由汇编器转换。",
+        "机器语言虽然性能直接，但可读性与可维护性最差。"
+      ],
+      questions:[
+        {
+          type:"single", q:"把汇编语言程序转换成机器码的程序称为（　）。",
+          opts:["编译器 compiler","解释器 interpreter","汇编器 assembler","链接器 linker"], a:2,
+          exp:"教材：计算机无法理解汇编语言，因此用汇编器（assembler）把汇编语言程序转换成机器码。"
+        },
+        {
+          type:"judge", q:"用机器语言编写程序比用高级语言更容易阅读和修改。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。教材指出用机器语言编程是冗长乏味的过程，而且高度难以阅读和修改；高级语言类似英语、易学易写。"
+        }
+      ]
+    },
+    {
+      id:"sec-2", no:"02", zh:"编译器与解释器", en:"Compiler vs Interpreter",
+      summary:[
+        "用高级语言编写的程序叫源程序（source program）；计算机无法理解源程序，需要用编译器（compiler）把源程序翻译成机器语言程序，即目标程序（object program）；目标程序通常还要与支持库代码链接后才能执行。",
+        "解释器（interpreter）：把高级语言翻译或转换成机器语言；一次只翻译程序中的一条语句；比编译器更小、更灵活；更容易调试。",
+        "性能对比：从翻译过程看，解释器比编译器“快”；但程序一旦编译完成，编译后程序的运行／执行速度比解释执行的程序更快。",
+        "Python 是解释型语言：运行 Python 代码时会先编译再逐行解释，编译部分在代码执行后就被删除；Python 程序由 Python 解释器读取并执行。"
+      ],
+      focus:[
+        "一句话区分：编译器整体翻译后生成可执行程序；解释器逐条翻译并立即执行。"
+      ],
+      hard:[
+        "两个“快”不是同一件事：翻译过程中解释器更快，但运行阶段编译后的程序更快——这里最容易设陷阱。"
+      ],
+      pit:[
+        "程序一旦编译完成，其运行速度通常快于解释执行。",
+        "编译器把源程序翻译成目标程序后，往往还需要链接库代码才能执行。"
+      ],
+      questions:[
+        {
+          type:"single", q:"关于解释器（interpreter），下列说法正确的是（　）。",
+          opts:["一次性把整个源程序翻译成目标程序","一次只翻译一条语句，比编译器更小更灵活、更易调试","不能把高级语言翻译成机器语言","编译后的程序运行速度一定比解释执行慢"], a:1,
+          exp:"教材描述解释器：一次只翻译一条语句、比编译器更小更灵活、更容易调试。"
+        },
+        {
+          type:"judge", q:"程序一旦编译完成，其运行（执行）速度通常快于解释执行的程序。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。教材指出，若只看翻译过程，解释器更快；但程序编译完成后，运行时（execution）的速度是编译后的程序更快。"
+        }
+      ]
+    },
+    {
+      id:"sec-3", no:"03", zh:"Python 简介与开发环境", en:"About Python · IDEs",
+      summary:[
+        "Python 是一门广泛使用的通用高级编程语言，最初由 Guido van Rossum 于 1991 年设计，由 Python Software Foundation 开发。",
+        "设计动机：Van Rossum 对当时可用的语言不满意；他需要的语言要既能快速编写程序，又要容易修改；Python 的语法比 Java、C、C++ 等主流语言更简单、更清晰，因此更容易学习。",
+        "Python 强调代码的可读性与简洁性；它是解释型语言，便于开发和测试短程序；程序由 Python 解释器读取并执行。",
+        "IDE（集成开发环境）：为程序员提供软件开发综合设施的软件应用；教材列出 5 个流行的开源 Python IDE：Jupyter、PyCharm、Rodeo、Spyder、Visual Studio Code。"
+      ],
+      focus:[
+        "Python 的四个关键词：通用（general-purpose）、高级、解释型、强调可读性与简洁。",
+        "记人名与年份：Guido van Rossum，1991 年。"
+      ],
+      hard:[
+        "“Python 是解释型语言”与“运行时先编译再解释”并不矛盾：编译只是内部步骤，编译产物执行后即被丢弃，程序员不必承受额外复杂度。"
+      ],
+      pit:[
+        "不要记成 Python 是编译型语言。",
+        "IDE 只是开发工具（Jupyter、PyCharm、Spyder、VS Code 等），不是编程语言本身。"
+      ],
+      questions:[
+        {
+          type:"single", q:"按照教材，Python 最初由谁设计（　）。",
+          opts:["Guido van Rossum","Blaise Pascal","Ada Lovelace","James Gosling"], a:0,
+          exp:"教材写明 Python 由 Guido van Rossum 于 1991 年最初设计，并由 Python Software Foundation 开发。"
+        },
+        {
+          type:"single", q:"下列哪一项不属于教材列出的 5 个开源 Python IDE（　）。",
+          opts:["Jupyter","PyCharm","Microsoft Excel","Visual Studio Code"], a:2,
+          exp:"教材列出的 5 个开源 Python IDE 是 Jupyter、PyCharm、Rodeo、Spyder、Visual Studio Code；Excel 是电子表格软件，不是 Python IDE。"
+        }
+      ]
+    },
+    {
+      id:"sec-4", no:"04", zh:"Python 语句的类型", en:"Statements: Sequence · Condition · Loop · Call",
+      summary:[
+        "语句是 Python 代码的默认行；Python 试图把每个表达式解析成一个值。",
+        "语句可以有子语句，子语句又可以有子子语句。",
+        "语句是 Python 程序的构建块，可分为四类：",
+        "顺序 Sequence：一行中的若干语句，属于常规语句（如赋值语句或表达式语句）。",
+        "条件 Condition：决定要做什么，如 if…else 条件语句。",
+        "循环／重复 Loop / Repetition：重复某些活动，如 while、for 循环语句。",
+        "调用／函数语句 Call statement：如 int()。"
+      ],
+      focus:[
+        "四类语句的名称与代表关键字要能对应：顺序（赋值/表达式）、条件（if…else）、循环（while/for）、调用（int()）。"
+      ],
+      hard:[
+        "“语句可以嵌套子语句”是理解条件与循环内部代码块的前提，也是后面缩进规则存在的原因。"
+      ],
+      pit:[
+        "赋值语句属于顺序／常规语句，不要与函数调用语句混为一类。",
+        "语句与表达式不是同一概念：Python 会尽量把表达式解析为一个值。"
+      ],
+      questions:[
+        {
+          type:"single", q:"while 与 for 在教材的语句分类中属于（　）。",
+          opts:["顺序语句 Sequence","条件语句 Condition","循环／重复语句 Loop","函数调用语句 Call"], a:2,
+          exp:"教材把语句分为顺序（assignment 或 expression）、条件（if…else）、循环／重复（while、for）、调用（如 int()）四类。"
+        },
+        {
+          type:"single", q:"int() 这样的写法属于教材语句分类中的（　）。",
+          opts:["顺序语句","条件语句","循环语句","调用／函数语句"], a:3,
+          exp:"教材把函数调用（call statement / function statement）单列一类，例子就是 int()。"
+        }
+      ]
+    },
+    {
+      id:"sec-5", no:"05", zh:"数据类型与动态类型", en:"Data Types · type()",
+      summary:[
+        "数字与字符串是构建任何 Python 程序的基本构件。",
+        "Python 的几种基本数据类型：Numeric（整数 integer 或浮点数 float）、String（一行文本）、Boolean（True 或 False）。",
+        "与其他编程语言不同，Python 随着程序进行来决定类型（动态类型），这既有好处也有缺点。",
+        "可以用强制转换（casting）改变某个东西的类型。",
+        "可以用 type() 函数查看一个表达式的类型。"
+      ],
+      focus:[
+        "三种基本类型（数值、字符串、布尔）与 type() 的用法。"
+      ],
+      hard:[
+        "动态类型意味着“类型跟着值走”，同一个变量在不同时刻可以指向不同类型的值——这正是后面对应“类型坑”的根源。"
+      ],
+      pit:[
+        "type(True) 与 type(\"True\") 的结果不同：前者是布尔类型，后者是字符串。",
+        "布尔值不是字符串，不要给它加引号。"
+      ],
+      questions:[
+        {
+          type:"single", q:"要查看一个表达式的数据类型，应使用（　）。",
+          opts:["len()","type()","str()","ord()"], a:1,
+          exp:"教材：可以用 type() 函数查出表达式的类型。"
+        },
+        {
+          type:"judge", q:"由于类型与值相关联，同一个变量在程序中可以先保存整数，之后再保存字符串。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。教材强调数据类型与值关联、而不是与变量关联，变量可以在程序不同位置被赋不同类型的值；但这也是容易出错的坑，所以要尽量保持同一类型。"
+        }
+      ]
+    },
+    {
+      id:"sec-6", no:"06", zh:"变量、赋值语句与常量", en:"Variables · Assignment · Constants",
+      summary:[
+        "变量是符号名，是存放值的内存位置的引用或指针；它是一种命名的存储位置。",
+        "赋值语句形式为「变量 = 表达式」；把表达式的结果存进变量，下次使用该变量时就得到存进去的值。",
+        "“定义”一个变量即告知：用什么名字引用它，以及它的初始值。",
+        "“=” 是赋值运算符，把右边的值放进左边的变量，如 cansPerPack = 6；注意 “=” 不用于比较，比较用的是 “==”。",
+        "常量 Constant：赋值后其值不应再被改变的变量；惯例用全大写命名（如 BOTTLE_VOLUME = 2.0）。",
+        "用命名常量解释数值含义是好风格：totalVolume = bottles * BOTTLE_VOLUME 比 bottles * 2 更清楚，因为读者可能不理解 “2” 的含义。"
+      ],
+      focus:[
+        "两件事要记牢：“=” 是赋值不是比较；常量用全大写命名、用名字解释“魔数”的含义。"
+      ],
+      hard:[
+        "Python 并不会阻止你修改常量的值——“能改”不等于“应该改”，常量靠约定与自觉维持。"
+      ],
+      pit:[
+        "把 “=” 当比较用是典型错误，比较相等要用 “==”。",
+        "直接写数字（如 2）会让代码难以理解，教材建议改成具名常量。"
+      ],
+      questions:[
+        {
+          type:"single", q:"在 Python 中，“=” 这个符号的含义是（　）。",
+          opts:["判断左右两边是否相等","把右边的值赋给左边的变量","表示约等于","把左边变量与右边的值相加"], a:1,
+          exp:"教材：赋值语句中的 “=” 用于把右边的值放进左边的变量；比较相等用的是 “==”，二者不能混用。"
+        },
+        {
+          type:"judge", q:"用命名的常量（如 BOTTLE_VOLUME）代替直接写数字 2，是更好的编程风格。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。教材指出使用具名常量有助于解释计算中数值的含义：读 bottles * BOTTLE_VOLUME 比读 bottles * 2 更容易理解 “2” 代表什么。"
+        }
+      ]
+    },
+    {
+      id:"sec-7", no:"07", zh:"变量命名规则与 Python 关键字", en:"Naming Rules · 33 Keywords",
+      summary:[
+        "变量／标识符命名规则：长度任意；只能包含字母、数字与下划线（A-z、0-9、_）；必须以字母或下划线开头，不能以数字开头；区分大小写（score、Score、SCORE 是三个不同的变量）；不能使用问号或百分号等符号，也不允许空格；用 camelCase 记法（用大写字母标示词边界）分隔单词。",
+        "更多命名规则：变量名应描述变量的用途（age 优于 a）；变量名与函数名传统上以小写字母开头；类名传统上以大写字母开头；标识符不能是 Python 的保留关键字。",
+        "Python 的 33 个关键字：False、None、True、and、as、assert、break、class、continue、def、del、elif、else、except、finally、for、from、global、if、import、in、is、lambda、nonlocal、not、or、pass、raise、return、try、while、with、yield；它们区分大小写，且不能用作变量名。",
+        "把关键字（如 pass）赋值为某个值，是错误的做法。"
+      ],
+      focus:[
+        "三条硬规则：必须以字母或下划线开头、只能由字母数字下划线组成、区分大小写。",
+        "标识符不能是关键字，这一点要靠记忆关键字表。"
+      ],
+      hard:[
+        "区分大小写意味着 Score 与 score 是两个变量——这既是灵活性也是 bug 的常见来源。"
+      ],
+      pit:[
+        "以数字开头（如 2ndScore）非法；含空格或连字符（my score、my-score）也非法。",
+        "不能用关键字（如 pass、class、for）当变量名。"
+      ],
+      questions:[
+        {
+          type:"single", q:"下列变量名中合法的是（　）。",
+          opts:["2ndScore","my score","my-score","my_score"], a:3,
+          exp:"标识符只能由字母、数字与下划线组成，必须以字母或下划线开头，且不能含空格与其他符号。因此 my_score 合法，其余三项都不合法。"
+        },
+        {
+          type:"judge", q:"Python 区分大小写，score 与 Score 会被视为两个不同的变量。",
+          opts:["正确","错误"], a:0,
+          exp:"正确。教材明确写 It is case-sensitive：score、Score 与 SCORE 被认为是三个不同的变量。"
+        }
+      ]
+    },
+    {
+      id:"sec-8", no:"08", zh:"变量更新、未定义变量与类型坑", en:"Updating Variables · Undefined Variables · Type Traps",
+      summary:[
+        "给已存在的变量赋新值，新值会替换变量原来的内容（例如 cansPerPack = 6 之后再写 cansPerPack = 8）。",
+        "计算式赋值 cansPerPack = cansPerPack + 2 分两步：第一步计算右侧（取 cansPerPack 的值再加 2）；第二步把结果存入左侧变量。",
+        "未定义变量：必须先定义变量才能使用它，且定义必须出现在第一次使用它的代码行之前。例如 canVolume = 12 * literPerOunce 写在 literPerOunce = 0.0296 之前就会出错。",
+        "类型坑：变量 taxRate 先被赋值为 5（整数），再赋值为 5.5（浮点数），再赋值为字符串，这时执行 taxRate - 1 就会出错。用某个类型的值初始化变量之后，就要小心后续始终保持同一类型。"
+      ],
+      focus:[
+        "赋值语句的执行顺序：先算右边，再存左边。",
+        "使用变量前必须先定义，且定义要在使用之前。"
+      ],
+      hard:[
+        "类型错误往往不是语法错，而是运行时才暴露的行为错误——这也是教材强调类型一致性的原因。"
+      ],
+      pit:[
+        "语句顺序颠倒会导致“变量未定义”错误，看似正确的算式也一样。",
+        "把变量改成字符串后再做算术运算会报错。"
+      ],
+      questions:[
+        {
+          type:"single", q:"执行赋值语句 cansPerPack = cansPerPack + 2 时，第一步做的是（　）。",
+          opts:["把 2 存入 cansPerPack","计算右侧表达式的值（取 cansPerPack 的值再加 2）","把 cansPerPack 清零","检查 cansPerPack 的类型"], a:1,
+          exp:"教材把该语句拆成两步：先计算赋值号右侧的值，再把结果存入左侧的变量。"
+        },
+        {
+          type:"single", q:"下面两行代码会出错，原因是（　）。第一行：canVolume = 12 * literPerOunce；第二行：literPerOunce = 0.0296",
+          opts:["12 不能与变量相乘","literPerOunce 在定义之前就被使用","0.0296 不是合法的浮点数","变量名太长"], a:1,
+          exp:"教材的未定义变量示例：变量必须先定义，且定义应写在第一次使用它的代码行之前；正确的顺序是先写 literPerOunce = 0.0296，再写 canVolume = 12 * literPerOunce。"
+        }
+      ]
+    },
+    {
+      id:"sec-9", no:"09", zh:"算术运算、优先级、整除与取余", en:"Arithmetic · Precedence · // and %",
+      summary:[
+        "Python 支持基本算术运算：加法 +、减法 -、乘法 *、除法 /。",
+        "数值运算符：() 分组；** 指数；* 乘；/ 除；// 整除（整数除法）；% 取余；+ 加；- 减。",
+        "优先级与代数类似，即 PEMDAS：括号 → 指数 → 乘除 → 加减。",
+        "混合类型：整数与浮点数混合运算的结果是浮点数（7 + 4.0 得到 11.0）；把字符串与整数或浮点数混合则会产生错误。",
+        "幂运算用两个星号，例如 b*(1+r/100)**n 等价于 b * ((1 + r/100) ** n)。",
+        "整除 //：7 / 4 得到 1.75（浮点数），而 7 // 4 得到 1，因为 // 计算商并丢弃小数部分。",
+        "取余 %（modulus，也叫 modulo divide）：7 % 4 的余数是 3。",
+        "经典例：pennies = 1729 时，dollars = pennies // 100 得 17，cents = pennies % 100 得 29。"
+      ],
+      focus:[
+        "// 丢弃小数部分（不是四舍五入）；% 取余数；** 是幂运算。",
+        "混合整数与浮点数的结果是浮点数；字符串与数字混合运算会报错。"
+      ],
+      hard:[
+        "7 / 4 与 7 // 4 的结果不同（1.75 与 1），这一类题最容易因粗心而丢分。"
+      ],
+      pit:[
+        "整除 // 不进行四舍五入，它直接丢弃小数部分。",
+        "表达式里加空格更易读，但空格不影响运算结果。"
+      ],
+      questions:[
+        {
+          type:"single", q:"表达式 7 // 4 的值是（　）。",
+          opts:["1.75","1","2","0.75"], a:1,
+          exp:"“//” 是整除运算符：它计算商并丢弃小数部分。7 除以 4 得 1.75，小数部分 0.75 被丢弃，结果是 1。"
+        },
+        {
+          type:"single", q:"表达式 7 + 4.0 的结果是（　）。",
+          opts:["整数 11","浮点数 11.0","字符串 \"11\"","报错"], a:1,
+          exp:"教材：整数与浮点数混合运算时结果为浮点数，7 + 4.0 得到浮点值 11.0；而字符串与数值混合才会报错。"
+        }
+      ]
+    },
+    {
+      id:"sec-10", no:"10", zh:"函数调用与内置函数", en:"Calling Functions · Built-in Functions",
+      summary:[
+        "函数是完成某一特定任务的一组编程指令；调用函数时必须提供正确数量的参数，否则程序会产生错误信息。",
+        "大多数函数会返回一个值：任务完成后把值传回函数被调用的位置。例如 abs(-173) 返回 173；返回值可以存入变量（distance = abs(x)）；函数调用也可以作为 print 的参数（print(abs(-173))）。",
+        "内置函数（built-in functions）是 Python 语言自身定义的一小组函数，无需导入任何模块就可以使用。",
+        "函数（无论自定义还是内置）就是需要时可以调用的一段代码块；对 Python 来说，函数是一个表达式，必须被解析为单个值。",
+        "常见内置函数示例：int(2.6) 得到 2；chr(65) 得到 \"A\"；ord(\"A\") 得到 65；round(3.1417, 1) 得到 3.1。"
+      ],
+      focus:[
+        "内置函数无需 import 即可使用；函数会返回一个值，因此可以嵌套在别的表达式里。",
+        "chr 与 ord 互为反向：chr(65) 得到 \"A\"，ord(\"A\") 得到 65。"
+      ],
+      hard:[
+        "“函数是一个表达式”意味着调用结果必定是某个值，而不是一段动作——这解释了为什么可以写 distance = abs(x)。"
+      ],
+      pit:[
+        "参数个数不对会报错。",
+        "数学函数（如 sqrt）不是内置函数，必须先从 math 模块导入。"
+      ],
+      questions:[
+        {
+          type:"single", q:"下列哪个函数不需要导入任何模块就可以直接使用（　）。",
+          opts:["abs()","sqrt()","sin()","cos()"], a:0,
+          exp:"abs() 属于 Python 的内置函数，无需导入模块即可使用；sqrt、sin、cos 定义在 math 模块中，必须先显式导入。"
+        },
+        {
+          type:"single", q:"表达式中 ord(\"A\") 与 chr(65) 的结果分别是（　）。",
+          opts:["\"A\" 与 65","65 与 \"A\"","65 与 65","\"A\" 与 \"A\""], a:1,
+          exp:"教材示例：chr(65) 得到 \"A\"（数字转字符），ord(\"A\") 得到 65（字符转数字），二者互为反向操作。"
+        }
+      ]
+    },
+    {
+      id:"sec-11", no:"11", zh:"模块与 import 的三种写法", en:"Libraries · Modules · import",
+      summary:[
+        "库（library）是别人写好并编译好、可直接在你的程序中使用的代码集合。",
+        "标准库（standard library）是被视为语言一部分、任何 Python 系统都必须包含的库。",
+        "Python 的标准库按模块组织：相关的函数与数据类型归入同一个模块；模块中定义的函数必须显式加载到程序中才能使用。",
+        "用 math 模块的 sqrt：程序文件顶部写 from math import sqrt，之后就可以直接调用 y = sqrt(x)。",
+        "三种导入写法：from math import sqrt, sin, cos（只导入列出的函数）；from math import *（导入模块中全部函数）；import math（导入全部函数，但调用时要写模块名和点，如 y = math.sqrt(x)）。"
+      ],
+      focus:[
+        "记牢三种 import 写法及其调用方式的差别：只有 import math 这种写法需要在调用时加模块名前缀。"
+      ],
+      hard:[
+        "“必须显式加载”意味着直接写 sqrt(x) 而不写导入语句会报错——模块的边界要清楚。"
+      ],
+      pit:[
+        "使用 import math 后必须写 math.sqrt(x)，不能直接写 sqrt(x)。",
+        "from math import * 与 import math 都能用全部函数，但调用写法不同。"
+      ],
+      questions:[
+        {
+          type:"single", q:"如果程序开头写的是 import math，那么计算 x 的平方根的正确写法是（　）。",
+          opts:["sqrt(x)","math.sqrt(x)","math:sqrt(x)","sqrt.math(x)"], a:1,
+          exp:"教材指出，使用 import math 这种写法时，必须在每次函数调用前加上模块名和点，即 y = math.sqrt(x)。"
+        },
+        {
+          type:"judge", q:"模块中定义的函数可以直接使用，不需要显式导入。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。教材明确指出：模块中定义的函数必须先被显式加载（import）到程序中才能使用。"
+        }
+      ]
+    },
+    {
+      id:"sec-12", no:"12", zh:"类型转换与浮点误差", en:"int()/float()/str() · Roundoff Errors",
+      summary:[
+        "可以用 int() 与 float() 在整数与浮点数之间转换：dollars = int(balance) 会得到整数，浮点数的小数部分被丢弃（不进行四舍五入）。",
+        "用 str() 把数字转换成字符串（如 balanceAsString = str(balance)）；反过来用 int(\"1729\")、float(\"17.29\") 把含数字的字符串转成数值——当字符串来自用户输入时，这种转换非常重要。",
+        "浮点数并不精确：这是二进制表示的固有限制，并非所有浮点数都有精确表示。例如 price = 4.35、quantity = 100 时，total 本应是 435.00，但打印结果可能不是精确的 435.00。",
+        "处理舍入误差的方法：用 round() 舍入到最近的整数，或显示固定的小数位数。",
+        "教材的警告：不要比较浮点小数是否相等。"
+      ],
+      focus:[
+        "int() 是截断（丢弃小数部分），不是四舍五入；浮点数不精确，不能直接用 == 比较。"
+      ],
+      hard:[
+        "理解“误差来自二进制表示的固有限制”，才能明白为什么 4.35 乘以 100 不一定是精确的 435。"
+      ],
+      pit:[
+        "int(2.6) 的结果是 2，而不是 3。",
+        "把字符串与数字混在一起运算会报错，用户输入必须先转换类型。"
+      ],
+      questions:[
+        {
+          type:"single", q:"按教材的定义，int(2.6) 的结果是（　）。",
+          opts:["3","2","2.6","报错"], a:1,
+          exp:"int() 会丢弃浮点数的小数部分且不进行四舍五入，因此 int(2.6) 得到 2（教材示例同样是 int(2.6) 得到 2）。"
+        },
+        {
+          type:"judge", q:"在 Python 中可以直接用 == 比较两个浮点小数是否相等。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。教材强调浮点数值并不精确（这是二进制表示的固有限制），因此不要比较浮点小数是否相等，应改用 round() 或固定小数位数。"
+        }
+      ]
+    },
+    {
+      id:"sec-13", no:"13", zh:"字符串：长度、拼接、重复与索引", en:"str: len · + · * · Indexing",
+      summary:[
+        "字符串是字符序列：字符包括字母、数字、标点、空格等；用成对匹配的单引号或双引号包裹。",
+        "允许两种引号的好处是便于在字符串里放入撇号或引号（如 message = 'He said \"Hello\"'）；引号必须成对匹配：单引号配单引号、双引号配双引号。",
+        "长度：字符串中字符的个数；len(\"World!\") 得到 6；长度为 0 的字符串称为空字符串，写作 \"\" 或 ''。",
+        "拼接 “+”：name = firstName + lastName 得到 \"HarryMorgan\"；若需要空格要写成 firstName + \" \" + lastName；用 “+” 拼接字符串是运算符重载（operator overloading）的例子。",
+        "重复 “*”：dashes = \"-\" * 50 会生成由 50 个短横线组成的字符串；“*” 同样被重载。",
+        "索引：字符串中每个字符都有索引号，第一个字符的索引为 0；方括号运算符返回指定索引处的字符，例如 name = \"Harry\" 时 name[0] 是 H，name[4] 是 y。",
+        "字符串使用 Unicode 字符（Unicode 定义超过 10 万个字符，可为几乎所有书写语言编码）；字符以整数存储，ASCII 是 Unicode 的子集，例如字母 H 的值是 72。"
+      ],
+      focus:[
+        "索引从 0 开始：\"Harry\" 的长度是 5，最后一个字符的索引是 4。",
+        "“+” 拼接、“*” 重复是运算符重载的典型例子。"
+      ],
+      hard:[
+        "同一字符串的“长度”与“最大索引”相差 1，这是后续所有切片与循环边界的基础。"
+      ],
+      pit:[
+        "len(\"Harry\") 是 5，不存在 name[5]。",
+        "引号必须成对匹配：单双引号混用是语法错误。"
+      ],
+      questions:[
+        {
+          type:"single", q:"字符串 \"Harry\" 的长度与最后一个字符的索引分别是（　）。",
+          opts:["5 和 5","5 和 4","6 和 5","4 和 4"], a:1,
+          exp:"\"Harry\" 有 5 个字符，因此长度为 5；索引从 0 开始，所以最后一个字符的索引是 4（name[0] 是 H，name[4] 是 y）。"
+        },
+        {
+          type:"single", q:"表达式 \"-\" * 50 的结果是（　）。",
+          opts:["报错","一个由 50 个短横线组成的字符串","数字 50","字符串 \"-50\""], a:1,
+          exp:"“*” 用于字符串时表示重复：dashes = \"-\" * 50 会生成由 50 个短横线组成的字符串，教材用它来画分隔线。"
+        }
+      ]
+    },
+    {
+      id:"sec-14", no:"14", zh:"方法与函数；常用字符串方法", en:"Methods vs Functions · String Methods",
+      summary:[
+        "对象（object）是表示某个值、并带有一定行为的软件实体；值可以很简单（如字符串），也可以很复杂（如窗口或数据文件）。",
+        "对象的行为通过它的方法（method）给出：方法是完成特定任务的一组编程指令，和函数类似。",
+        "但与“独立操作”的函数不同，方法只能应用于定义它的那种类型的对象：方法是特定于对象类型的，函数是通用的、可以接受不同类型的参数。",
+        "例：upper() 方法可应用于任何字符串，name = \"John Smith\" 时 name.upper() 得到 \"JOHN SMITH\"。",
+        "返回 True/False 的字符串方法：isdigit()（所有字符都是数字）、isalpha()（所有字符都是字母）、isalnum()（所有字符都是字母或数字）、islower()（至少有一个字母且所有字母都是小写）、isupper()（至少有一个字母且所有字母都是大写）、isspace()（只包含空白字符）。"
+      ],
+      focus:[
+        "方法与函数的核心区别：方法只能作用于定义了它的那种类型的对象，函数是通用的。",
+        "判断类方法（isdigit、isalpha、islower 等）返回布尔值，可用于条件判断。"
+      ],
+      hard:[
+        "对象等于“值加行为”。理解“方法是对象的行为”，才能解释为什么写成 name.upper() 而不是 upper(name)。"
+      ],
+      pit:[
+        "调用方法要带括号：name.upper()，写成 name.upper 不会执行。",
+        "islower() 与 isupper() 要求字符串至少含有一个字母，纯数字或空字符串不满足条件。"
+      ],
+      questions:[
+        {
+          type:"single", q:"方法与函数的主要区别是（　）。",
+          opts:["方法不能返回值，函数可以返回值","方法只能应用于定义了它的那种类型的对象，而函数是通用的、可接受不同类型的参数","方法必须导入模块才能使用","函数只能用于字符串"], a:1,
+          exp:"教材：方法只能应用于为它定义的那种类型的对象；函数是通用的，可以接受不同类型的参数。"
+        },
+        {
+          type:"single", q:"当字符串 s 中的所有字符都是数字时，s.isdigit() 返回（　）。",
+          opts:["True","False","数字 1","字符串 \"True\""], a:0,
+          exp:"教材列出的字符串判断方法中，isdigit() 在字符串所有字符都是数字时返回 True；这些方法返回的都是布尔值。"
+        }
+      ]
+    },
+    {
+      id:"sec-15", no:"15", zh:"转义字符", en:"Escape Sequences",
+      summary:[
+        "如何打印双引号：在双引号字符串中给双引号加上反斜杠，例如 print(\"He said \\\"Hello\\\"\")。",
+        "如何打印反斜杠：给反斜杠再加一个反斜杠，例如 \"C:\\\\Temp\\\\Secret.txt\"。",
+        "字符串中的特殊字符：\\n 输出换行；\\t 输出制表符（Tab）。",
+        "例：print(\"*\\n**\\n***\\n\") 会输出三行星号。",
+        "转义序列是放在字符串中的短序列，用于指示光标位置或允许打印某些特殊字符；其第一个字符总是反斜杠；默认制表位为 8 个空格，可用 expandtabs 方法调整。"
+      ],
+      focus:[
+        "四个最常用的转义：\\n 换行、\\t 制表、\\\" 双引号、\\\\ 反斜杠。"
+      ],
+      hard:[
+        "“转义序列的第一个字符总是反斜杠”，因此要在字符串里输出反斜杠本身就必须写两个。"
+      ],
+      pit:[
+        "Windows 路径写法最容易漏：字符串里要写两个反斜杠才能输出一个反斜杠。",
+        "\\n 是换行符，不是两个字符 “反斜杠” 和 “n”。"
+      ],
+      questions:[
+        {
+          type:"single", q:"若要在字符串中输出一个反斜杠，应该写作（　）。",
+          opts:["单个反斜杠","两个连续的反斜杠","斜杠 /","反斜杠加字母 n"], a:1,
+          exp:"教材：要在字符串中打印一个反斜杠，需要给它再加一个反斜杠，即写成两个反斜杠；因此 Windows 路径要写成 C:\\\\Temp\\\\Secret.txt 的形式。"
+        },
+        {
+          type:"single", q:"在字符串中，\\t 的作用是（　）。",
+          opts:["换行","输出一个制表符 Tab","输出反斜杠","删除前一个字符"], a:1,
+          exp:"教材列出两个最常见的“光标指示”转义序列：\\t 产生水平制表符（Tab），\\n 产生换行；默认制表位为 8 个空格。"
+        }
+      ]
+    },
+    {
+      id:"sec-16", no:"16", zh:"布尔类型、关系运算符与逻辑运算", en:"bool · Relational · Logical · De Morgan",
+      summary:[
+        "bool（布尔）类型只有两个可能的值：True 与 False。",
+        "布尔表达式不是字符串：type(True) 与 type(\"True\") 的结果不同。",
+        "关系运算符：== 等于、!= 不等于、< 小于、> 大于、<= 小于或等于、>= 大于或等于、in 是子串、not in 不是子串。",
+        "逻辑运算符有三个：not、and、or，并且有优先级（not 高于 and，高于 or）。",
+        "德摩根定律：not (A or B) 等价于 (not A and not B)；not (A and B) 等价于 (not A or not B)。",
+        "由此可推出：not (test < 50) 等价于 (test >= 50)；not (test >= 50) 等价于 (test < 50)；not (test < 50 or exam < 50) 等价于 (test >= 50 and exam >= 50)；not (test < 50 and exam < 50) 等价于 (test >= 50 or exam >= 50)。"
+      ],
+      focus:[
+        "德摩根定律的两种形式必须滚瓜烂熟：not(A or B) 等于 not A and not B；not(A and B) 等于 not A or not B。",
+        "关系运算符与逻辑运算符的优先级顺序。"
+      ],
+      hard:[
+        "取反时括号内的 and / or 必须互换，这是德摩根定律最容易错的地方。"
+      ],
+      pit:[
+        "not (A and B) 不等于 (not A and not B)。",
+        "True 是布尔值，\"True\" 是字符串，二者类型不同。"
+      ],
+      questions:[
+        {
+          type:"single", q:"根据德摩根定律，not (A and B) 等价于（　）。",
+          opts:["(not A) and (not B)","(not A) or (not B)","A or B","A and B"], a:1,
+          exp:"教材给出的德摩根定律：not (A and B) 等价于 (not A or not B)；not (A or B) 等价于 (not A and not B)。"
+        },
+        {
+          type:"single", q:"表达式 not (test < 50) 等价于（　）。",
+          opts:["test > 50","test >= 50","test <= 50","test != 50"], a:1,
+          exp:"教材明确列出：not (test < 50) 与 (test >= 50) 等价；取反时要把严格不等号换成其补集关系。"
+        }
+      ]
+    },
+    {
+      id:"sec-17", no:"17", zh:"输入输出与格式化输出", en:"input() · print() · Formatting",
+      summary:[
+        "input 函数提示用户输入数据，一般形式为 variableName = input(prompt)，其中 prompt 是请求用户回应的字符串；提示信息显示后程序暂停，用户输入并回车后变量被赋值。",
+        "输入得到的是字符串；需要数值时要转换：age = int(input(\"Please enter age: \"))，它等价于两步（先 input 得到字符串，再用 int 转换）。",
+        "eval() 函数会对指定的表达式求值：如果该表达式是合法的 Python 语句，它就会被执行。",
+        "print 用法：print(n) 显示 n；print(m, n, r) 显示多个变量；print 默认会换行，因此下一次 print 的输出会从新的一行开始。",
+        "print 的通用形式：print(value, …, sep=' ', end='\\n', file=sys.stdout, flush=False)——通过 sep 与 end 可以改变默认的分隔与结尾行为。",
+        "字段对齐方法：ljust(n)、rjust(n)、center(n) 分别把字符串输出在宽度为 n 的字段中左对齐、右对齐、居中。",
+        "百分号格式：print(\"Price per liter %.2f\" % price) 输出 1.22；%10.2f 是格式说明符（10 表示总宽度，2 表示小数位数）；%-10s 表示左对齐的字符串。",
+        "format() 方法功能更多：可加千分位、四舍五入、转换为百分比。例如 \"{0:10,d}\".format(12345678) 得到 12,345,678；\"{0:10.2f}\".format(1234.5678) 得到 1234.57；\"{0:10.2%}\".format(12.345678) 得到 1234.57%。"
+      ],
+      focus:[
+        "input() 返回字符串，做算术前必须先转换类型，这是最常见的错误来源。",
+        "格式化三种手段：print 的 sep/end 参数、ljust/rjust/center 对齐方法、% 格式说明符与 format() 方法。"
+      ],
+      hard:[
+        "格式说明符要看懂两位数字：%10.2f 中 10 是字段总宽度、2 是小数位数。"
+      ],
+      pit:[
+        "把 input() 的结果直接做加减会报错（它是字符串）。",
+        "print(1,245,679.00) 会被当成三个参数，按空格分隔输出为 “1 245 679.0”。"
+      ],
+      questions:[
+        {
+          type:"single", q:"执行 age = input(\"Please enter age: \") 之后，直接写 age + 1 会出现什么问题（　）。",
+          opts:["没有问题，结果是数值加 1","因为 input 返回的是字符串，字符串不能与整数相加，会报错","age 会自动变成整数 1","程序会提示用户再次输入"], a:1,
+          exp:"input 读取到的是字符串；教材给出的正确做法是 age = int(input(\"Please enter age: \"))，即先取得字符串再转换为整数后才能参与算术运算。"
+        },
+        {
+          type:"single", q:"表达式 \"{0:10,.2f}\".format(1234.5678) 的输出是（　）。",
+          opts:["1234.57","1,234.57","1234.5678","1,234.568"], a:1,
+          exp:"教材示例：\"{0:10,.2f}\".format(1234.5678) 得到 1,234.57——逗号加入千分位，.2f 表示保留两位小数并四舍五入。"
+        }
+      ]
+    },
+    {
+      id:"sec-18", no:"18", zh:"代码风格：注释、命名、空格与括号配平", en:"Comments · Naming · Spacing · Parentheses",
+      summary:[
+        "注释是记录 Python 代码的主要机制。第一种是单行注释：以井号 # 开始，延续到该行结束。",
+        "第二种是多行注释：以三个单引号或三个双引号开始并结束，可用于为函数、类或模块提供说明信息。",
+        "教材建议在每个程序开头使用注释，并用注释澄清代码细节；注释是对他人的礼貌，也是记录自己思路的方式；编译器会忽略注释。",
+        "编程技巧：选择描述性的变量名（canVolume 优于 cv），这一点在多人协作时尤其重要；表达式中使用空格更易读。",
+        "括号配平：表达式中任意时刻，左括号的数量必须大于或等于右括号的数量；表达式结束时两者数量必须相等。只有数量相等也不一定正确，还要看位置顺序。"
+      ],
+      focus:[
+        "两种注释写法要记牢：单行用 #，多行用三个单引号或三个双引号。",
+        "括号配平的两条规则：过程中左括号数量不少于右括号，结束时必须相等。"
+      ],
+      hard:[
+        "“数量相等也可能配错”是这一节最容易被忽略的细节：括号的位置顺序同样重要。"
+      ],
+      pit:[
+        "编译器忽略注释，因此注释不影响程序运行，但要写清楚“为什么”。",
+        "不要用 cv 这类无法自解释的变量名。"
+      ],
+      questions:[
+        {
+          type:"single", q:"Python 中的多行注释用下列哪一对符号包裹（　）。",
+          opts:["一行中的两个斜杠","三个单引号或三个双引号","井号 # 与分号","尖括号 < >"], a:1,
+          exp:"教材：第二种注释是多行注释，以三个单引号或三个双引号开始并结束；单行注释则以 # 开始并延续到行尾。"
+        },
+        {
+          type:"judge", q:"只要一个表达式中左右括号的数量相等，括号就一定配对正确。",
+          opts:["正确","错误"], a:1,
+          exp:"错误。教材的例子 (a + b) * t) / (2 * (1 - t) 中括号数量虽然相等，但结构仍然不正确；配平还要求任意时刻左括号的数量不少于右括号。"
+        }
+      ]
+    }
+  ];
+
+  var TOTAL = SECTIONS.reduce(function(n, s){ return n + s.questions.length; }, 0);
+
+  function qTypeText(t){ return t === "judge" ? "判断题" : "单选题"; }
+
+  function renderOptions(q){
+    return '<div class="opts">' + q.opts.map(function(o,i){
+      return '<button type="button" class="opt" data-i="'+i+'" aria-label="选项 '+LETTERS[i]+'">'+
+        '<span class="ol">'+LETTERS[i]+'</span><span class="ot">'+o+'</span></button>';
+    }).join("") + '</div>';
+  }
+
+  function renderQuestion(sec, qi){
+    var q = sec.questions[qi];
+    var key = sec.id + "-q" + (qi+1);
+    return '<div class="q" data-key="'+key+'" data-answer="'+q.a+'">'+
+      '<div class="q-meta"><span class="tagq">'+qTypeText(q.type)+'</span><span class="q-no">第 '+sec.no+' 组 · 第 '+(qi+1)+' 题</span></div>'+
+      '<div class="q-text">'+q.q+'</div>'+
+      renderOptions(q)+
+      '<div class="fb" data-fb="'+key+'"></div>'+
+    '</div>';
+  }
+
+  function chips(sec){
+    var out = [];
+    if (sec.focus && sec.focus.length) out.push('<span class="chip chip-focus">重点</span>');
+    if (sec.hard && sec.hard.length) out.push('<span class="chip chip-hard">难点</span>');
+    if (sec.pit && sec.pit.length) out.push('<span class="chip chip-pit">易错点</span>');
+    return '<div class="chips">'+out.join("")+'</div>';
+  }
+
+  function ulOf(arr){
+    if (!arr) return "";
+    return '<ul>'+arr.map(function(x){ return "<li>"+x+"</li>"; }).join("")+'</ul>';
+  }
+
+  function renderSection(sec){
+    var qs = sec.questions.map(function(_, i){ return renderQuestion(sec, i); }).join("");
+    return '<section class="card" id="'+sec.id+'">'+
+      '<div class="card-head"><div class="no">'+sec.no+'</div>'+
+      '<div class="titles"><h2>'+sec.zh+'</h2><div class="en">'+sec.en+'</div></div>'+
+      chips(sec)+'</div>'+
+      '<div class="body">'+
+        '<div class="blk blk-sum"><h3>📚 知识点</h3>'+ulOf(sec.summary)+'</div>'+
+        '<div class="igrid">'+
+          '<div class="blk ig ig-focus"><h3>🎯 重点</h3>'+ulOf(sec.focus)+'</div>'+
+          '<div class="blk ig ig-hard"><h3>🧠 难点</h3>'+ulOf(sec.hard)+'</div>'+
+          '<div class="blk ig ig-pit"><h3>⚠️ 易错点</h3>'+ulOf(sec.pit)+'</div>'+
+        '</div>'+
+        '<div class="quiz"><h3>✏️ 练习自测</h3><p class="qhint">每个知识点 2 题，共 '+TOTAL+' 题。点击选项作答，系统会给出正误判断与解析。</p>'+qs+'</div>'+
+      '</div>'+
+    '</section>';
+  }
+
+  function renderAll(){
+    document.getElementById("stTotal").textContent = TOTAL;
+    document.getElementById("map").innerHTML = SECTIONS.map(function(s){
+      return '<a href="#'+s.id+'">'+s.no+' '+s.zh+'</a>';
+    }).join("");
+    document.getElementById("side").innerHTML = SECTIONS.map(function(s){
+      return '<a class="nav-i" href="#'+s.id+'"><span class="num">'+s.no+'</span><span>'+s.zh+'</span><span class="cnt" id="cnt-'+s.id+'">0/'+s.questions.length+'</span></a>';
+    }).join("");
+    document.getElementById("content").innerHTML = SECTIONS.map(renderSection).join("");
+  }
+
+  function updateProgress(){
+    var answered = 0, right = 0, per = {};
+    Object.keys(state).forEach(function(k){
+      var part = k.split("-q")[0];
+      per[part] = per[part] || {a:0,r:0};
+      per[part].a++;
+      if (state[k].correct) per[part].r++;
+    });
+    SECTIONS.forEach(function(sec){
+      var st = per[sec.id];
+      var cnt = document.getElementById("cnt-"+sec.id);
+      if (!cnt) return;
+      var a = st ? st.a : 0, r = st ? st.r : 0;
+      answered += a; right += r;
+      cnt.textContent = a + "/" + sec.questions.length;
+      cnt.className = "cnt" + (a === sec.questions.length ? (r === sec.questions.length ? " good" : " mix") : "");
+    });
+    document.getElementById("stAns").textContent = answered;
+    document.getElementById("stRight").textContent = right;
+    document.getElementById("pbar").style.width = (answered / TOTAL * 100) + "%";
+    var st = document.getElementById("stState");
+    if (answered === 0) st.textContent = "开始答题吧～";
+    else if (answered === TOTAL && right === TOTAL) st.textContent = "🎉 全部答对，太棒了！";
+    else if (answered === TOTAL) st.textContent = "已完成全部 " + TOTAL + " 题，建议复习橙色（易错点）标注后再来一次。";
+    else st.textContent = "继续加油！完成全部题目即可看到总评。";
+  }
+
+  function findQuestion(key){
+    var found = null;
+    SECTIONS.some(function(sec){
+      for (var i=0;i<sec.questions.length;i++){
+        if (sec.id + "-q" + (i+1) === key){ found = sec.questions[i]; return true; }
+      }
+      return false;
+    });
+    return found;
+  }
+
+  function showFeedback(key){
+    var fb = document.querySelector('[data-fb="'+key+'"]');
+    if (!fb) return;
+    var s = state[key];
+    var card = fb.closest(".q");
+    var ansIdx = parseInt(card.dataset.answer, 10);
+    var q = findQuestion(key);
+    if (!q) return;
+    fb.className = "fb show " + (s.correct ? "fb-ok" : "fb-bad");
+    fb.innerHTML = '<b>'+(s.correct ? "✅ 回答正确" : "❌ 回答错误")+'</b>　正确答案：'+LETTERS[ansIdx]+'. '+q.opts[ansIdx]+
+      '<div class="exp">💡 解析：'+q.exp+'</div>';
+  }
+
+  function applyMark(key){
+    var s = state[key];
+    var card = document.querySelector('.q[data-key="'+key+'"]');
+    if (!card) return;
+    var ansIdx = parseInt(card.dataset.answer,10);
+    Array.prototype.forEach.call(card.querySelectorAll(".opt"), function(btn){
+      btn.disabled = true;
+      var i = parseInt(btn.dataset.i,10);
+      if (i === ansIdx) btn.classList.add("right");
+      else if (i === s.sel) btn.classList.add("wrong");
+    });
+  }
+
+  function choose(btn){
+    var card = btn.closest(".q");
+    if (!card) return;
+    var key = card.dataset.key;
+    if (state[key]) return;
+    var sel = parseInt(btn.dataset.i,10);
+    var ans = parseInt(card.dataset.answer,10);
+    state[key] = {sel: sel, correct: sel === ans};
+    applyMark(key);
+    showFeedback(key);
+    updateProgress();
+  }
+
+  function bindEvents(){
+    document.addEventListener("click", function(e){
+      var btn = e.target.closest ? e.target.closest(".opt") : null;
+      if (btn) choose(btn);
+    });
+    document.getElementById("btnReset").addEventListener("click", function(){
+      state = {};
+      document.getElementById("content").innerHTML = "";
+      renderAll();
+      updateProgress();
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+    document.getElementById("btnPrint").addEventListener("click", function(){ window.print(); });
+  }
+
+  function scrollSpy(){
+    var links = Array.prototype.slice.call(document.querySelectorAll("#side .nav-i"));
+    var secs = SECTIONS.map(function(s){ return document.getElementById(s.id); });
+    if (!("IntersectionObserver" in window)) return;
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){
+          links.forEach(function(a){
+            a.classList.toggle("active", a.getAttribute("href") === "#" + en.target.id);
+          });
+        }
+      });
+    }, {rootMargin:"-15% 0px -70% 0px"});
+    secs.forEach(function(s){ if (s) obs.observe(s); });
+  }
+
+  renderAll();
+  bindEvents();
+  updateProgress();
+  scrollSpy();
+})();
+</script>
+</body>
+</html>
